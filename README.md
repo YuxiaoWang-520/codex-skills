@@ -51,6 +51,21 @@ skills/
 3. 质量保障：`tdd-workflow` + `e2e-testing` + `verification-loop`
 4. 发布协作：`gh-address-comments` / `gh-fix-ci` / `yeet`
 
+## Star Rating（技能优先级）
+
+- `⭐⭐ Core`：跨项目高复用、建议优先掌握（默认工作流核心）。
+- `⭐ Common`：高频实战技能，覆盖大部分工程与协作场景。
+- 无星标：按特定任务场景使用的专业技能。
+
+### Starred Skills Quick Picks
+
+- `⭐⭐ repo-codex-bootstrap`：会话记忆与仓库上下文管理基座。
+- `⭐⭐ codex-longrun-dev`：长周期、多阶段任务的稳定推进框架。
+- `⭐ backend-patterns`, `⭐ frontend-patterns`, `⭐ coding-standards`, `⭐ security-review`
+- `⭐ api-design`, `⭐ tdd-workflow`, `⭐ verification-loop`, `⭐ playwright`
+- `⭐ deep-research`, `⭐ openai-docs`, `⭐ article-writing`
+- `⭐ gh-address-comments`, `⭐ gh-fix-ci`
+
 ## Full Skill Reference
 
 > 字段说明：
@@ -69,18 +84,18 @@ skills/
 
 | Skill | 用途 | 使用时机 | 使用建议 |
 |---|---|---|---|
-| `api-design` | 生产级 REST API 设计 | 新建/重构接口，对外开放 API | 先定资源与错误模型，再做分页过滤 |
-| `backend-patterns` | Node/Express/Next.js 后端架构与优化 | 后端模块重构、性能瓶颈治理 | 与 `security-review` 联合，在设计阶段介入 |
-| `frontend-patterns` | React/Next.js 架构与性能实践 | 页面复杂度上升、状态管理混乱 | 先做状态分层与渲染边界，再做优化 |
-| `coding-standards` | TS/JS/React/Node 编码规范 | 团队风格不一致、评审成本高 | 绑定 lint/test 门禁，防止“规范落空” |
-| `security-review` | 安全审查清单（鉴权/输入/密钥/支付） | 涉及敏感数据或高风险接口时 | 先做威胁建模，再做实现与验证 |
-| `tdd-workflow` | 测试驱动开发流程 | 新功能、修复缺陷、重构高风险模块 | 先写失败测试，再写实现 |
+| `⭐ api-design` | 生产级 REST API 设计 | 新建/重构接口，对外开放 API | 先定资源与错误模型，再做分页过滤 |
+| `⭐ backend-patterns` | Node/Express/Next.js 后端架构与优化 | 后端模块重构、性能瓶颈治理 | 与 `security-review` 联合，在设计阶段介入 |
+| `⭐ frontend-patterns` | React/Next.js 架构与性能实践 | 页面复杂度上升、状态管理混乱 | 先做状态分层与渲染边界，再做优化 |
+| `⭐ coding-standards` | TS/JS/React/Node 编码规范 | 团队风格不一致、评审成本高 | 绑定 lint/test 门禁，防止“规范落空” |
+| `⭐ security-review` | 安全审查清单（鉴权/输入/密钥/支付） | 涉及敏感数据或高风险接口时 | 先做威胁建模，再做实现与验证 |
+| `⭐ tdd-workflow` | 测试驱动开发流程 | 新功能、修复缺陷、重构高风险模块 | 先写失败测试，再写实现 |
 | `e2e-testing` | Playwright 端到端测试体系 | 核心用户路径需要回归保障 | 优先覆盖高价值路径，减少脆弱断言 |
-| `verification-loop` | 会话级综合验证机制 | 多模块改动、需要可审计交付 | 形成“静态检查→测试→手测”闭环 |
+| `⭐ verification-loop` | 会话级综合验证机制 | 多模块改动、需要可审计交付 | 形成“静态检查→测试→手测”闭环 |
 | `eval-harness` | EDD 评估框架 | 需要量化 agent/model 效果 | 先固化指标和样本，再做策略对比 |
-| `codex-longrun-dev` | 长周期自主开发协作框架 | 任务跨度数小时/数天 | 一次一个 feature，确保每轮可验证 |
+| `⭐⭐ codex-longrun-dev` | 长周期自主开发协作框架 | 任务跨度数小时/数天 | 一次一个 feature，确保每轮可验证 |
 | `dmux-workflows` | dmux/tmux 多 agent 编排 | 可并行拆解的复杂任务 | 预先划分无重叠职责边界 |
-| `repo-codex-bootstrap` | 仓库级 `codex/` 文档初始化与维护 | 新仓库或跨会话上下文易丢失 | 每会话先读 `memory.md`/`prompt.md`，每轮滚动更新 |
+| `⭐⭐ repo-codex-bootstrap` | 仓库级 `codex/` 文档初始化与维护 | 新仓库或跨会话上下文易丢失 | 每会话先读 `memory.md`/`prompt.md`，每轮滚动更新 |
 | `strategic-compact` | 关键阶段手动上下文压缩 | 长任务上下文接近上限时 | 按里程碑压缩，不按固定轮次机械压缩 |
 
 ### 3) Frontend, Design & Automation
@@ -89,7 +104,7 @@ skills/
 |---|---|---|---|
 | `figma` | 通过 Figma MCP 拉取设计上下文与资产 | 有 Figma URL/节点或 MCP 连接问题 | 先拉 token/变量再编码，避免视觉猜测 |
 | `figma-implement-design` | Figma 1:1 高保真实现 | 明确要求“与设计稿一致” | 先对齐项目设计系统与 token 映射 |
-| `playwright` | 终端自动化真实浏览器 | UI 流程复现、抓取、截图、调试 | 脚本化关键路径并显式等待 |
+| `⭐ playwright` | 终端自动化真实浏览器 | UI 流程复现、抓取、截图、调试 | 脚本化关键路径并显式等待 |
 | `develop-web-game` | Web 游戏迭代与验证闭环 | HTML/JS 游戏小步快跑开发 | 每次只改一个机制并即时回归 |
 | `frontend-slides` | HTML 幻灯片制作或 PPT 转 Web | 路演、演讲、培训课件 | 先定叙事节奏和视觉母版 |
 | `screenshot` | 系统级截图能力 | 需要窗口/区域/全屏截图 | 先确认目标窗口与分辨率 |
@@ -98,12 +113,12 @@ skills/
 
 | Skill | 用途 | 使用时机 | 使用建议 |
 |---|---|---|---|
-| `deep-research` | 多源深度研究并提供引用 | 需要证据链与可追溯结论 | 先收敛问题，再扩展来源 |
+| `⭐ deep-research` | 多源深度研究并提供引用 | 需要证据链与可追溯结论 | 先收敛问题，再扩展来源 |
 | `market-research` | 市场/竞品/尽调研究 | 商业决策、市场进入、融资准备 | 结论绑定决策动作，避免信息堆砌 |
 | `paper-deep-review` | 论文深读与结构化拆解 | 需要快速理解方法与实验 | 先看问题定义与贡献，再看实验边界 |
-| `openai-docs` | OpenAI 官方文档检索与引用 | 涉及 OpenAI API 能力或限制 | 优先官方来源，标注查询日期 |
+| `⭐ openai-docs` | OpenAI 官方文档检索与引用 | 涉及 OpenAI API 能力或限制 | 优先官方来源，标注查询日期 |
 | `exa-search` | Exa 神经搜索（网页/代码/公司） | 需要快速定位高相关资料 | 把检索结果做二次验证再下结论 |
-| `article-writing` | 高质量长文写作与风格对齐 | 文章、教程、Newsletter、指南 | 先确定受众与样例文风再写作 |
+| `⭐ article-writing` | 高质量长文写作与风格对齐 | 文章、教程、Newsletter、指南 | 先确定受众与样例文风再写作 |
 | `doc` | `.docx` 创建/编辑与排版校验 | Word 文档交付且版式重要 | 结构化生成后做渲染复核 |
 | `pdf` | PDF 解析、生成与审阅 | 报告/论文/票据类 PDF 工作流 | 文本抽取与版式校验分开处理 |
 
@@ -111,8 +126,8 @@ skills/
 
 | Skill | 用途 | 使用时机 | 使用建议 |
 |---|---|---|---|
-| `gh-address-comments` | 处理 PR review/issue 评论 | PR 收到反馈需要逐条闭环 | 先分级评论，再按优先级处理 |
-| `gh-fix-ci` | 排查并修复 GitHub Actions 失败 | PR checks 失败或不稳定 | 先最小复现，再实施修复 |
+| `⭐ gh-address-comments` | 处理 PR review/issue 评论 | PR 收到反馈需要逐条闭环 | 先分级评论，再按优先级处理 |
+| `⭐ gh-fix-ci` | 排查并修复 GitHub Actions 失败 | PR checks 失败或不稳定 | 先最小复现，再实施修复 |
 | `yeet` | 一键 stage/commit/push/开 PR | 用户明确要求一条龙发布 | 仅在显式授权下使用 |
 | `linear` | Linear 任务与项目流管理 | 需要跟踪任务状态和协作 | issue 必须写清验收标准 |
 
@@ -158,4 +173,3 @@ skills/
 1. 技能触发条件清晰且可复用。
 2. `SKILL.md` 与脚本/参考资料一致。
 3. 说明中包含边界条件与失败回退策略。
-

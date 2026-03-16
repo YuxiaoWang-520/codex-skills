@@ -51,6 +51,21 @@ skills/
 3. Quality and validation: `tdd-workflow` + `e2e-testing` + `verification-loop`
 4. Delivery and collaboration: `gh-address-comments` / `gh-fix-ci` / `yeet`
 
+## Star Rating (Priority Signals)
+
+- `⭐⭐ Core`: foundational skills recommended for most multi-step engineering sessions.
+- `⭐ Common`: high-frequency skills that work well across many repositories and workflows.
+- No star: specialized skills for narrower task contexts.
+
+### Starred Skills Quick Picks
+
+- `⭐⭐ repo-codex-bootstrap`: baseline context/memory system for cross-session work.
+- `⭐⭐ codex-longrun-dev`: stable execution model for long-horizon autonomous development.
+- `⭐ backend-patterns`, `⭐ frontend-patterns`, `⭐ coding-standards`, `⭐ security-review`
+- `⭐ api-design`, `⭐ tdd-workflow`, `⭐ verification-loop`, `⭐ playwright`
+- `⭐ deep-research`, `⭐ openai-docs`, `⭐ article-writing`
+- `⭐ gh-address-comments`, `⭐ gh-fix-ci`
+
 ## Full Skill Reference
 
 > Columns:
@@ -69,18 +84,18 @@ skills/
 
 | Skill | Purpose | Best timing | Recommendation |
 |---|---|---|---|
-| `api-design` | Production REST API design patterns | New API or interface refactor | Define resource/error model before endpoints |
-| `backend-patterns` | Backend architecture/performance patterns | Service evolution or performance bottlenecks | Pair with `security-review` early |
-| `frontend-patterns` | Frontend architecture/state/performance patterns | Complex UI state and rendering issues | Design state boundaries first |
-| `coding-standards` | Unified coding standards for JS/TS/React/Node | Team style drift, unstable review quality | Enforce with lint/test gates |
-| `security-review` | Security checklist for sensitive changes | Auth, payments, secrets, untrusted input | Start with threat modeling |
-| `tdd-workflow` | Test-driven development workflow | New features, bug fixes, risky refactors | Write failing tests first |
+| `⭐ api-design` | Production REST API design patterns | New API or interface refactor | Define resource/error model before endpoints |
+| `⭐ backend-patterns` | Backend architecture/performance patterns | Service evolution or performance bottlenecks | Pair with `security-review` early |
+| `⭐ frontend-patterns` | Frontend architecture/state/performance patterns | Complex UI state and rendering issues | Design state boundaries first |
+| `⭐ coding-standards` | Unified coding standards for JS/TS/React/Node | Team style drift, unstable review quality | Enforce with lint/test gates |
+| `⭐ security-review` | Security checklist for sensitive changes | Auth, payments, secrets, untrusted input | Start with threat modeling |
+| `⭐ tdd-workflow` | Test-driven development workflow | New features, bug fixes, risky refactors | Write failing tests first |
 | `e2e-testing` | Playwright E2E testing patterns | Critical user flow regressions | Prioritize high-value paths |
-| `verification-loop` | End-to-end verification discipline | Multi-module changes before delivery | Use explicit check/test/manual chain |
+| `⭐ verification-loop` | End-to-end verification discipline | Multi-module changes before delivery | Use explicit check/test/manual chain |
 | `eval-harness` | Eval-driven development framework | Quantitative agent/model evaluation | Freeze metrics and dataset first |
-| `codex-longrun-dev` | Long-horizon autonomous development | Multi-session, long-running tasks | Keep one-feature-per-session cadence |
+| `⭐⭐ codex-longrun-dev` | Long-horizon autonomous development | Multi-session, long-running tasks | Keep one-feature-per-session cadence |
 | `dmux-workflows` | Multi-agent orchestration via dmux/tmux | Parallelizable complex tasks | Assign disjoint ownership upfront |
-| `repo-codex-bootstrap` | Initialize and maintain `codex/` docs | New repo or context-loss risk | Always read/update `memory.md` and `prompt.md` |
+| `⭐⭐ repo-codex-bootstrap` | Initialize and maintain `codex/` docs | New repo or context-loss risk | Always read/update `memory.md` and `prompt.md` |
 | `strategic-compact` | Manual context compaction strategy | Long tasks near context limits | Compact by milestones, not fixed intervals |
 
 ### 3) Frontend, Design & Automation
@@ -89,7 +104,7 @@ skills/
 |---|---|---|---|
 | `figma` | Pull context/assets from Figma MCP | Figma-linked implementation tasks | Fetch tokens/variables before coding |
 | `figma-implement-design` | 1:1 design-to-code implementation | Pixel-fidelity requirements | Map Figma tokens to project tokens |
-| `playwright` | Real-browser automation from terminal | UI debugging, extraction, scripted flows | Script replayable steps with waits |
+| `⭐ playwright` | Real-browser automation from terminal | UI debugging, extraction, scripted flows | Script replayable steps with waits |
 | `develop-web-game` | Iterative web-game dev + testing loop | HTML/JS game iteration | Change one mechanic per cycle |
 | `frontend-slides` | Rich HTML slides / PPT-to-web conversion | Talks, demos, pitch decks | Lock narrative structure first |
 | `screenshot` | OS-level screenshot capture | Full screen/window/region capture needs | Confirm target display/window before capture |
@@ -98,12 +113,12 @@ skills/
 
 | Skill | Purpose | Best timing | Recommendation |
 |---|---|---|---|
-| `deep-research` | Multi-source cited deep research | Evidence-heavy analysis tasks | Narrow questions before broad crawl |
+| `⭐ deep-research` | Multi-source cited deep research | Evidence-heavy analysis tasks | Narrow questions before broad crawl |
 | `market-research` | Market/competitor/investor diligence research | Go-to-market or fundraising decisions | Tie outputs to concrete decisions |
 | `paper-deep-review` | Structured paper dissection | Fast but rigorous paper understanding | Start from problem and contribution |
-| `openai-docs` | Official OpenAI docs lookup and citation | OpenAI API/features/limits questions | Prefer official sources only |
+| `⭐ openai-docs` | Official OpenAI docs lookup and citation | OpenAI API/features/limits questions | Prefer official sources only |
 | `exa-search` | Exa neural web/code/company search | Fast high-relevance retrieval | Validate results before synthesis |
-| `article-writing` | Long-form writing with voice consistency | Articles, tutorials, newsletters, guides | Define audience and tone examples first |
+| `⭐ article-writing` | Long-form writing with voice consistency | Articles, tutorials, newsletters, guides | Define audience and tone examples first |
 | `doc` | `.docx` authoring/editing with layout checks | Word output with formatting requirements | Validate visual output after generation |
 | `pdf` | PDF extraction/generation/review workflow | Reports, contracts, paper PDFs | Separate text extraction from layout QA |
 
@@ -111,8 +126,8 @@ skills/
 
 | Skill | Purpose | Best timing | Recommendation |
 |---|---|---|---|
-| `gh-address-comments` | Resolve PR review/issue comments via `gh` | Comment-driven revision cycles | Triage comments before implementing |
-| `gh-fix-ci` | Diagnose and fix failing GitHub Actions checks | Red CI in PR workflow | Reproduce minimally before patching |
+| `⭐ gh-address-comments` | Resolve PR review/issue comments via `gh` | Comment-driven revision cycles | Triage comments before implementing |
+| `⭐ gh-fix-ci` | Diagnose and fix failing GitHub Actions checks | Red CI in PR workflow | Reproduce minimally before patching |
 | `yeet` | Stage/commit/push/open PR in one flow | Explicit user request for one-click release | Use only with explicit authorization |
 | `linear` | Linear issue/project management workflows | Planning and team coordination | Keep acceptance criteria explicit |
 
@@ -158,4 +173,3 @@ Issues and PRs are welcome. Before submitting, please ensure:
 1. Trigger conditions are clear and reusable.
 2. `SKILL.md` matches scripts/references behavior.
 3. Boundary conditions and fallback behavior are documented.
-
