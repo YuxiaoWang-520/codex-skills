@@ -23,58 +23,103 @@ python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" --r
    - `codex/plan.md`
    - `codex/checklist.md`
 4. Confirm `.gitignore` contains `/codex/` so these files are never pushed.
-5. Immediately fill in initial useful content for `memory.md`, `prompt.md`, and `repowiki.md`.
+5. First invocation in a repo must produce useful baseline content for all five docs (not placeholder-only content).
 
-## Session-Start Required Read
+## Non-Negotiable Rules
 
-Apply this at the start of every session where this skill is invoked.
+1. At session start, read `codex/memory.md` and `codex/prompt.md` before analysis or edits.
+2. For code or architecture tasks, also read `codex/repowiki.md` before planning implementation.
+3. Do not leave any of the five files as single-line stubs or TODO-only placeholders.
+4. Keep `/codex/` ignored in `.gitignore`.
+5. Treat this as a living system: every invocation should either update content or explicitly confirm review status.
 
-1. Before analysis, planning, or edits, read `codex/memory.md` and `codex/prompt.md`.
-2. Use both files as required context sources for the current session.
-3. If either file is missing, initialize it first, then continue.
-4. Do not skip this step, even for short or follow-up requests.
+## Five-Document Responsibility Contract
+
+| File | Primary responsibility | Minimum useful content | Update trigger |
+| --- | --- | --- | --- |
+| `memory.md` | Durable working memory across turns/sessions | latest objective, decisions, blockers, next actions, open questions | every interaction |
+| `prompt.md` | Prompt and intent history | latest user prompt, interpreted intent/constraints, prompt history timeline | every interaction |
+| `repowiki.md` | Repository operational wiki | architecture, module map, commands, env/config, testing, known gaps | when new repo facts are learned or changed |
+| `plan.md` | Execution design for non-trivial work | request scope, assumptions, steps, file-level plan, validation/rollback | when plan is requested or non-trivial implementation starts |
+| `checklist.md` | Execution ledger and completion tracking | task checklist mapped to plan, changed files, validation outcomes | when code change is planned/executed |
+
+## First-Run Baseline Requirements
+
+When bootstrapping a repo for the first time, fill all five docs with concrete baseline info.
+
+1. `memory.md`
+   - include current objective, key context, known risks, and immediate next actions.
+2. `prompt.md`
+   - include the exact latest prompt and a concise interpretation of intent + constraints.
+3. `repowiki.md`
+   - include at least: repo purpose, stack/toolchain, key directories, run/test/build commands, and known unknowns.
+4. `plan.md`
+   - include a reusable planning skeleton with assumptions, step format, file-impact section, and validation section.
+5. `checklist.md`
+   - include a reusable checklist skeleton with plan mapping, file-change log format, and validation checklist.
 
 ## Session and Turn-by-Turn Update Rules
 
 Apply these rules on every interaction when this skill is invoked.
 
 1. Always update `codex/memory.md`
-   - Roll forward context for this interaction (append/update, do not reset).
-   - Capture conversation summary for this turn.
-   - Capture decisions, blockers, and next actions.
-   - Keep old context concise instead of deleting it.
+   - roll context forward (append/update, never reset).
+   - capture summary, decisions, blockers, and next actions.
 2. Always update `codex/prompt.md`
-   - Roll forward the prompt history for this interaction (append/update, do not reset).
-   - Append the user prompt from this turn.
-   - Add a short "intent + constraints" interpretation.
-3. Always update `codex/repowiki.md`
-   - Keep it structured and current: purpose, architecture, stack, directory map, run/test/build commands, known gaps.
-4. Update `codex/plan.md` only when user explicitly asks for a plan or asks for implementation that requires plan review first.
-5. Update `codex/checklist.md` only when code changes are planned or executed.
-   - Checklist must map to `plan.md` and include all modified files.
-6. Ensure `/codex/` remains in `.gitignore` when initializing or updating docs.
-7. Treat `memory.md` and `prompt.md` maintenance as mandatory recurring work for every session and every interaction using this skill.
+   - append latest prompt and interpretation.
+   - preserve historical prompts with timestamps.
+3. Update `codex/repowiki.md` whenever repository facts evolve
+   - architecture changes, command changes, new module ownership, env var changes, testing changes.
+   - if nothing changed, add a short review timestamp note instead of rewriting the whole file.
+4. Update `codex/plan.md` when planning is requested or implementation is non-trivial.
+5. Update `codex/checklist.md` when code changes are planned or executed.
+6. Keep `plan.md` and `checklist.md` aligned (step IDs or clear textual mapping).
+
+## RepoWiki Depth Standard (Must Not Be Superficial)
+
+`codex/repowiki.md` should be usable as a practical wiki, not a short summary. It must include:
+
+1. Repository purpose and non-goals
+2. Architecture overview and key data/control flow
+3. Module ownership or responsibility map (by directory or component)
+4. Directory map with important paths and what lives there
+5. Local development prerequisites and commands (run, build, test, lint, format)
+6. Runtime/config notes (env vars, config files, secrets handling boundaries)
+7. Testing strategy and quality gates
+8. Known gaps, tech debt, and open questions with next action hints
+
+Quality checks for `repowiki.md`:
+- commands are copy-runnable where possible.
+- sections use concrete paths/names, not generic wording.
+- unknowns are written as explicit TODO questions with discovery hints.
 
 ## Plan and Checklist Contract
 
-When `plan.md` is requested:
-- Explain each step and why this approach is chosen.
-- Include alternatives briefly only when useful.
-- Include explicit file-level code change plan.
+When `plan.md` is active:
+- include assumptions, dependencies, risks, and rollback intent.
+- include explicit file-level change plan.
+- include validation strategy before coding.
 
-When `checklist.md` is requested:
-- Record every code change after implementation.
-- Include file path and one-line purpose per change.
-- Keep entries aligned with `plan.md` steps.
+When `checklist.md` is active:
+- reflect real execution progress (not generic template-only checkboxes).
+- include every modified file and one-line purpose.
+- include validation outcomes (pass/fail/skipped with reason).
 
 ## Content Quality Rules
 
-- Prefer short, high-signal bullets.
-- Use timestamps when appending new entries.
-- Preserve existing information unless it is outdated or incorrect.
-- If repository facts are unknown, write `TODO` placeholders instead of guessing.
+- prefer short, high-signal bullets.
+- use timestamps for appended entries.
+- preserve useful history; summarize old content instead of deleting it.
+- if facts are unknown, write explicit TODO questions and next discovery action.
+
+## Anti-Patterns (Disallowed)
+
+- One-paragraph `repowiki.md` with no runnable commands.
+- `memory.md` or `prompt.md` not updated on an interaction where this skill is invoked.
+- `plan.md` and `checklist.md` drifting with no mapping.
+- wiping historical context instead of rolling it forward.
 
 ## Resources
 
 ### scripts/
-- `scripts/init_codex_docs.py`: idempotently creates `codex/` and the five markdown files with starter templates.
+- `scripts/init_codex_docs.py`: idempotently creates `codex/` and the five markdown files with detailed starter templates.
