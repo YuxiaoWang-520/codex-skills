@@ -1,0 +1,4 @@
+interface:
+  display_name: "Long-Run Dev"
+  short_description: "Stable multi-session autonomous coding loop"
+  default_prompt: "Use $codex-longrun-dev to run a long-horizon coding workflow that progresses one verified feature per session with durable handoff artifacts."

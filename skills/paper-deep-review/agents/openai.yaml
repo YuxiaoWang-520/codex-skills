@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Deep Review"
+  short_description: "Deep paper reading with method and baseline analysis."
+  default_prompt: "Use $paper-deep-review to deeply read this paper and produce section-wise, baseline-aware, method step-by-step analysis."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repo Bootstrap"
+  short_description: "Initialize and maintain codex workspace docs for a repository"
+  default_prompt: "Initialize or update codex/memory.md, prompt.md, repowiki.md, plan.md, and checklist.md for this repository task."
