@@ -12,7 +12,7 @@
 ## Overview
 
 - 仓库目标：沉淀高复用技能，降低重复上下文沟通成本。
-- 当前规模：**41** 个 skills（含 `.system` 下的 2 个系统技能）。
+- 当前规模：**42** 个 skills（含 `.system` 下的 2 个系统技能）。
 - 适用对象：AI 应用开发者、自动化工程师、研究/内容团队、开源维护者。
 
 ## Repository Structure
@@ -85,6 +85,7 @@ skills/
 | Skill | 用途 | 使用时机 | 使用建议 |
 |---|---|---|---|
 | `⭐ api-design` | 生产级 REST API 设计 | 新建/重构接口，对外开放 API | 先定资源与错误模型，再做分页过滤 |
+| `agent-team-dev` | 多 agent 编码协作编排（最多 4 个 sub-agents） | 任务需要架构/实现/测试/审查并行协作且要求高正确性 | 先写任务契约与文件 ownership，再按风险选择 Mode A/B/C |
 | `⭐ backend-patterns` | Node/Express/Next.js 后端架构与优化 | 后端模块重构、性能瓶颈治理 | 与 `security-review` 联合，在设计阶段介入 |
 | `⭐ frontend-patterns` | React/Next.js 架构与性能实践 | 页面复杂度上升、状态管理混乱 | 先做状态分层与渲染边界，再做优化 |
 | `⭐ coding-standards` | TS/JS/React/Node 编码规范 | 团队风格不一致、评审成本高 | 绑定 lint/test 门禁，防止“规范落空” |
@@ -156,7 +157,7 @@ skills/
 
 ## Skill Inventory (A-Z)
 
-`api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
+`agent-team-dev`, `api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
 
 ## Maintenance Guidelines
 

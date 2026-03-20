@@ -12,7 +12,7 @@ An open-source repository of reusable Codex skills. Each skill is a task capabil
 ## Overview
 
 - Goal: standardize reusable workflows and reduce repeated context setup.
-- Scale: **41** skills (including 2 system skills under `.system`).
+- Scale: **42** skills (including 2 system skills under `.system`).
 - Audience: AI builders, automation engineers, research/content teams, open-source maintainers.
 
 ## Repository Structure
@@ -85,6 +85,7 @@ skills/
 | Skill | Purpose | Best timing | Recommendation |
 |---|---|---|---|
 | `⭐ api-design` | Production REST API design patterns | New API or interface refactor | Define resource/error model before endpoints |
+| `agent-team-dev` | Multi-agent coding orchestration (up to 4 sub-agents) | Tasks requiring parallel design/implementation/testing/review with high correctness | Write task contract and file ownership first, then select Mode A/B/C by risk |
 | `⭐ backend-patterns` | Backend architecture/performance patterns | Service evolution or performance bottlenecks | Pair with `security-review` early |
 | `⭐ frontend-patterns` | Frontend architecture/state/performance patterns | Complex UI state and rendering issues | Design state boundaries first |
 | `⭐ coding-standards` | Unified coding standards for JS/TS/React/Node | Team style drift, unstable review quality | Enforce with lint/test gates |
@@ -156,7 +157,7 @@ skills/
 
 ## Skill Inventory (A-Z)
 
-`api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
+`agent-team-dev`, `api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
 
 ## Maintenance Guidelines
 
