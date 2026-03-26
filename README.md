@@ -1,176 +1,263 @@
-<div align="right">
-
-[![Language: English](https://img.shields.io/badge/Language-English-0A66C2)](./README_EN.md)
-[![语言: 简体中文](https://img.shields.io/badge/语言-简体中文-2EA44F)](./README.md)
-
-</div>
-
 # Codex Skills
 
-一个面向开源协作的 Codex Skill 集合仓库。每个 skill 都是可复用的任务能力单元，包含触发规则、执行流程、参考资料与脚本。
+Production-grade skills for Codex agents who need to remember your repo, run for hours without losing the plot, and coordinate multiple agents without chaos.
 
-## Overview
+This repository is not a random prompt pack. It is a practical operating layer for serious agent-driven development:
 
-- 仓库目标：沉淀高复用技能，降低重复上下文沟通成本。
-- 当前规模：**42** 个 skills（含 `.system` 下的 2 个系统技能）。
-- 适用对象：AI 应用开发者、自动化工程师、研究/内容团队、开源维护者。
+- durable repo memory instead of repeated rediscovery
+- long-running execution harnesses instead of fragile one-shot sessions
+- accountable multi-agent teamwork instead of parallel confusion
+- reusable engineering, research, docs, and delivery skills for real projects
 
-## Repository Structure
+## Why This Repo Exists
 
-```text
-skills/
-  .system/
-    skill-creator/
-    skill-installer/
-  <skill-name>/
-    SKILL.md              # 必需：触发条件与执行流程
-    agents/openai.yaml    # 可选：界面与元信息
-    scripts/              # 可选：可执行脚本
-    references/           # 可选：按需加载资料
-    assets/               # 可选：模板/素材
+Most agent workflows break in the same three places:
+
+1. The agent forgets what it learned about the repo.
+2. Long tasks drift, restart badly, or lose verification discipline.
+3. Multi-agent work creates overlap, merge conflicts, and shallow review.
+
+This repository is built to solve those problems directly.
+
+If you only try three skills, start here:
+
+- `repo-codex-bootstrap`
+- `codex-longrun-dev`
+- `agent-team-dev`
+
+Together, they give you a durable memory layer, a long-horizon execution harness, and a safe multi-agent coordination model.
+
+## Install
+
+To use a skill with Codex, place the skill folder under your local Codex skills directory:
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/repo-codex-bootstrap ~/.codex/skills/
+cp -R skills/codex-longrun-dev ~/.codex/skills/
+cp -R skills/agent-team-dev ~/.codex/skills/
 ```
 
-## How To Use
+Or install the whole collection by copying the skill directories from this repo into `~/.codex/skills/`.
 
-1. 明确任务目标与交付物（代码、文档、报告、PR、发布等）。
-2. 选择最小可覆盖的 1-3 个 skills，避免同类技能重复叠加。
-3. 先读 `SKILL.md` 再执行；仅按需读取 `references/`。
-4. 有 `scripts/` 时优先复用脚本，减少一次性手写逻辑。
-5. 完成后做验证与回顾：输出、日志、测试、风险点、下一步。
+Expected structure:
 
-## Skill Trigger Rules
+```text
+~/.codex/skills/
+  repo-codex-bootstrap/
+    SKILL.md
+  codex-longrun-dev/
+    SKILL.md
+  agent-team-dev/
+    SKILL.md
+```
 
-- 显式触发：用户在需求中直接提到 skill 名称（例如 `$openai-docs`）。
-- 语义触发：用户需求与 skill `description` 高度匹配。
-- 多 skill 组合：优先「研究/输入」→「实现/产出」→「验证/交付」。
+Each skill is self-contained and follows the same pattern:
 
-## Recommended Workflow
+```text
+<skill-name>/
+  SKILL.md
+  agents/openai.yaml
+  scripts/
+  references/
+  assets/
+```
 
-1. 上下文准备：`repo-codex-bootstrap` + `strategic-compact`
-2. 架构与实现：`api-design` / `backend-patterns` / `frontend-patterns`
-3. 质量保障：`tdd-workflow` + `e2e-testing` + `verification-loop`
-4. 发布协作：`gh-address-comments` / `gh-fix-ci` / `yeet`
+## The 3 Flagship Skills
 
-## Star Rating（技能优先级）
+### 1. `repo-codex-bootstrap`
 
-- `⭐⭐ Core`：跨项目高复用、建议优先掌握（默认工作流核心）。
-- `⭐ Common`：高频实战技能，覆盖大部分工程与协作场景。
-- 无星标：按特定任务场景使用的专业技能。
+**Turn Codex into a repo-aware system with durable memory on disk.**
 
-### Starred Skills Quick Picks
+What it solves:
 
-- `⭐⭐ repo-codex-bootstrap`：会话记忆与仓库上下文管理基座。
-- `⭐⭐ codex-longrun-dev`：长周期、多阶段任务的稳定推进框架。
-- `⭐ backend-patterns`, `⭐ frontend-patterns`, `⭐ coding-standards`, `⭐ security-review`
-- `⭐ api-design`, `⭐ tdd-workflow`, `⭐ verification-loop`, `⭐ playwright`
-- `⭐ deep-research`, `⭐ openai-docs`, `⭐ article-writing`
-- `⭐ gh-address-comments`, `⭐ gh-fix-ci`
+- the agent forgets architecture, decisions, and prior discoveries between sessions
+- repo knowledge lives only in chat history
+- planning notes, prompt history, and implementation context disappear over time
 
-## Full Skill Reference
+Why it is different:
 
-> 字段说明：
-> - 用途：解决什么问题
-> - 使用时机：何时触发最有效
-> - 使用建议：落地时的实践建议
+- uses `codex/state.json` as a structured source of truth
+- continuously re-renders `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, and `checklist.md`
+- preserves rolling knowledge instead of overwriting it with templates
+- keeps repo understanding local, inspectable, and recoverable
 
-### 1) System Skills
+Architecture:
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `skill-creator` | 创建/更新 skill，规范化技能结构 | 要沉淀新能力或重构旧技能时 | 用真实样例反推边界，保持 `SKILL.md` 精简 |
-| `skill-installer` | 安装 curated/GitHub skills 到 `$CODEX_HOME/skills` | 新环境搭建、团队同步、迁移恢复 | 安装后立即做最小烟雾测试 |
+- `codex/state.json`: machine-readable memory store
+- `codex/memory.md`: durable working memory
+- `codex/prompt.md`: prompt and intent history
+- `codex/repowiki.md`: operational wiki for the repo
+- `codex/plan.md`: execution plan
+- `codex/checklist.md`: validation and delivery ledger
 
-### 2) Engineering & Quality
+Why people try it:
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `⭐ api-design` | 生产级 REST API 设计 | 新建/重构接口，对外开放 API | 先定资源与错误模型，再做分页过滤 |
-| `agent-team-dev` | 多 agent 编码协作编排（最多 4 个 sub-agents） | 任务需要架构/实现/测试/审查并行协作且要求高正确性 | 先写任务契约与文件 ownership，再按风险选择 Mode A/B/C |
-| `⭐ backend-patterns` | Node/Express/Next.js 后端架构与优化 | 后端模块重构、性能瓶颈治理 | 与 `security-review` 联合，在设计阶段介入 |
-| `⭐ frontend-patterns` | React/Next.js 架构与性能实践 | 页面复杂度上升、状态管理混乱 | 先做状态分层与渲染边界，再做优化 |
-| `⭐ coding-standards` | TS/JS/React/Node 编码规范 | 团队风格不一致、评审成本高 | 绑定 lint/test 门禁，防止“规范落空” |
-| `⭐ security-review` | 安全审查清单（鉴权/输入/密钥/支付） | 涉及敏感数据或高风险接口时 | 先做威胁建模，再做实现与验证 |
-| `⭐ tdd-workflow` | 测试驱动开发流程 | 新功能、修复缺陷、重构高风险模块 | 先写失败测试，再写实现 |
-| `e2e-testing` | Playwright 端到端测试体系 | 核心用户路径需要回归保障 | 优先覆盖高价值路径，减少脆弱断言 |
-| `⭐ verification-loop` | 会话级综合验证机制 | 多模块改动、需要可审计交付 | 形成“静态检查→测试→手测”闭环 |
-| `eval-harness` | EDD 评估框架 | 需要量化 agent/model 效果 | 先固化指标和样本，再做策略对比 |
-| `⭐⭐ codex-longrun-dev` | 长周期自主开发协作框架 | 任务跨度数小时/数天 | 一次一个 feature，确保每轮可验证 |
-| `dmux-workflows` | dmux/tmux 多 agent 编排 | 可并行拆解的复杂任务 | 预先划分无重叠职责边界 |
-| `⭐⭐ repo-codex-bootstrap` | 仓库级 `codex/` 文档初始化与维护 | 新仓库或跨会话上下文易丢失 | 每会话先读 `memory.md`/`prompt.md`，每轮滚动更新 |
-| `strategic-compact` | 关键阶段手动上下文压缩 | 长任务上下文接近上限时 | 按里程碑压缩，不按固定轮次机械压缩 |
+Because the fastest way to make an agent feel smarter is to stop making it rediscover the same repo every day.
 
-### 3) Frontend, Design & Automation
+### 2. `codex-longrun-dev`
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `figma` | 通过 Figma MCP 拉取设计上下文与资产 | 有 Figma URL/节点或 MCP 连接问题 | 先拉 token/变量再编码，避免视觉猜测 |
-| `figma-implement-design` | Figma 1:1 高保真实现 | 明确要求“与设计稿一致” | 先对齐项目设计系统与 token 映射 |
-| `⭐ playwright` | 终端自动化真实浏览器 | UI 流程复现、抓取、截图、调试 | 脚本化关键路径并显式等待 |
-| `develop-web-game` | Web 游戏迭代与验证闭环 | HTML/JS 游戏小步快跑开发 | 每次只改一个机制并即时回归 |
-| `frontend-slides` | HTML 幻灯片制作或 PPT 转 Web | 路演、演讲、培训课件 | 先定叙事节奏和视觉母版 |
-| `screenshot` | 系统级截图能力 | 需要窗口/区域/全屏截图 | 先确认目标窗口与分辨率 |
+**Run long-horizon coding work as a harness, not as a fragile conversation.**
 
-### 4) Research, Docs & Knowledge
+What it solves:
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `⭐ deep-research` | 多源深度研究并提供引用 | 需要证据链与可追溯结论 | 先收敛问题，再扩展来源 |
-| `market-research` | 市场/竞品/尽调研究 | 商业决策、市场进入、融资准备 | 结论绑定决策动作，避免信息堆砌 |
-| `paper-deep-review` | 论文深读与结构化拆解 | 需要快速理解方法与实验 | 先看问题定义与贡献，再看实验边界 |
-| `⭐ openai-docs` | OpenAI 官方文档检索与引用 | 涉及 OpenAI API 能力或限制 | 优先官方来源，标注查询日期 |
-| `exa-search` | Exa 神经搜索（网页/代码/公司） | 需要快速定位高相关资料 | 把检索结果做二次验证再下结论 |
-| `⭐ article-writing` | 高质量长文写作与风格对齐 | 文章、教程、Newsletter、指南 | 先确定受众与样例文风再写作 |
-| `doc` | `.docx` 创建/编辑与排版校验 | Word 文档交付且版式重要 | 结构化生成后做渲染复核 |
-| `pdf` | PDF 解析、生成与审阅 | 报告/论文/票据类 PDF 工作流 | 文本抽取与版式校验分开处理 |
+- multi-hour or multi-day tasks lose structure between context windows
+- agents claim progress without clean validation
+- large projects stall because nobody knows what was done, what is left, and what is currently green
 
-### 5) GitHub, Project Ops & Delivery
+Why it is different:
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `⭐ gh-address-comments` | 处理 PR review/issue 评论 | PR 收到反馈需要逐条闭环 | 先分级评论，再按优先级处理 |
-| `⭐ gh-fix-ci` | 排查并修复 GitHub Actions 失败 | PR checks 失败或不稳定 | 先最小复现，再实施修复 |
-| `yeet` | 一键 stage/commit/push/开 PR | 用户明确要求一条龙发布 | 仅在显式授权下使用 |
-| `linear` | Linear 任务与项目流管理 | 需要跟踪任务状态和协作 | issue 必须写清验收标准 |
+- bootstraps a deterministic `.codex-longrun/` harness inside the target repo
+- enforces one-feature-at-a-time execution
+- requires verification evidence before a feature is considered done
+- leaves every session with a clean handoff and a commit
 
-### 6) Content, Media & Growth
+Architecture:
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `content-engine` | 多平台原生内容系统建设 | 从单一素材扩展内容矩阵 | 先定义内容支柱再多平台改写 |
-| `crosspost` | 跨平台差异化分发 | 同主题需发 X/LinkedIn/Threads 等 | 保持核心观点一致，平台表达重写 |
-| `video-editing` | AI 辅助视频编辑全流程 | vlog、产品短视频、批量剪辑 | 先锁主线叙事，再加特效 |
-| `fal-ai-media` | fal.ai 图像/视频/音频生成 | 需要快速生成 AI 媒体资产 | 先小样本试参，再批量生成 |
-| `x-api` | X/Twitter API 集成 | 自动发帖、检索、分析 | 严格处理 OAuth 与速率限制 |
+- `.codex-longrun/init.sh`: dependency setup and smoke checks
+- `.codex-longrun/feature_list.json`: feature queue and pass/fail state
+- `.codex-longrun/progress.md`: session-by-session progress log
+- `.codex-longrun/session_state.json`: current session state and recovery info
 
-### 7) Business & Fundraising
+Why people try it:
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `investor-materials` | 融资材料创建与维护 | BP/one-pager/memo/财务模型准备 | 所有材料共用同一数据口径 |
-| `investor-outreach` | 投资人外联文案 | 冷启动、引荐、跟进、进展更新 | 按投资人画像做个性化首段 |
+Because long-running agent work only scales when progress, verification, and handoff are made explicit.
 
-### 8) Platform Integrations
+### 3. `agent-team-dev`
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `claude-api` | Anthropic Claude API 工程化集成 | 构建 Claude 驱动应用 | 先定义调用模式，再封装工具链 |
+**Use multiple agents without turning your codebase into a collision zone.**
 
-## Skill Inventory (A-Z)
+What it solves:
 
-`agent-team-dev`, `api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
+- overlapping edits from parallel agents
+- weak ownership and unclear handoffs
+- shallow or redundant analysis from too many agents doing the same work
+- rushed implementation without an independent review pass
 
-## Maintenance Guidelines
+Why it is different:
 
-- 每个 skill 目录必须包含 `SKILL.md`。
-- `name` 与目录名保持一致，`description` 写清触发条件。
-- 脚本涉及执行权限时，保持可执行位正确。
-- 外部依赖变更（API、平台策略、CLI 行为）后及时更新 skill。
-- 重要改动应通过 PR 描述记录变更原因与影响范围。
+- keeps one Team Lead in the main thread
+- limits the team to a compact topology with explicit roles
+- assigns disjoint file ownership before delegation
+- prioritizes correctness first, efficiency second, token savings third
+
+Architecture:
+
+- Team Lead: contract, integration, verification
+- Solution Architect: read-only design and risk brief
+- Feature Engineer: production code implementation
+- Test Engineer: tests and fixtures
+- Reviewer/Verifier: independent risk-ranked review
+
+Why people try it:
+
+Because parallelism is only valuable when ownership, verification, and integration are controlled.
+
+## How These 3 Skills Work Together
+
+This is the recommended operating stack:
+
+1. Start with `repo-codex-bootstrap` to persist repo knowledge locally.
+2. Use `codex-longrun-dev` when the task is bigger than one safe session.
+3. Use `agent-team-dev` when the task benefits from bounded parallelism.
+
+In practice:
+
+- `repo-codex-bootstrap` makes the agent remember
+- `codex-longrun-dev` makes the agent finish
+- `agent-team-dev` makes multiple agents collaborate without stepping on each other
+
+That combination is the core value of this repository.
+
+## Recommended Usage Flow
+
+For a serious repo, this is a strong default:
+
+1. Install `repo-codex-bootstrap`, `codex-longrun-dev`, and `agent-team-dev` into `~/.codex/skills/`.
+2. Bootstrap repo memory with `repo-codex-bootstrap`.
+3. Bootstrap long-run harness files if the task spans many sessions.
+4. Delegate with `agent-team-dev` only when there is a real parallelism win.
+5. Add domain-specific skills only after the operating layer is in place.
+
+Suggested companion skills:
+
+- build and architecture: `api-design`, `backend-patterns`, `frontend-patterns`, `coding-standards`
+- quality: `tdd-workflow`, `e2e-testing`, `verification-loop`, `security-review`
+- research and docs: `deep-research`, `openai-docs`, `article-writing`
+- delivery: `gh-address-comments`, `gh-fix-ci`, `yeet`
+
+## What Else Is In This Repo
+
+Beyond the three flagship skills, this repo includes a broad set of focused, reusable skills for engineering, testing, research, content, media, fundraising, and delivery.
+
+### Full Skill Inventory
+
+| Skill | Primary Use |
+| --- | --- |
+| `agent-team-dev` | Coordinate a small sub-agent team with explicit ownership and quality gates |
+| `api-design` | Design production-grade REST APIs |
+| `article-writing` | Write polished long-form articles, guides, and newsletters |
+| `backend-patterns` | Structure and optimize Node.js, Express, and Next.js backend systems |
+| `claude-api` | Build apps with the Anthropic Claude API |
+| `codex-longrun-dev` | Run long-horizon development with persistent harness artifacts |
+| `coding-standards` | Apply shared coding standards across TS, JS, React, and Node |
+| `content-engine` | Turn one idea into a multi-platform content system |
+| `crosspost` | Adapt one message across X, LinkedIn, Threads, and Bluesky |
+| `deep-research` | Run multi-source research with citations and synthesis |
+| `develop-web-game` | Iterate on HTML/JS games with a tight test loop |
+| `dmux-workflows` | Orchestrate multi-agent work through dmux/tmux workflows |
+| `doc` | Create and edit `.docx` documents with layout checks |
+| `e2e-testing` | Build and maintain Playwright end-to-end test suites |
+| `eval-harness` | Evaluate agent behavior with a formal harness |
+| `exa-search` | Use Exa for neural web, code, and company search |
+| `fal-ai-media` | Generate image, video, and audio assets via fal.ai |
+| `figma` | Pull design context and assets from Figma |
+| `figma-implement-design` | Translate Figma nodes into production-ready UI |
+| `frontend-patterns` | Build scalable React and Next.js frontend systems |
+| `frontend-slides` | Create high-impact slide decks in HTML |
+| `gh-address-comments` | Resolve GitHub PR review comments systematically |
+| `gh-fix-ci` | Diagnose and fix failing GitHub Actions checks |
+| `investor-materials` | Produce investor-facing fundraising materials |
+| `investor-outreach` | Write investor outreach and follow-up messages |
+| `linear` | Manage issues and workflow in Linear |
+| `market-research` | Analyze markets, competitors, and due diligence targets |
+| `openai-docs` | Use current official OpenAI docs with citations |
+| `paper-deep-review` | Read and explain research papers deeply |
+| `pdf` | Parse, generate, and inspect PDFs |
+| `playwright` | Automate a real browser from the terminal |
+| `repo-codex-bootstrap` | Persist repo memory and regenerate structured codex docs |
+| `screenshot` | Capture desktop or app screenshots |
+| `security-review` | Review auth, secrets, input handling, and sensitive flows |
+| `skill-creator` | Create or refine Codex skills |
+| `skill-installer` | Install skills into your local Codex environment |
+| `strategic-compact` | Compress context intentionally at milestone boundaries |
+| `tdd-workflow` | Drive implementation through tests first |
+| `verification-loop` | Run a structured verification pass before delivery |
+| `video-editing` | Edit and structure videos with AI-assisted workflows |
+| `x-api` | Integrate with the X/Twitter API |
+| `yeet` | Stage, commit, push, and open a PR in one flow |
+
+## Who This Repo Is For
+
+- engineers building serious agent workflows
+- solo builders who want agents to behave like durable collaborators
+- teams that need repeatable AI-assisted implementation, testing, and delivery
+- anyone tired of agents forgetting the repo, losing momentum, or creating parallel messes
 
 ## Contributing
 
-欢迎提交 Issue 和 PR 来补充新技能、修正流程或改进文档。建议在提交前确保：
+Contributions are welcome, but the bar is practical usefulness.
 
-1. 技能触发条件清晰且可复用。
-2. `SKILL.md` 与脚本/参考资料一致。
-3. 说明中包含边界条件与失败回退策略。
+A strong skill in this repo should:
+
+- solve a repeatable real-world problem
+- have a clear trigger condition
+- define a concrete workflow, not just generic advice
+- include scripts or references when they materially improve execution
+- help the agent produce better outcomes, not just longer outputs
+
+If you want this repository to feel dramatically more capable on day one, start with the flagship trio:
+
+- `repo-codex-bootstrap`
+- `codex-longrun-dev`
+- `agent-team-dev`
