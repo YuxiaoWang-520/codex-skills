@@ -1,125 +1,215 @@
 ---
 name: repo-codex-bootstrap
-description: Initialize and maintain repository-level Codex context files under a `codex/` folder (`memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md`) and keep `/codex/` ignored by git. Use when the user asks for one-click repository bootstrap, persistent context tracking, rolling memory updates, or plan/checklist-driven implementation review.
+description: Initialize and continuously maintain repository-level Codex context under `codex/` using a state-backed memory system. Keeps `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, and `checklist.md` synchronized from `codex/state.json`, and keeps `/codex/` ignored by git. Use when the user asks for repository bootstrap, durable project memory, rolling context updates, or plan/checklist-driven implementation review.
 ---
 
 # Repo Codex Bootstrap
 
-Create and maintain a `codex/` workspace in the repository root so future turns keep stable project memory and reviewable planning artifacts.
+Create and maintain a `codex/` workspace in the repository root so future turns keep stable project memory, structured plan state, and reviewable execution artifacts.
 
-## Quick Start
+This skill now uses `codex/state.json` as a local machine-readable source of truth. The five markdown files are rendered from that state so the agent can keep updating them without losing prior knowledge.
 
-1. Resolve repository root (default: current working directory).
-2. Run:
+## When To Use It
 
-```bash
-python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" --repo-root <repo-root>
-```
+- First-time repository bootstrap
+- Ongoing work where the agent should persist memory across turns
+- Non-trivial implementation that needs plan/checklist tracking
+- Periodic repo-wiki refresh after architecture or workflow discovery
+- Long-running sessions where prompt history and decisions should survive context-window loss
 
-3. Confirm these files exist:
+## Core Model
+
+The durable memory model has two layers:
+
+1. `codex/state.json`
+   - structured source of truth for current memory, prompt log, repo facts, plan, and checklist state
+   - preserves rolling history and allows deterministic markdown regeneration
+2. Rendered markdown views
    - `codex/memory.md`
    - `codex/prompt.md`
    - `codex/repowiki.md`
    - `codex/plan.md`
    - `codex/checklist.md`
-4. Confirm `.gitignore` contains `/codex/` so these files are never pushed.
-5. First invocation in a repo must produce useful baseline content for all five docs (not placeholder-only content).
+
+`/codex/` must remain gitignored.
+
+## Quick Start
+
+1. Resolve repository root.
+2. Run a bootstrap or sync command:
+
+```bash
+python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
+  --repo-root <repo-root> \
+  --latest-prompt "Summarize and improve this repo bootstrap skill." \
+  --intent "Persist durable repo memory and update the codex docs." \
+  --objective "Upgrade repo-codex-bootstrap to support rolling updates." \
+  --workstream "skill enhancement" \
+  --work-summary "Synced codex state for the current task." \
+  --next-action "Run verification"
+```
+
+3. For richer updates, write a JSON payload and pass `--context-file`:
+
+```bash
+python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
+  --repo-root <repo-root> \
+  --context-file /tmp/codex-context.json
+```
+
+4. Confirm these files exist:
+   - `codex/state.json`
+   - `codex/memory.md`
+   - `codex/prompt.md`
+   - `codex/repowiki.md`
+   - `codex/plan.md`
+   - `codex/checklist.md`
+5. Confirm `.gitignore` contains `/codex/`.
+
+## Required Turn Workflow
+
+Apply this workflow every time the skill is invoked.
+
+1. Read `codex/memory.md` and `codex/prompt.md` before analysis.
+2. For code or architecture tasks, also read `codex/repowiki.md` before planning.
+3. Before finishing the turn, sync the latest task context back into `codex/state.json`.
+4. Let the script re-render the five markdown files from state.
+5. If facts changed, update `repowiki.md` through the structured state instead of editing only the markdown view.
+
+The skill is only doing its job if the state is refreshed continuously. Bootstrap alone is not enough.
 
 ## Non-Negotiable Rules
 
-1. At session start, read `codex/memory.md` and `codex/prompt.md` before analysis or edits.
-2. For code or architecture tasks, also read `codex/repowiki.md` before planning implementation.
-3. Do not leave any of the five files as single-line stubs or TODO-only placeholders.
-4. Keep `/codex/` ignored in `.gitignore`.
-5. Treat this as a living system: every invocation should either update content or explicitly confirm review status.
+1. `codex/state.json` is the canonical local memory store.
+2. `memory.md` and `prompt.md` must be refreshed on every invocation.
+3. `repowiki.md` must be refreshed whenever repository facts evolve, or at minimum receive a review entry.
+4. `plan.md` and `checklist.md` must stay aligned through shared step IDs or explicit mapping.
+5. `/codex/` must stay ignored in `.gitignore`.
+6. Do not wipe history just to keep docs tidy; summarize or trim old entries instead.
+7. Do not rely on placeholder-only content after bootstrap.
+
+## First-Run Baseline Expectations
+
+The first run should produce useful baseline content automatically:
+
+- repo name and summary from README when available
+- stack/toolchain guesses from manifests and lockfiles
+- detected run/build/test/lint commands
+- top-level directory map placeholders with concrete paths
+- initial memory objective, risks, next actions, and decisions
+- initial prompt record even when no explicit prompt was supplied
+
+Unknown facts are allowed, but they must be framed as explicit gaps or discovery actions, not empty stubs.
+
+## Structured Update Payload
+
+The script accepts structured context through `--context-file` or `--context-json`.
+
+Supported top-level fields:
+
+- `latest_prompt`
+- `prompt_summary`
+- `intent`
+- `constraints`
+- `success_criteria`
+- `requested_output_format`
+- `objective`
+- `definition_of_done`
+- `workstream`
+- `why_now`
+- `work_summary`
+- `repo_facts`
+- `assumptions`
+- `decisions`
+- `blockers`
+- `risks`
+- `open_questions`
+- `next_actions`
+- `repo_name`
+- `repo_summary`
+- `repo_purpose`
+- `stakeholders`
+- `non_goals`
+- `directory_map`
+- `architecture`
+- `data_flow`
+- `required_env_vars`
+- `test_strategy`
+- `deployment_notes`
+- `observability_notes`
+- `security_notes`
+- `known_gaps`
+- `repowiki_review`
+- `plan`
+- `checklist`
+
+Recommended shapes:
+
+- `decisions`: array of `{summary, reason, tradeoff}`
+- `blockers`: array of `{item, owner, next_action}`
+- `risks`: array of `{item, impact, mitigation}`
+- `open_questions`: array of `{question, discovery_action, expected_source}`
+- `plan.steps`: array of `{id, step, why, owner, status}`
+- `plan.files`: array of `{path, change_type, purpose, linked_step}`
+- `checklist.plan_mapping`: array of `{plan_step, item, status, evidence}`
+- `checklist.files`: array of `{path, purpose, linked_step, status}`
+- `checklist.validation_results`: array of `{check, result, notes}`
+
+If `plan` is present and `checklist` is omitted, the script auto-derives a checklist skeleton from the plan.
 
 ## Five-Document Responsibility Contract
 
 | File | Primary responsibility | Minimum useful content | Update trigger |
 | --- | --- | --- | --- |
-| `memory.md` | Durable working memory across turns/sessions | latest objective, decisions, blockers, next actions, open questions | every interaction |
-| `prompt.md` | Prompt and intent history | latest user prompt, interpreted intent/constraints, prompt history timeline | every interaction |
-| `repowiki.md` | Repository operational wiki | architecture, module map, commands, env/config, testing, known gaps | when new repo facts are learned or changed |
-| `plan.md` | Execution design for non-trivial work | request scope, assumptions, steps, file-level plan, validation/rollback | when plan is requested or non-trivial implementation starts |
-| `checklist.md` | Execution ledger and completion tracking | task checklist mapped to plan, changed files, validation outcomes | when code change is planned/executed |
+| `memory.md` | Durable working memory across turns/sessions | current objective, decisions, blockers, risks, open questions, next actions, change log | every interaction |
+| `prompt.md` | Prompt and intent history | latest prompt, interpretation, constraints, success criteria, prompt timeline | every interaction |
+| `repowiki.md` | Repository operational wiki | repo purpose, stack, commands, directory map, repo facts, known gaps | whenever facts are learned or reviewed |
+| `plan.md` | Execution design for non-trivial work | request scope, assumptions, steps, file plan, validation, rollback | when planning is requested or work is non-trivial |
+| `checklist.md` | Execution ledger and validation status | plan mapping, file ledger, validation results, post-implementation status | when code change is planned or executed |
 
-## First-Run Baseline Requirements
+## RepoWiki Depth Standard
 
-When bootstrapping a repo for the first time, fill all five docs with concrete baseline info.
+`codex/repowiki.md` must remain a practical wiki, not a summary paragraph. It should stay useful for future sessions by including:
 
-1. `memory.md`
-   - include current objective, key context, known risks, and immediate next actions.
-2. `prompt.md`
-   - include the exact latest prompt and a concise interpretation of intent + constraints.
-3. `repowiki.md`
-   - include at least: repo purpose, stack/toolchain, key directories, run/test/build commands, and known unknowns.
-4. `plan.md`
-   - include a reusable planning skeleton with assumptions, step format, file-impact section, and validation section.
-5. `checklist.md`
-   - include a reusable checklist skeleton with plan mapping, file-change log format, and validation checklist.
-
-## Session and Turn-by-Turn Update Rules
-
-Apply these rules on every interaction when this skill is invoked.
-
-1. Always update `codex/memory.md`
-   - roll context forward (append/update, never reset).
-   - capture summary, decisions, blockers, and next actions.
-2. Always update `codex/prompt.md`
-   - append latest prompt and interpretation.
-   - preserve historical prompts with timestamps.
-3. Update `codex/repowiki.md` whenever repository facts evolve
-   - architecture changes, command changes, new module ownership, env var changes, testing changes.
-   - if nothing changed, add a short review timestamp note instead of rewriting the whole file.
-4. Update `codex/plan.md` when planning is requested or implementation is non-trivial.
-5. Update `codex/checklist.md` when code changes are planned or executed.
-6. Keep `plan.md` and `checklist.md` aligned (step IDs or clear textual mapping).
-
-## RepoWiki Depth Standard (Must Not Be Superficial)
-
-`codex/repowiki.md` should be usable as a practical wiki, not a short summary. It must include:
-
-1. Repository purpose and non-goals
-2. Architecture overview and key data/control flow
-3. Module ownership or responsibility map (by directory or component)
-4. Directory map with important paths and what lives there
-5. Local development prerequisites and commands (run, build, test, lint, format)
-6. Runtime/config notes (env vars, config files, secrets handling boundaries)
-7. Testing strategy and quality gates
-8. Known gaps, tech debt, and open questions with next action hints
-
-Quality checks for `repowiki.md`:
-- commands are copy-runnable where possible.
-- sections use concrete paths/names, not generic wording.
-- unknowns are written as explicit TODO questions with discovery hints.
+1. repository purpose and non-goals
+2. architecture notes and control/data-flow hints
+3. module or directory responsibility map
+4. local development commands
+5. runtime/config notes
+6. test strategy and quality gates
+7. operational/security notes when they become known
+8. known gaps and explicit discovery actions
 
 ## Plan and Checklist Contract
 
 When `plan.md` is active:
-- include assumptions, dependencies, risks, and rollback intent.
-- include explicit file-level change plan.
-- include validation strategy before coding.
+
+- record assumptions, dependencies, risks, mitigations, and rollback intent
+- include explicit file-level change plans
+- define validation before implementation
 
 When `checklist.md` is active:
-- reflect real execution progress (not generic template-only checkboxes).
-- include every modified file and one-line purpose.
-- include validation outcomes (pass/fail/skipped with reason).
 
-## Content Quality Rules
+- track execution progress honestly
+- include every modified file and one-line purpose
+- record validation outcomes as `pass`, `fail`, `skip`, or `pending`
+- stay aligned with plan step IDs
 
-- prefer short, high-signal bullets.
-- use timestamps for appended entries.
-- preserve useful history; summarize old content instead of deleting it.
-- if facts are unknown, write explicit TODO questions and next discovery action.
+## Migration Behavior
 
-## Anti-Patterns (Disallowed)
+If legacy codex markdown files exist but `codex/state.json` does not, the script captures those markdown files into state archives before rendering the new state-backed versions. This prevents silent knowledge loss during upgrade.
 
-- One-paragraph `repowiki.md` with no runnable commands.
-- `memory.md` or `prompt.md` not updated on an interaction where this skill is invoked.
-- `plan.md` and `checklist.md` drifting with no mapping.
-- wiping historical context instead of rolling it forward.
+## Anti-Patterns
+
+- Running bootstrap once and never syncing again
+- Editing markdown views while ignoring `state.json`
+- Letting `memory.md` or `prompt.md` go stale
+- Allowing `plan.md` and `checklist.md` to drift apart
+- Replacing explicit unknowns with generic TODO-only stubs
+- Removing historical context without a summary
 
 ## Resources
 
 ### scripts/
-- `scripts/init_codex_docs.py`: idempotently creates `codex/` and the five markdown files with detailed starter templates.
+
+- `scripts/init_codex_docs.py`: bootstraps and continuously syncs `codex/state.json` plus the rendered markdown files.
