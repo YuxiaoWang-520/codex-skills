@@ -5,9 +5,18 @@
 
 </div>
 
+<div align="center">
+
 # Codex Skills
 
-把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复的工程系统。
+**把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复的工程系统。**
+
+[![Skills](https://img.shields.io/badge/Skills-41-111111)](./skills)
+[![核心卖点](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#三个核心卖点-skill)
+[![Focus](https://img.shields.io/badge/Focus-可持久化%20%C2%B7%20可验证%20%C2%B7%20可恢复-2EA44F)](#核心思路)
+[![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
+
+</div>
 
 这个仓库背后的核心判断很简单：
 
@@ -22,6 +31,17 @@
 
 这类问题，本质上不是“智力问题”，而是“系统问题”。
 
+## 目录
+
+- [核心思路](#核心思路)
+- [快速开始](#快速开始)
+- [三个核心卖点 Skill](#三个核心卖点-skill)
+- [这套组合是怎么协同工作的](#这套组合是怎么协同工作的)
+- [怎么使用这个仓库](#怎么使用这个仓库)
+- [完整 Skill 清单](#完整-skill-清单)
+- [适合谁](#适合谁)
+- [Contributing](#contributing)
+
 ## 核心思路
 
 这个仓库要解决的，不是再多叠一层 prompt。
@@ -34,6 +54,44 @@
 - **可恢复**：长任务能从稳定状态继续，而不是从模糊记忆重启
 
 这就是整个仓库的设计中心。
+
+### Prompt 技巧 vs 工程系统
+
+| Prompt 优先工作流 | 系统优先工作流 |
+| --- | --- |
+| 上下文只存在于聊天记录里 | 上下文落在 repo 本地工件里 |
+| 完成依赖模型主观判断 | 完成依赖验证证据和检查 |
+| 多 agent 协作是临时拼装 | 角色、ownership、review gate 都明确 |
+| 长任务容易跨 session 漂移 | 长任务从结构化状态恢复 |
+| handoff 很脆弱 | handoff 被直接写进工作流 |
+
+## 快速开始
+
+把 skill 目录放到本地 Codex skills 目录下即可：
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/repo-codex-bootstrap ~/.codex/skills/
+cp -R skills/codex-longrun-dev ~/.codex/skills/
+cp -R skills/agent-team-dev ~/.codex/skills/
+```
+
+如果你想整仓安装：
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/* ~/.codex/skills/
+```
+
+目标结构大致如下：
+
+```text
+~/.codex/skills/
+  repo-codex-bootstrap/
+  codex-longrun-dev/
+  agent-team-dev/
+  ...
+```
 
 ## 三个核心卖点 Skill
 
@@ -53,8 +111,6 @@
 
 这三个 skill 组合在一起，才构成这个仓库真正的差异化价值。
 
-## 为什么是这三个 Skill
-
 ### `repo-codex-bootstrap`
 
 **它解决的是“如何保住上下文”。**
@@ -71,7 +127,8 @@
 - 哪些问题还没有搞清楚
 - 当前计划和真实执行是否一致
 
-这些信息如果只散落在聊天窗口里，实际上非常脆弱。只要 session 一切换，只要并行线程一多，只要中途换 agent，事实和假设就很容易混在一起。
+这些信息如果只散落在聊天窗口里，实际上非常脆弱。  
+只要 session 一切换，只要并行线程一多，只要中途换 agent，事实和假设就很容易混在一起。
 
 #### 架构设计
 
@@ -96,8 +153,6 @@
 
 #### 这个设计为什么强
 
-我认为它强在三个地方：
-
 1. 它没有假装自动化可以替代理解。  
    脚本可以自动探测语言、框架、命令、配置文件和目录结构，但这些自动化只负责搭骨架，不负责冒充深度理解。
 
@@ -113,7 +168,8 @@
 
 **它解决的是“如何让长任务长期不跑偏”。**
 
-绝大多数 agent demo 都很擅长展示“开始”，但真正的难点是“持续”。
+绝大多数 agent demo 都很擅长展示“开始”。  
+真正的难点是“持续”。
 
 #### 长任务为什么最容易失败
 
@@ -125,7 +181,8 @@
 - 进度只有叙述，没有结构
 - 模型主观上觉得“差不多了”，系统上却没有任何完成证据
 
-这些问题，不是再加一段“请认真工作”就能解决的。它们需要状态文件、恢复入口、执行顺序、完成条件，以及对 scope 的节流。
+这些问题，不是再加一段“请认真工作”就能解决的。  
+它们需要状态文件、恢复入口、执行顺序、完成条件，以及对 scope 的节流。
 
 #### 架构设计
 
@@ -139,8 +196,6 @@
 最重要的一点是：长任务的状态，不再是对话资产，而是 repo 资产。
 
 #### 它的控制模型
-
-这个 skill 的关键约束很值得注意：
 
 | 约束 | 背后的考虑 | 防的是什么问题 |
 | --- | --- | --- |
@@ -195,8 +250,6 @@ multi-agent 最大的难点，不是并行能力，而是边界治理。
 
 #### Mode 选择机制
 
-这个 skill 不把“并行”当作默认值，而是把它当作基于风险的选择：
-
 | 模式 | 使用时机 | 编制 | 我想达到的平衡 |
 | --- | --- | --- | --- |
 | Mode A | 小改动、低风险、单模块 | 0-1 个 sub-agent | 最低协调成本 |
@@ -215,6 +268,22 @@ multi-agent 最大的难点，不是并行能力，而是边界治理。
 
 所以这个 skill 的重点不是“更多 agent 更聪明”，而是“多 agent 必须先被治理”。
 
+## 这套组合是怎么协同工作的
+
+```mermaid
+flowchart LR
+    A[repo-codex-bootstrap<br/>持久化 repo 记忆] --> B[codex-longrun-dev<br/>管理长任务执行连续性]
+    B --> C[agent-team-dev<br/>控制并行协作]
+    A --> C
+    C --> D[带证据的交付<br/>和可恢复 handoff]
+```
+
+一句话总结：
+
+- `repo-codex-bootstrap` 让 agent 记得住
+- `codex-longrun-dev` 让 agent 不跑偏
+- `agent-team-dev` 让多个 agent 不失控
+
 ## 怎么使用这个仓库
 
 ### 安装到 Codex
@@ -224,54 +293,42 @@ multi-agent 最大的难点，不是并行能力，而是边界治理。
 通常是：
 
 - `~/.codex/skills/`
-- 或者 `$CODEX_HOME/skills/`
+- `$CODEX_HOME/skills/`
 
-示例：
-
-```bash
-mkdir -p ~/.codex/skills
-cp -R skills/repo-codex-bootstrap ~/.codex/skills/
-cp -R skills/codex-longrun-dev ~/.codex/skills/
-cp -R skills/agent-team-dev ~/.codex/skills/
-```
-
-如果你想整仓安装：
-
-```bash
-mkdir -p ~/.codex/skills
-cp -R skills/* ~/.codex/skills/
-```
-
-目标结构大致如下：
+每个 skill 的结构都比较统一：
 
 ```text
-~/.codex/skills/
-  repo-codex-bootstrap/
-    SKILL.md
-  codex-longrun-dev/
-    SKILL.md
-  agent-team-dev/
-    SKILL.md
+<skill-name>/
+  SKILL.md
+  agents/openai.yaml
+  scripts/
+  references/
+  assets/
 ```
 
 ### 推荐使用顺序
 
 如果你要把 agent 真正带进 repo 工作流，一个很强的默认组合是：
 
-1. 先用 `repo-codex-bootstrap` 把仓库知识落盘
-2. 任务跨多 session 时，用 `codex-longrun-dev` 管执行连续性
-3. 只有在确实存在并行收益时，再用 `agent-team-dev`
-4. 在此基础上，再叠加领域技能
+1. 先安装到 `~/.codex/skills/`
+2. 先用 `repo-codex-bootstrap` 把仓库知识落盘
+3. 任务跨多 session 时，用 `codex-longrun-dev` 管执行连续性
+4. 只有在确实存在并行收益时，再用 `agent-team-dev`
+5. 在此基础上，再叠加领域技能
 
-一句话总结：
+推荐搭配的补充 skills：
 
-- `repo-codex-bootstrap` 让 agent 记得住
-- `codex-longrun-dev` 让 agent 不跑偏
-- `agent-team-dev` 让多个 agent 不失控
+- 架构与实现：`api-design`、`backend-patterns`、`frontend-patterns`、`coding-standards`
+- 质量与验证：`tdd-workflow`、`e2e-testing`、`verification-loop`、`security-review`
+- 研究与文档：`deep-research`、`openai-docs`、`article-writing`
+- 交付与流程：`gh-address-comments`、`gh-fix-ci`、`yeet`、`linear`
 
-## 其他 Skills 一览
+## 完整 Skill 清单
 
 除了上面三个核心 skill，这个仓库还包含一系列面向工程、测试、研究、内容、交付的可复用 skills。
+
+<details>
+<summary><strong>查看全部 skills</strong></summary>
 
 | Skill | 主要用途 |
 | --- | --- |
@@ -317,6 +374,8 @@ cp -R skills/* ~/.codex/skills/
 | `video-editing` | AI 辅助视频编辑 |
 | `x-api` | 集成 X/Twitter API |
 | `yeet` | 一次性完成 stage/commit/push/开 PR |
+
+</details>
 
 ## 适合谁
 

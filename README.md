@@ -5,15 +5,24 @@
 
 </div>
 
+<div align="center">
+
 # Codex Skills
 
-Turn Agentic Coding from a one-off prompt trick into a durable engineering system.
+**Turn Agentic Coding from a one-off prompt trick into a durable engineering system.**
+
+[![Skills](https://img.shields.io/badge/Skills-41-111111)](./skills)
+[![Flagship Workflows](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#the-3-flagship-skills)
+[![Focus](https://img.shields.io/badge/Focus-Persistent%20%C2%B7%20Verifiable%20%C2%B7%20Recoverable-2EA44F)](#core-idea)
+[![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
+
+</div>
 
 This repository is built around a simple belief:
 
 > The biggest failure mode in agent-driven development is usually not intelligence. It is system instability.
 
-Most teams do not get blocked because the model "cannot write code".
+Most teams do not get blocked because the model "cannot write code".  
 They get blocked because the workflow is fragile:
 
 - the agent understood the repo yesterday and acts like it has amnesia today
@@ -22,6 +31,17 @@ They get blocked because the workflow is fragile:
 - the agent feels done, while the repository is still not in a deliverable state
 
 This repo is designed to solve those problems directly.
+
+## Contents
+
+- [Core Idea](#core-idea)
+- [Quick Start](#quick-start)
+- [The 3 Flagship Skills](#the-3-flagship-skills)
+- [How the Stack Fits Together](#how-the-stack-fits-together)
+- [How To Use This Repo](#how-to-use-this-repo)
+- [Full Skill Inventory](#full-skill-inventory)
+- [Who This Repo Is For](#who-this-repo-is-for)
+- [Contributing](#contributing)
 
 ## Core Idea
 
@@ -35,6 +55,44 @@ The goal is to upgrade agent work into a system that is:
 - **recoverable**: long tasks can resume from stable state instead of vague memory
 
 That is the design center of this repository.
+
+### Prompt Tricks vs. Engineering Systems
+
+| Prompt-First Workflow | System-First Workflow |
+| --- | --- |
+| Context lives in chat history | Context is written to repo-local artifacts |
+| Completion is based on model confidence | Completion is based on evidence and checks |
+| Multi-agent work is ad hoc | Roles, ownership, and review gates are explicit |
+| Long tasks drift across sessions | Long tasks resume from structured state |
+| Handoffs are fragile | Handoffs are built into the workflow |
+
+## Quick Start
+
+Place the skill folders under your local Codex skills directory:
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/repo-codex-bootstrap ~/.codex/skills/
+cp -R skills/codex-longrun-dev ~/.codex/skills/
+cp -R skills/agent-team-dev ~/.codex/skills/
+```
+
+Or install the full collection:
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/* ~/.codex/skills/
+```
+
+Expected structure:
+
+```text
+~/.codex/skills/
+  repo-codex-bootstrap/
+  codex-longrun-dev/
+  agent-team-dev/
+  ...
+```
 
 ## The 3 Flagship Skills
 
@@ -54,13 +112,11 @@ Together, they cover the three layers where serious agent workflows usually fail
 
 These three skills are the core differentiator of the repository.
 
-## Why These Skills Matter
-
 ### `repo-codex-bootstrap`
 
 **This skill is about protecting context.**
 
-The key insight is not "generate five markdown files".
+The key insight is not "generate five markdown files".  
 The real value is that it turns repo understanding from hidden background knowledge into an explicit workspace.
 
 #### What problem it solves
@@ -73,7 +129,7 @@ A capable agent needs more than source code:
 - which gaps are still unresolved
 - whether the plan still matches execution reality
 
-If that information lives only in chat history, it is fragile.
+If that information lives only in chat history, it is fragile.  
 As soon as sessions change, parallel threads multiply, or another agent takes over, facts and assumptions blur together.
 
 #### Architecture
@@ -99,15 +155,13 @@ That separation matters because these concerns should not be mixed:
 
 #### Why the design is strong
 
-There are three design decisions here that matter:
-
-1. It does not pretend automation can replace understanding.
+1. It does not pretend automation can replace understanding.  
    The bootstrap script can detect languages, frameworks, commands, config files, and top-level structure. That gives the agent a scaffold, not false certainty.
 
-2. It treats update rules as governance, not suggestions.
+2. It treats update rules as governance, not suggestions.  
    `memory.md` and `prompt.md` are supposed to be updated every turn. `repowiki.md` should reflect repo fact changes. `plan.md` and `checklist.md` should move together when non-trivial implementation starts.
 
-3. It manages unknowns explicitly.
+3. It manages unknowns explicitly.  
    A good memory system does not only store what is known. It also stores what is still missing, how to discover it, and what should not be assumed.
 
 That makes the system more honest, easier to hand off, and much harder to silently drift.
@@ -116,7 +170,7 @@ That makes the system more honest, easier to hand off, and much harder to silent
 
 **This skill is about keeping long tasks from wandering off course.**
 
-Short demos usually show how an agent starts.
+Short demos usually show how an agent starts.  
 Real engineering systems need to control how an agent continues.
 
 #### What problem it solves
@@ -129,7 +183,7 @@ Once a task spans many sessions, the common failure modes are predictable:
 - progress is narrated, but not structured
 - the model decides that something is "basically done" without objective evidence
 
-These are not prompt wording problems.
+These are not prompt wording problems.  
 They are state-management and execution-discipline problems.
 
 #### Architecture
@@ -144,8 +198,6 @@ They are state-management and execution-discipline problems.
 This is the critical move: long-running task state becomes a **repo asset**, not a chat artifact.
 
 #### The control model
-
-The most important constraints are intentionally strict:
 
 | Constraint | Why It Exists | What It Prevents |
 | --- | --- | --- |
@@ -169,7 +221,7 @@ That is what makes long-running autonomous development practical rather than the
 
 **This skill is about governed multi-agent collaboration.**
 
-The point of multi-agent systems is not "more minds".
+The point of multi-agent systems is not "more minds".  
 The point is better decomposition with stronger boundaries.
 
 #### What problem it solves
@@ -197,8 +249,6 @@ This skill deliberately keeps the team small and explicit:
 
 #### Mode-based orchestration
 
-Instead of treating parallelism as the default, this skill treats it as a risk-based decision:
-
 | Mode | When To Use It | Staffing | Optimization Goal |
 | --- | --- | --- | --- |
 | Mode A | small, low-risk, single-module changes | 0-1 sub-agents | lowest coordination overhead |
@@ -209,8 +259,8 @@ Instead of treating parallelism as the default, this skill treats it as a risk-b
 
 This skill is intentionally unromantic about multi-agent work.
 
-It does not try to simulate an entire company.
-It does not optimize for theatrical roleplay.
+It does not try to simulate an entire company.  
+It does not optimize for theatrical roleplay.  
 It optimizes for:
 
 - explicit file ownership
@@ -221,6 +271,22 @@ It optimizes for:
 
 That is why it tends to hold up better in real engineering tasks than looser "everyone collaborates with everyone" patterns.
 
+## How the Stack Fits Together
+
+```mermaid
+flowchart LR
+    A[repo-codex-bootstrap<br/>Persist repo memory] --> B[codex-longrun-dev<br/>Control long-running execution]
+    B --> C[agent-team-dev<br/>Coordinate parallel implementation]
+    A --> C
+    C --> D[Verified delivery<br/>with evidence and handoff]
+```
+
+In practice:
+
+- `repo-codex-bootstrap` makes the agent remember
+- `codex-longrun-dev` makes the agent stay on track
+- `agent-team-dev` makes multiple agents cooperate without chaos
+
 ## How To Use This Repo
 
 ### Install Into Codex
@@ -230,34 +296,17 @@ Place the skill folders under your local Codex skills directory.
 Use either:
 
 - `~/.codex/skills/`
-- or `$CODEX_HOME/skills/`
+- `$CODEX_HOME/skills/`
 
-Example:
-
-```bash
-mkdir -p ~/.codex/skills
-cp -R skills/repo-codex-bootstrap ~/.codex/skills/
-cp -R skills/codex-longrun-dev ~/.codex/skills/
-cp -R skills/agent-team-dev ~/.codex/skills/
-```
-
-To install the whole collection:
-
-```bash
-mkdir -p ~/.codex/skills
-cp -R skills/* ~/.codex/skills/
-```
-
-Expected structure:
+Each skill is self-contained:
 
 ```text
-~/.codex/skills/
-  repo-codex-bootstrap/
-    SKILL.md
-  codex-longrun-dev/
-    SKILL.md
-  agent-team-dev/
-    SKILL.md
+<skill-name>/
+  SKILL.md
+  agents/openai.yaml
+  scripts/
+  references/
+  assets/
 ```
 
 ### Recommended Operating Order
@@ -270,15 +319,19 @@ For serious repo work, a strong default is:
 4. Use `agent-team-dev` only when bounded parallelism is worth the coordination cost.
 5. Layer on domain-specific skills after the operating system is in place.
 
-In short:
+Suggested companion skills:
 
-- `repo-codex-bootstrap` makes the agent remember
-- `codex-longrun-dev` makes the agent stay on track
-- `agent-team-dev` makes multiple agents cooperate without chaos
+- architecture and implementation: `api-design`, `backend-patterns`, `frontend-patterns`, `coding-standards`
+- quality and verification: `tdd-workflow`, `e2e-testing`, `verification-loop`, `security-review`
+- research and docs: `deep-research`, `openai-docs`, `article-writing`
+- delivery and workflow: `gh-address-comments`, `gh-fix-ci`, `yeet`, `linear`
 
 ## Full Skill Inventory
 
-The flagship trio is the main entry point, but the repo also includes a broader skill library.
+Beyond the flagship trio, the repo includes a broader reusable library.
+
+<details>
+<summary><strong>View all skills</strong></summary>
 
 | Skill | Primary Use |
 | --- | --- |
@@ -324,6 +377,8 @@ The flagship trio is the main entry point, but the repo also includes a broader 
 | `video-editing` | Edit and structure videos with AI-assisted workflows |
 | `x-api` | Integrate with the X/Twitter API |
 | `yeet` | Stage, commit, push, and open a PR in one flow |
+
+</details>
 
 ## Who This Repo Is For
 
