@@ -226,27 +226,77 @@ Three orchestration modes based on risk:
 
 ### `learn`
 
-**Makes agents smarter over time.** Every conversation contains valuable knowledge — corrections, patterns, facts, preferences. Without a learning system, this knowledge evaporates when the session ends.
+**Makes agents smarter over time.** Every conversation between a developer and an agent contains high-value knowledge: corrections, patterns, facts, preferences. Without a learning system, this knowledge evaporates when the session ends. The agent starts from zero next time, and the user has to teach the same things again.
 
-This skill gives agents a structured way to extract, evaluate, and accumulate reusable knowledge from interactions:
+#### What problem it actually solves
+
+- The agent was corrected last session — "don't mock the database" — and this session it mocks it again
+- The user has said "keep responses concise" three times, but the agent is still verbose
+- The project has a specific deploy pipeline, and it needs to be re-explained every time
+- User coding preferences (naming style, architecture patterns) are never remembered
+
+#### Architecture
+
+This skill is built around one core belief: **conversations are a gold mine of reusable knowledge that gets wasted every time a session ends.** What the user teaches the agent should be systematically preserved.
 
 | Design choice | Why | What it prevents |
 | --- | --- | --- |
-| Two commands only (`/learn` + `/learn-review`) | Minimal cognitive load | Users forgetting which of 6 commands to use |
-| Markdown files, not YAML/JSON | Human-readable, directly editable | Black-box knowledge that users can't inspect |
-| Three-tier strength (`weak→medium→strong`) | Simple but effective validation | Floating-point pseudo-precision (0.47 vs 0.52) |
-| Project + Global scoping | Keep project knowledge isolated | Cross-project contamination |
-| Semi-automatic promotion | User confirms before globalizing | Wrong knowledge polluting all projects |
+| Two commands only (`/learn` + `/learn-review`) | Minimal cognitive load | Too many commands that users won't bother to learn |
+| Markdown files, not YAML/JSON | Human-readable, directly editable, git-friendly | Black-box knowledge that users can't inspect or correct |
+| Three-tier strength (`weak→medium→strong`) | Simple but effective validation model | Floating-point pseudo-precision (0.47 vs 0.52 is meaningless) |
+| Project + Global scoping | Keep project knowledge isolated | React habits leaking into a Python project |
+| Semi-automatic promotion | User confirms before globalizing | Wrong knowledge polluting all projects — false promotion costs more than missed promotion |
 | Quality gate (Save/Merge/Skip) | Filter noise before saving | Knowledge directory becoming a junk drawer |
 
-**Four knowledge types, prioritized:**
+#### Four knowledge types, prioritized
 
-1. **Corrections** — user corrected the agent's approach (highest value)
-2. **Patterns** — repeated workflow or coding convention
-3. **Facts** — project/environment-specific truths
-4. **Preferences** — user's personal style choices
+1. **Corrections** — user corrected the agent's approach (highest value). These represent mistakes the agent made and must never repeat.
+2. **Patterns** — repeated workflow or coding convention. E.g., "in this project, always run lint before commit."
+3. **Facts** — project/environment-specific truths. E.g., "CI uses Node 20", "deploy requires staging approval."
+4. **Preferences** — user's personal style choices. E.g., "keep responses concise", "write comments in Chinese."
 
-**Why it works:** It draws on the same insight as ECC's continuous-learning system — that conversations are a gold mine of reusable knowledge — but strips away the complexity. No background observer agents, no hooks dependency, no YAML instinct files. Just a skill that extracts knowledge into human-readable Markdown, validates it through use, and makes it available in future sessions. The agent gets smarter, and the user can see exactly what it learned.
+#### Strength evolution model
+
+One of the most carefully designed aspects of `learn`. Knowledge is not permanently valid once saved — it needs to be validated, strengthened, and can be overturned:
+
+```
+New knowledge created → strength: weak, confirmed: 0
+  ↓ Applied once without user correction
+strength: weak, confirmed: 1
+  ↓ Applied again without correction
+strength: medium, confirmed: 2
+  ↓ Repeatedly validated
+strength: strong, confirmed: 4+
+  ↓ User explicitly confirms ("yes, exactly")
+strength: strong (immediate jump)
+```
+
+User says "no, that's wrong" → downgrade or delete. No automatic decay — knowledge doesn't disappear just because it hasn't been used recently. Stale knowledge is cleaned up through `/learn-review`.
+
+This is more practical than floating-point confidence: `weak/medium/strong` is enough to distinguish "first observation" from "thoroughly validated" without forcing the system to split hairs between 0.47 and 0.52.
+
+#### Scope isolation and promotion
+
+Knowledge is stored at two levels:
+
+- **Project** (`.claude/learned/`): project-specific knowledge, the default destination
+- **Global** (`~/.claude/learned/`): cross-project universal knowledge
+
+Promotion rules are deliberately conservative: only when a project-scoped entry reaches `strength = strong` and its content contains no project-specific references will the system **suggest** promotion — but the user always confirms.
+
+Why not auto-promote? Because the cost of false promotion (polluting global scope) far exceeds the cost of missed promotion (teaching it again in another project).
+
+#### User experience design
+
+"Getting smarter over time" can't just be a technical fact — the user must **feel** it:
+
+- Every `/learn` run clearly reports what was learned, what was skipped, and why
+- When the agent makes a different decision based on learned knowledge, it says so:
+  > "Using real database for integration tests (learned: don't mock DB)"
+- `/learn-review` shows cumulative statistics: 23 global entries / 12 project entries
+- New sessions announce: "Loaded 8 project entries and 15 global entries"
+
+**Why it works:** Conversations are full of knowledge that agents lose between sessions. This skill turns that loss into lasting growth. Two commands, Markdown files, three strength tiers, and a quality gate — simple enough to actually use, transparent enough to trust, and structured enough to compound over time.
 
 ## How the Stack Fits Together
 
