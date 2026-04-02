@@ -163,64 +163,152 @@ If you only try four things from this repo, start here:
 
 ### `repo-bootstrap`
 
-**Protects context.** Turns repo understanding from hidden background knowledge into an explicit, persistent workspace.
+**Protects context.** The real power of this skill is not generating a few documents — it turns repo understanding from hidden background knowledge into an explicit, persistent workspace.
 
-A capable agent needs more than source code — it needs to know what the user is trying to achieve, what decisions were already made, what gaps remain, and whether the plan still matches execution reality.
+#### What problem it actually solves
 
-This skill separates repo cognition into six durable artifacts:
+An agent needs more than source code to work effectively. It also needs to know:
 
-| File | Responsibility | Why It Must Stay Separate |
+- What the user is actually trying to achieve
+- What decisions have already been made
+- How the repo is actually built, tested, and deployed
+- What is still unknown or uncertain
+- Whether the current plan still matches execution reality
+
+When this information lives only in chat history, it is extremely fragile. One session switch, one parallel thread, one agent handoff — and facts mix with assumptions.
+
+#### Architecture
+
+This skill splits repo cognition into six durable artifacts:
+
+- `codex/state.json`: machine-readable single source of truth
+- `codex/memory.md`: ongoing working memory
+- `codex/prompt.md`: user intent, constraints, explanation history
+- `codex/repowiki.md`: repo facts — directories, commands, environment
+- `codex/plan.md`: design approach, assumptions, risks, validation paths
+- `codex/checklist.md`: real execution ledger — file changes, validation status
+
+These responsibilities must stay separated:
+
+| File | What it owns | Why it can't be merged |
 | --- | --- | --- |
-| `state.json` | Machine-readable source of truth | Canonical state for automation |
 | `memory.md` | Ongoing working memory | Mixed with repo facts, it becomes an unstructured diary |
-| `prompt.md` | User intent and constraints | Task semantics shouldn't be buried in repo structure |
-| `repowiki.md` | Stable repo knowledge | Long-term facts shouldn't be polluted by session noise |
-| `plan.md` | Intended path forward | Plans are not the same as execution reality |
-| `checklist.md` | Real execution ledger | Actual progress shouldn't be rewritten into design prose |
+| `prompt.md` | User intent and constraints | Task semantics shouldn't couple with repo structure |
+| `repowiki.md` | Repo operations, directories, commands | Long-term facts shouldn't be polluted by session noise |
+| `plan.md` | Design approach, risks, validation paths | Future actions are not the same as past execution |
+| `checklist.md` | Execution ledger, verification status | Real progress shouldn't be rewritten into design prose |
 
-**Why it works:** It doesn't pretend automation replaces understanding. It treats update rules as governance, not suggestions. And it manages unknowns explicitly — a good memory system stores what is still missing, not just what is known.
+#### Why this design is strong
+
+1. It doesn't pretend automation can replace understanding. Scripts can auto-detect languages, frameworks, commands, config files and directory structure — but that automation only builds the skeleton. It doesn't claim to provide deep understanding.
+
+2. It treats update rules as governance, not suggestions. `memory.md` and `prompt.md` should be updated every session; repo fact changes must be reflected in `repowiki.md`; non-trivial implementations must sync `plan.md` and `checklist.md`.
+
+3. It manages unknowns explicitly. A mature memory system records not only what is known, but also what is still unknown, how to discover it, and what should not be assumed by default.
+
+This makes the system more honest, and much easier to hand off.
 
 ---
 
 ### `longrun-dev`
 
-**Keeps long tasks on track.** Most demos show how an agent starts. Real engineering needs to control how an agent *continues*.
+**Keeps long tasks on track.** Most agent demos excel at showing how work *starts*. The real difficulty is controlling how work *continues*.
 
-Once a task spans many sessions, failure modes are predictable: the agent loses its place, baseline is already broken, scope drifts silently, and "done" is declared without evidence.
+#### Why long tasks fail most often
 
-| Constraint | Why It Exists | What It Prevents |
+Once a task spans many sessions, highly predictable failure modes emerge:
+
+- The agent doesn't know where it left off last time
+- The baseline is already broken, but it keeps building on top of the damage
+- Feature scope drifts silently across rounds
+- Progress is narrative only — no structure
+- The model *feels* done, but the system has zero completion evidence
+
+These problems can't be solved by adding another paragraph that says "please work carefully." They require state files, recovery entry points, execution order, completion criteria, and scope throttling.
+
+#### Architecture
+
+This skill generates a longrun harness inside the target repo:
+
+- `.longrun/init.sh`: dependency setup and smoke checks
+- `.longrun/feature_list.json`: feature definitions with pass/fail status
+- `.longrun/progress.md`: append-only session progress log
+- `.longrun/session_state.json`: current recovery state and session info
+
+The most important point: **long-task state becomes a repo asset, not a conversation asset.**
+
+#### Control model
+
+| Constraint | Design intent | What it prevents |
 | --- | --- | --- |
-| One feature per session | Limits scope expansion | "While I'm here" drift and hidden scope creep |
+| One feature per session | Limit scope expansion | Doing too much, drifting, "while I'm here" creep |
 | Run `init.sh` first | Restore health before new work | Building on a broken baseline |
-| `feature_list.json` status-only | Freeze feature definitions | Quietly rewriting the target mid-flight |
-| `progress.md` append-only | Preserve traceability | History loss and weak handoff |
-| Evidence required for completion | Tie done-ness to validation | Premature "done" based on model confidence |
+| `feature_list.json` status-only updates | Freeze feature definitions | Quietly rewriting the target mid-flight |
+| `progress.md` append-only | Preserve traceable history | Overwriting history, making handoff impossible |
+| Evidence required for completion | Turn "feels done" into "verified done" | Premature completion based on model confidence |
 
-**Why it works:** The strongest idea is restraint. "One feature per session" is one of the highest-leverage control points — agents don't only fail by being incapable, they fail by doing too much, too broadly, too early.
+#### Why it embodies real "systems thinking"
+
+The most powerful idea in this skill is not complexity — it is restraint.
+
+"One feature per session" looks simple, but it is one of the highest-leverage control points for agents. The most common advanced failure mode is not that agents *can't* do the work — it's that they do too much, too broadly, beyond the original task boundary.
+
+This skill cuts long-horizon tasks into a series of verifiable, recoverable, accountable units. At the end of each session, the system can re-evaluate:
+
+- Is the baseline healthy?
+- Is the scope stable?
+- Is the evidence sufficient?
+
+This is the kind of engineering constraint that long-running autonomous development actually needs.
 
 ---
 
 ### `agent-team-dev`
 
-**Governs multi-agent collaboration.** The point of multi-agent systems is not "more minds" — it's better decomposition with stronger boundaries.
+**Governs multi-agent collaboration.** The hardest problem in multi-agent systems is not parallel capacity — it is boundary governance.
 
-| Role | Write Scope | Responsibility |
-| --- | --- | --- |
-| Team Lead | Integration | Task contract, staffing, conflict resolution, final verification |
-| Solution Architect | Read-only | Design brief, risk hotspots, file impact map |
-| Feature Engineer | Production code | Smallest safe implementation patch |
-| Test Engineer | Tests & fixtures | Coverage, regression protection, test evidence |
-| Reviewer / Verifier | Read-only | Independent review of integrated result |
+#### What problem it actually solves
 
-Three orchestration modes based on risk:
+Multi-agent workflows spiral out of control because:
 
-| Mode | When | Agents | Goal |
+- Multiple agents edit the same files with no clear ownership
+- Everyone is analyzing, but nobody owns final integration authority
+- Review happens too early, or is too broad
+- The main thread loses its role as the single source of truth
+
+Without governance, multi-agent just amplifies single-agent instability.
+
+#### Architecture
+
+This skill deliberately keeps the team in a small, explicit topology:
+
+| Role | Write scope | Responsibility | Why this separation |
 | --- | --- | --- | --- |
-| Mode A | Small, low-risk, single-module | 0–1 | Lowest coordination overhead |
-| Mode B | Implementation + testing can parallelize | 2 | Throughput without losing control |
-| Mode C | High-risk, cross-module, independent review needed | 3–4 | Correctness-first protection |
+| Team Lead | Integration & arbitration | Task contract, staffing, conflict resolution, final verification | Must retain the single source of truth |
+| Solution Architect | Read-only | Design brief, risk hotspots, file impact map | Design must precede changes |
+| Feature Engineer | Production code | Smallest safe implementation patch | Isolate implementation from other concerns |
+| Test Engineer | Test code | Test coverage, regression protection | Make verification an independent responsibility |
+| Reviewer / Verifier | Read-only | Review the integrated result | Avoid unfocused feedback on half-finished work |
 
-**Why it works:** It doesn't simulate an entire company. It optimizes for explicit file ownership, clear role packets, independent review after integration, and a single arbitration point.
+#### Mode selection
+
+| Mode | When to use | Staffing | Design goal |
+| --- | --- | --- | --- |
+| Mode A | Small change, low risk, single module | 0–1 sub-agents | Lowest coordination overhead |
+| Mode B | Implementation and testing can parallelize | 2 sub-agents | Higher throughput without losing control |
+| Mode C | High risk, cross-module, independent review needed | 3–4 sub-agents | Correctness-first full protection |
+
+#### How it differs from "role-play" multi-agent
+
+It doesn't indulge in the theatrics of multi-agent — it returns to the fundamentals of engineering organization:
+
+- The main thread must retain a Team Lead
+- Parallelism is not the default — it is a risk-driven choice
+- Roles exist for responsibility isolation, not for appearances
+- Review must be independent, and must happen after integration
+- There can only be one source of truth
+
+The point of this skill is not "more agents = smarter" — it's "multiple agents must be governed first."
 
 ---
 
