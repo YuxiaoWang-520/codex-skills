@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Team Dev"
+  short_description: "Coordinate coding with up to 4 sub-agents and strict QA gates"
+  default_prompt: "Use this skill to run coding tasks with a bounded agent team: architect, implementer, tester, and reviewer under one lead."
