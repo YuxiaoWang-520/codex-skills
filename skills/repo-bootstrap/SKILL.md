@@ -1,9 +1,9 @@
 ---
-name: repo-codex-bootstrap
-description: Initialize and continuously maintain repository-level Codex context under `codex/` using a state-backed memory system. Keeps `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, and `checklist.md` synchronized from `codex/state.json`, and keeps `/codex/` ignored by git. Use when the user asks for repository bootstrap, durable project memory, rolling context updates, or plan/checklist-driven implementation review.
+name: repo-bootstrap
+description: Initialize and continuously maintain repository-level agent context under `codex/` using a state-backed memory system. Keeps `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, and `checklist.md` synchronized from `codex/state.json`, and keeps `/codex/` ignored by git. Use when the user asks for repository bootstrap, durable project memory, rolling context updates, or plan/checklist-driven implementation review.
 ---
 
-# Repo Codex Bootstrap
+# Repo Bootstrap
 
 Create and maintain a `codex/` workspace in the repository root so future turns keep stable project memory, structured plan state, and reviewable execution artifacts.
 
@@ -38,12 +38,25 @@ The durable memory model has two layers:
 1. Resolve repository root.
 2. Run a bootstrap or sync command:
 
+Claude Code:
 ```bash
-python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
+python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
   --repo-root <repo-root> \
   --latest-prompt "Summarize and improve this repo bootstrap skill." \
   --intent "Persist durable repo memory and update the codex docs." \
-  --objective "Upgrade repo-codex-bootstrap to support rolling updates." \
+  --objective "Upgrade repo-bootstrap to support rolling updates." \
+  --workstream "skill enhancement" \
+  --work-summary "Synced codex state for the current task." \
+  --next-action "Run verification"
+```
+
+Codex:
+```bash
+python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
+  --repo-root <repo-root> \
+  --latest-prompt "Summarize and improve this repo bootstrap skill." \
+  --intent "Persist durable repo memory and update the codex docs." \
+  --objective "Upgrade repo-bootstrap to support rolling updates." \
   --workstream "skill enhancement" \
   --work-summary "Synced codex state for the current task." \
   --next-action "Run verification"
@@ -51,8 +64,16 @@ python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
 
 3. For richer updates, write a JSON payload and pass `--context-file`:
 
+Claude Code:
 ```bash
-python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
+python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
+  --repo-root <repo-root> \
+  --context-file /tmp/codex-context.json
+```
+
+Codex:
+```bash
+python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
   --context-file /tmp/codex-context.json
 ```
@@ -212,4 +233,4 @@ If legacy codex markdown files exist but `codex/state.json` does not, the script
 
 ### scripts/
 
-- `scripts/init_codex_docs.py`: bootstraps and continuously syncs `codex/state.json` plus the rendered markdown files.
+- `scripts/init_docs.py`: bootstraps and continuously syncs `codex/state.json` plus the rendered markdown files.

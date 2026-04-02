@@ -1,6 +1,6 @@
-# Repo Codex Bootstrap
+# Repo Bootstrap
 
-`repo-codex-bootstrap` gives a repository a local Codex memory system that survives context-window loss.
+`repo-bootstrap` gives a repository a local agent memory system that survives context-window loss.
 
 It maintains a `codex/` workspace in the repo root and keeps these files synchronized:
 
@@ -41,8 +41,21 @@ It also captures legacy `codex/*.md` files into state archives when upgrading an
 
 Run a basic sync:
 
+Claude Code:
 ```bash
-python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
+python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
+  --repo-root <repo-root> \
+  --latest-prompt "Analyze and improve this repository." \
+  --intent "Persist durable repo knowledge for future turns." \
+  --objective "Keep codex docs continuously synchronized." \
+  --workstream "repository analysis" \
+  --work-summary "Synced codex state for the current turn." \
+  --next-action "Review generated docs"
+```
+
+Codex:
+```bash
+python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
   --latest-prompt "Analyze and improve this repository." \
   --intent "Persist durable repo knowledge for future turns." \
@@ -54,16 +67,32 @@ python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
 
 For richer updates, pass a structured JSON payload:
 
+Claude Code:
 ```bash
-python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
+python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
+  --repo-root <repo-root> \
+  --context-file /tmp/codex-context.json
+```
+
+Codex:
+```bash
+python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
   --context-file /tmp/codex-context.json
 ```
 
 You can also pass inline JSON:
 
+Claude Code:
 ```bash
-python3 "$CODEX_HOME/skills/repo-codex-bootstrap/scripts/init_codex_docs.py" \
+python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
+  --repo-root <repo-root> \
+  --context-json '{"latest_prompt":"Update repo memory","intent":"Persist new repo knowledge"}'
+```
+
+Codex:
+```bash
+python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
   --context-json '{"latest_prompt":"Update repo memory","intent":"Persist new repo knowledge"}'
 ```
@@ -139,8 +168,8 @@ This is what makes the skill improve over time instead of resetting to templates
 - `SKILL.md`: skill contract and usage rules
 - `README.md`: human-readable overview and usage guide
 - `agents/openai.yaml`: agent-facing display metadata and default prompt
-- `scripts/init_codex_docs.py`: bootstrap and rolling-sync implementation
-- `tests/test_init_codex_docs.py`: regression tests for bootstrap, rolling memory updates, and plan/checklist alignment
+- `scripts/init_docs.py`: bootstrap and rolling-sync implementation
+- `tests/test_init_docs.py`: regression tests for bootstrap, rolling memory updates, and plan/checklist alignment
 
 ## Verification
 
@@ -153,7 +182,7 @@ The current implementation is covered by automated tests for:
 Run:
 
 ```bash
-python3 skills/repo-codex-bootstrap/tests/test_init_codex_docs.py
+python3 skills/repo-bootstrap/tests/test_init_docs.py
 ```
 
 ## Notes

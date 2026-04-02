@@ -5,18 +5,18 @@ import unittest
 from pathlib import Path
 
 
-SCRIPT_PATH = Path(__file__).resolve().parents[1] / "scripts" / "init_codex_docs.py"
+SCRIPT_PATH = Path(__file__).resolve().parents[1] / "scripts" / "init_docs.py"
 
 
 def load_module():
-    spec = importlib.util.spec_from_file_location("repo_codex_bootstrap", SCRIPT_PATH)
+    spec = importlib.util.spec_from_file_location("repo_bootstrap", SCRIPT_PATH)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     spec.loader.exec_module(module)
     return module
 
 
-class RepoCodexBootstrapTests(unittest.TestCase):
+class RepoBootstrapTests(unittest.TestCase):
     def setUp(self) -> None:
         self.module = load_module()
         self.temp_dir = tempfile.TemporaryDirectory()
@@ -57,7 +57,7 @@ class RepoCodexBootstrapTests(unittest.TestCase):
     def test_bootstrap_creates_useful_baseline_files(self) -> None:
         self.write_repo_fixture()
 
-        result = self.module.sync_codex_docs(self.repo_root, context={})
+        result = self.module.sync_docs(self.repo_root, context={})
 
         self.assertTrue((self.repo_root / "codex" / "state.json").exists())
         self.assertEqual(result["docs"]["memory.md"], "created")
@@ -74,22 +74,22 @@ class RepoCodexBootstrapTests(unittest.TestCase):
 
     def test_update_rolls_memory_and_prompt_history_forward(self) -> None:
         self.write_repo_fixture()
-        self.module.sync_codex_docs(
+        self.module.sync_docs(
             self.repo_root,
             context={
                 "latest_prompt": "Bootstrap this repo memory system.",
                 "intent": "Create the first durable memory baseline.",
-                "objective": "Bootstrap codex docs",
+                "objective": "Bootstrap docs",
                 "next_actions": ["Inspect repo structure"],
             },
         )
 
-        self.module.sync_codex_docs(
+        self.module.sync_docs(
             self.repo_root,
             context={
                 "latest_prompt": "Add rolling update support.",
                 "intent": "Persist new knowledge without losing prior history.",
-                "objective": "Implement rolling codex updates",
+                "objective": "Implement rolling updates",
                 "work_summary": "Added structured state-backed updates.",
                 "decisions": [
                     {
@@ -106,7 +106,7 @@ class RepoCodexBootstrapTests(unittest.TestCase):
         prompt_log = (self.repo_root / "codex" / "prompt.md").read_text(encoding="utf-8")
         state = json.loads((self.repo_root / "codex" / "state.json").read_text(encoding="utf-8"))
 
-        self.assertIn("Implement rolling codex updates", memory)
+        self.assertIn("Implement rolling updates", memory)
         self.assertIn("Use a state.json source of truth", memory)
         self.assertIn("Add rolling update support.", prompt_log)
         self.assertIn("Bootstrap this repo memory system.", prompt_log)
@@ -115,7 +115,7 @@ class RepoCodexBootstrapTests(unittest.TestCase):
     def test_plan_and_checklist_stay_aligned(self) -> None:
         self.write_repo_fixture()
 
-        self.module.sync_codex_docs(
+        self.module.sync_docs(
             self.repo_root,
             context={
                 "latest_prompt": "Plan the bootstrap enhancement.",
@@ -123,20 +123,20 @@ class RepoCodexBootstrapTests(unittest.TestCase):
                     "request_summary": "Enhance repo bootstrap to support rolling updates.",
                     "in_scope": ["Durable state", "Markdown rendering"],
                     "out_of_scope": ["Remote sync"],
-                    "assumptions": ["Codex docs stay gitignored"],
+                    "assumptions": ["Context docs stay gitignored"],
                     "dependencies": ["Python 3"],
                     "steps": [
                         {
                             "id": "P1",
                             "step": "Create a state-backed sync layer",
                             "why": "Preserve knowledge across turns",
-                            "owner": "Codex",
+                            "owner": "Agent",
                             "status": "in_progress",
                         }
                     ],
                     "files": [
                         {
-                            "path": "skills/repo-codex-bootstrap/scripts/init_codex_docs.py",
+                            "path": "skills/repo-bootstrap/scripts/init_docs.py",
                             "change_type": "modify",
                             "purpose": "Add sync logic",
                             "linked_step": "P1",
@@ -166,7 +166,7 @@ class RepoCodexBootstrapTests(unittest.TestCase):
                     ],
                     "files": [
                         {
-                            "path": "skills/repo-codex-bootstrap/scripts/init_codex_docs.py",
+                            "path": "skills/repo-bootstrap/scripts/init_docs.py",
                             "purpose": "Add sync logic",
                             "linked_step": "P1",
                             "status": "done",
@@ -190,7 +190,7 @@ class RepoCodexBootstrapTests(unittest.TestCase):
         checklist = (self.repo_root / "codex" / "checklist.md").read_text(encoding="utf-8")
 
         self.assertIn("| P1 | Create a state-backed sync layer |", plan)
-        self.assertIn("skills/repo-codex-bootstrap/scripts/init_codex_docs.py", plan)
+        self.assertIn("skills/repo-bootstrap/scripts/init_docs.py", plan)
         self.assertIn("| P1 | Implement sync layer | [x] |", checklist)
         self.assertIn("state-backed rendering added", checklist)
 

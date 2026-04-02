@@ -1,9 +1,9 @@
 ---
-name: "codex-longrun-dev"
+name: "longrun-dev"
 description: "Run stable long-horizon autonomous software development across many context windows with no routine human confirmations. Use when tasks require hours/days of coding, reliable cross-session handoff, one-feature-at-a-time progress, strict end-to-end verification, and clean-state commits after every session."
 ---
 
-# Codex Longrun Dev
+# Long-Run Dev
 
 Execute long-running development as a repeatable harness, not as ad-hoc coding.
 
@@ -12,12 +12,18 @@ Execute long-running development as a repeatable harness, not as ad-hoc coding.
 1. Bootstrap harness artifacts in the repository root:
 
 ```bash
-python3 "$CODEX_HOME/skills/codex-longrun-dev/scripts/bootstrap_longrun_harness.py" \
+# Claude Code
+python3 ~/.claude/skills/longrun-dev/scripts/bootstrap_longrun_harness.py \
+  --repo-root "$(pwd)" \
+  --goal "<original user goal>"
+
+# Codex
+python3 "$CODEX_HOME/skills/longrun-dev/scripts/bootstrap_longrun_harness.py" \
   --repo-root "$(pwd)" \
   --goal "<original user goal>"
 ```
 
-2. Review and adjust `.codex-longrun/init.sh` so it can reliably run dependency setup + smoke checks.
+2. Review and adjust `.longrun/init.sh` so it can reliably run dependency setup + smoke checks.
 3. Commit the harness files before implementing product features.
 
 ## Session Protocol
@@ -26,12 +32,12 @@ Follow this order in every new context window.
 
 1. Get bearings
 - Run `pwd`.
-- Read `.codex-longrun/progress.md`.
-- Read `.codex-longrun/feature_list.json`.
+- Read `.longrun/progress.md`.
+- Read `.longrun/feature_list.json`.
 - Read `git log --oneline -20`.
 
 2. Re-establish baseline
-- Run `.codex-longrun/init.sh` (or `bash .codex-longrun/init.sh`).
+- Run `.longrun/init.sh` (or `bash .longrun/init.sh`).
 - Fix existing breakage before building anything new.
 
 3. Pick one feature
@@ -48,8 +54,8 @@ Follow this order in every new context window.
 - Do not mark a feature done without evidence.
 
 6. Update artifacts
-- In `.codex-longrun/feature_list.json`, only update status fields (`passes`, `evidence`, `updated_at`, optional `notes`).
-- Append a structured session entry to `.codex-longrun/progress.md`.
+- In `.longrun/feature_list.json`, only update status fields (`passes`, `evidence`, `updated_at`, optional `notes`).
+- Append a structured session entry to `.longrun/progress.md`.
 
 7. Leave clean handoff
 - Ensure repo is in a mergeable state.
@@ -67,7 +73,7 @@ Follow this order in every new context window.
 A session is complete only if all conditions are true:
 
 1. One selected feature advanced to a verified state (or intentionally kept failing with explicit blocker notes).
-2. `.codex-longrun/feature_list.json` and `.codex-longrun/progress.md` are updated.
+2. `.longrun/feature_list.json` and `.longrun/progress.md` are updated.
 3. Baseline smoke checks pass after the change.
 4. A commit captures the session output.
 
@@ -83,4 +89,4 @@ A session is complete only if all conditions are true:
 
 ## Scripts
 
-- `scripts/bootstrap_longrun_harness.py`: Create `.codex-longrun/` artifacts (`init.sh`, `feature_list.json`, `progress.md`, `session_state.json`) with deterministic defaults.
+- `scripts/bootstrap_longrun_harness.py`: Create `.longrun/` artifacts (`init.sh`, `feature_list.json`, `progress.md`, `session_state.json`) with deterministic defaults.

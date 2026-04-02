@@ -10,7 +10,7 @@ Follow these save-location rules every time:
 
 1) If the user specifies a path, save there.
 2) If the user asks for a screenshot without a path, save to the OS default screenshot location.
-3) If Codex needs a screenshot for its own inspection, save to the temp directory.
+3) If the agent needs a screenshot for its own inspection, save to the temp directory.
 
 ## Tool priority
 

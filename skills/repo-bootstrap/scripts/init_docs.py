@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Initialize and continuously sync codex workspace files for a repository."""
+"""Initialize and continuously sync context workspace files for a repository."""
 
 import argparse
 import json
@@ -375,7 +375,7 @@ def normalize_plan(plan: Optional[Dict[str, Any]], timestamp: str) -> Dict[str, 
                 "id": str(raw_step.get("id") or "P{0}".format(len(steps) + 1)).strip(),
                 "step": str(raw_step.get("step") or "Step details not captured.").strip(),
                 "why": str(raw_step.get("why") or "Why not captured.").strip(),
-                "owner": str(raw_step.get("owner") or "Codex").strip(),
+                "owner": str(raw_step.get("owner") or "Agent").strip(),
                 "status": str(raw_step.get("status") or "pending").strip(),
             }
         )
@@ -674,8 +674,8 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
             ],
         },
         "memory": {
-            "objective": "Establish durable Codex context for this repository.",
-            "definition_of_done": "Codex can recover repo knowledge from disk and keep it synchronized across turns.",
+            "objective": "Establish durable agent context for this repository.",
+            "definition_of_done": "Agent can recover repo knowledge from disk and keep it synchronized across turns.",
             "latest_user_request": "No explicit user prompt captured during bootstrap.",
             "workstream": "Repository bootstrap",
             "why_now": "Persistent context reduces repeated rediscovery in future sessions.",
@@ -687,7 +687,7 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
             "decisions": [
                 {
                     "timestamp": timestamp,
-                    "summary": "Bootstrap codex docs with a machine-readable state file.",
+                    "summary": "Bootstrap context docs with a machine-readable state file.",
                     "reason": "A single source of truth makes markdown regeneration and rolling updates deterministic.",
                     "tradeoff": "Adds one local JSON file under codex/ for structure.",
                 }
@@ -708,28 +708,28 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
                 }
             ],
             "next_actions": [
-                "Review generated codex documents for repo-specific details.",
+                "Review generated context documents for repo-specific details.",
                 "Capture the latest user request on the next interaction.",
                 "Refresh repowiki after the first code or architecture deep dive.",
             ],
             "change_log": [
                 {
                     "timestamp": timestamp,
-                    "summary": "Initialized codex memory baseline.",
+                    "summary": "Initialized context memory baseline.",
                 }
             ],
         },
         "prompt_log": {
             "latest_prompt": "Captured automatically during bootstrap because no explicit prompt was provided.",
-            "intent": "Initialize or refresh durable Codex repository memory files.",
+            "intent": "Initialize or refresh durable agent repository memory files.",
             "constraints": ["Keep /codex/ ignored by git."],
-            "requested_output_format": "Updated codex markdown files backed by state.json.",
-            "success_criteria": ["All codex docs exist with useful baseline content."],
+            "requested_output_format": "Updated context markdown files backed by state.json.",
+            "success_criteria": ["All context docs exist with useful baseline content."],
             "history": [
                 {
                     "timestamp": timestamp,
                     "prompt": "Captured automatically during bootstrap because no explicit prompt was provided.",
-                    "summary": "Bootstrap repo codex docs",
+                    "summary": "Bootstrap repo context docs",
                     "intent": "Initialize durable repo memory",
                     "constraints": ["Keep /codex/ ignored by git."],
                     "outcome_link": "codex/*.md",
@@ -738,7 +738,7 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
             "clarifications": [],
             "patterns": [
                 {
-                    "pattern": "Bootstrap or refresh codex docs after major repo discoveries.",
+                    "pattern": "Bootstrap or refresh context docs after major repo discoveries.",
                     "works_for": "Repository setup, planning, and long-running implementation sessions.",
                     "notes": "Use a structured context payload when updating plan/checklist state.",
                 }
@@ -810,7 +810,7 @@ def update_prompt_log(state: Dict[str, Any], context: Dict[str, Any], timestamp:
     requested_output_format = str(
         context.get("requested_output_format")
         or prompt_log.get("requested_output_format")
-        or "Updated codex docs."
+        or "Updated context docs."
     ).strip()
 
     prompt_log["latest_prompt"] = latest_prompt
@@ -951,7 +951,7 @@ def update_repo_state(state: Dict[str, Any], facts: Dict[str, Any], context: Dic
     review_summary = str(
         context.get("repowiki_review")
         or context.get("work_summary")
-        or "Repository facts reviewed during codex sync."
+        or "Repository facts reviewed during context sync."
     ).strip()
     repo.setdefault("review_log", []).append({"timestamp": timestamp, "summary": review_summary})
     repo["review_log"] = repo["review_log"][-MAX_HISTORY:]
@@ -1011,7 +1011,7 @@ def update_memory(state: Dict[str, Any], context: Dict[str, Any], timestamp: str
     else:
         memory["next_actions"] = ensure_string_list(memory.get("next_actions")) or ["No next actions recorded."]
 
-    work_summary = str(context.get("work_summary") or "Codex state synchronized.").strip()
+    work_summary = str(context.get("work_summary") or "Context state synchronized.").strip()
     memory.setdefault("change_log", []).append({"timestamp": timestamp, "summary": work_summary})
     memory["change_log"] = memory["change_log"][-MAX_HISTORY:]
 
@@ -1259,7 +1259,7 @@ def render_repowiki(state: Dict[str, Any]) -> str:
         "| --- | --- | --- | --- | --- |",
     ]
     for item in repo.get("known_gaps", [])[:20]:
-        gaps_lines.append(format_table_row(["Gap", item, "Repository context may be incomplete.", "Codex", "Update repowiki after discovery."]))
+        gaps_lines.append(format_table_row(["Gap", item, "Repository context may be incomplete.", "Agent", "Update repowiki after discovery."]))
 
     review_lines = []
     for item in repo.get("review_log", [])[-10:]:
@@ -1408,7 +1408,7 @@ def render_plan(state: Dict[str, Any]) -> str:
             )
         )
     if len(step_lines) == 2:
-        step_lines.append(format_table_row(["P1", "No active implementation plan recorded.", "Add a structured plan when work becomes non-trivial.", "Codex", "pending"]))
+        step_lines.append(format_table_row(["P1", "No active implementation plan recorded.", "Add a structured plan when work becomes non-trivial.", "Agent", "pending"]))
 
     file_lines = [
         "| File Path | Change Type | Purpose | Linked Step |",
@@ -1632,7 +1632,7 @@ def write_file(path: Path, content: str) -> str:
     return "updated"
 
 
-def ensure_codex_ignored(repo_root: Path) -> str:
+def ensure_context_ignored(repo_root: Path) -> str:
     gitignore_path = repo_root / ".gitignore"
     ignore_entry = "/codex/"
     existed_before = gitignore_path.exists()
@@ -1649,13 +1649,13 @@ def ensure_codex_ignored(repo_root: Path) -> str:
 
     if lines and lines[-1].strip():
         lines.append("")
-    lines.append("# Local Codex context")
+    lines.append("# Local agent context")
     lines.append(ignore_entry)
     gitignore_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return "updated" if existed_before else "created"
 
 
-def sync_codex_docs(repo_root: Path, context: Optional[Dict[str, Any]] = None, force: bool = False) -> Dict[str, Any]:
+def sync_docs(repo_root: Path, context: Optional[Dict[str, Any]] = None, force: bool = False) -> Dict[str, Any]:
     repo_root = Path(repo_root).expanduser().resolve()
     timestamp = now_text()
     context = context or {}
@@ -1669,7 +1669,7 @@ def sync_codex_docs(repo_root: Path, context: Optional[Dict[str, Any]] = None, f
         doc_statuses[name] = write_file(docs_dir / name, content)
 
     state_status = write_file(docs_dir / "state.json", json.dumps(state, indent=2, ensure_ascii=False) + "\n")
-    gitignore_status = ensure_codex_ignored(repo_root)
+    gitignore_status = ensure_context_ignored(repo_root)
 
     return {
         "repo_root": str(repo_root),
@@ -1705,7 +1705,7 @@ def parse_context_from_args(args: argparse.Namespace) -> Dict[str, Any]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Initialize and sync codex folder and context markdown files."
+        description="Initialize and sync context folder and markdown files."
     )
     parser.add_argument(
         "--repo-root",
@@ -1758,7 +1758,7 @@ def main() -> int:
     args = parse_args()
     repo_root = Path(args.repo_root).expanduser().resolve()
     context = parse_context_from_args(args)
-    result = sync_codex_docs(repo_root, context=context, force=args.force)
+    result = sync_docs(repo_root, context=context, force=args.force)
 
     print("Repo root: {0}".format(result["repo_root"]))
     print("Timestamp: {0}".format(result["timestamp"]))

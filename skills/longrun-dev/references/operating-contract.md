@@ -4,7 +4,7 @@ Use this contract when running long-horizon coding across many context windows.
 
 ## File Contract
 
-All files live under `.codex-longrun/`.
+All files live under `.longrun/`.
 
 1. `init.sh`
 - Run dependency setup and smoke checks deterministically.
@@ -50,7 +50,7 @@ Use this JSON shape per feature item.
 - Read `progress.md`, `feature_list.json`, and `git log --oneline -20`.
 
 2. Restore health
-- Run `.codex-longrun/init.sh`.
+- Run `.longrun/init.sh`.
 - If broken, fix baseline first.
 
 3. Select work

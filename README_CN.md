@@ -69,21 +69,59 @@
 
 ## 快速开始
 
-把 skill 目录放到本地 Codex skills 目录下即可：
+### 安装 Skills
+
+<details>
+<summary><strong>Claude Code</strong></summary>
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -R skills/repo-codex-bootstrap ~/.codex/skills/
-cp -R skills/codex-longrun-dev ~/.codex/skills/
-cp -R skills/agent-team-dev ~/.codex/skills/
+# 安装三个核心 skill
+mkdir -p ~/.claude/skills
+cp -R skills/repo-bootstrap ~/.claude/skills/
+cp -R skills/longrun-dev ~/.claude/skills/
+cp -R skills/agent-team-dev ~/.claude/skills/
+
+# 或整仓安装
+cp -R skills/* ~/.claude/skills/
 ```
 
-如果你想整仓安装：
+目标结构：
+
+```text
+~/.claude/skills/
+  repo-bootstrap/
+  longrun-dev/
+  agent-team-dev/
+  ...
+```
+
+</details>
+
+<details>
+<summary><strong>Codex (OpenAI)</strong></summary>
 
 ```bash
+# 安装三个核心 skill
 mkdir -p ~/.codex/skills
+cp -R skills/repo-bootstrap ~/.codex/skills/
+cp -R skills/longrun-dev ~/.codex/skills/
+cp -R skills/agent-team-dev ~/.codex/skills/
+
+# 或整仓安装
 cp -R skills/* ~/.codex/skills/
 ```
+
+目标结构：
+
+```text
+~/.codex/skills/
+  repo-bootstrap/
+  longrun-dev/
+  agent-team-dev/
+  ...
+```
+
+</details>
 
 ### 安装 Rules（始终生效的行为准则）
 
@@ -107,35 +145,25 @@ cp -r rules/common .claude/rules/
 - Python 文件自动加 type annotations、用 frozen dataclass
 - 写完代码后主动触发 code review
 
-目标结构大致如下：
-
-```text
-~/.codex/skills/
-  repo-codex-bootstrap/
-  codex-longrun-dev/
-  agent-team-dev/
-  ...
-```
-
 ## 三个核心卖点 Skill
 
 如果你只想先试三个 skill，优先看这三个：
 
-- `repo-codex-bootstrap`
-- `codex-longrun-dev`
+- `repo-bootstrap`
+- `longrun-dev`
 - `agent-team-dev`
 
 这三个 skill 分别对应 agent 工作流最容易失控的三个层面：
 
 | Skill | 所在层 | 我想解决的核心问题 | 设计抓手 | 最关键的控制点 | 典型输出 |
 | --- | --- | --- | --- | --- | --- |
-| `repo-codex-bootstrap` | 上下文层 | 上下文会丢，仓库知识无法持续复用 | 把项目认知拆成长期文档并由结构化状态驱动 | 文档分责、持续更新、显式未知项 | `codex/state.json`、`memory.md`、`prompt.md`、`repowiki.md`、`plan.md`、`checklist.md` |
-| `codex-longrun-dev` | 执行连续性层 | 长任务跨 session 后容易漂移、失焦、提前宣布完成 | 把长期开发变成有状态的 harness | 每轮只做一个 feature、先恢复 baseline、必须留 evidence | `.codex-longrun/init.sh`、`feature_list.json`、`progress.md`、`session_state.json` |
+| `repo-bootstrap` | 上下文层 | 上下文会丢，仓库知识无法持续复用 | 把项目认知拆成长期文档并由结构化状态驱动 | 文档分责、持续更新、显式未知项 | `codex/state.json`、`memory.md`、`prompt.md`、`repowiki.md`、`plan.md`、`checklist.md` |
+| `longrun-dev` | 执行连续性层 | 长任务跨 session 后容易漂移、失焦、提前宣布完成 | 把长期开发变成有状态的 harness | 每轮只做一个 feature、先恢复 baseline、必须留 evidence | `.longrun/init.sh`、`feature_list.json`、`progress.md`、`session_state.json` |
 | `agent-team-dev` | 协作编排层 | 多 agent 并行容易冲突、失控、噪音大 | 把多 agent 编排成一个小型工程团队 | ownership、角色边界、独立 review、round cap | task contract、role packet、`A1/I1/T1/R1` artifacts |
 
 这三个 skill 组合在一起，才构成这个仓库真正的差异化价值。
 
-### `repo-codex-bootstrap`
+### `repo-bootstrap`
 
 **它解决的是“如何保住上下文”。**
 
@@ -188,7 +216,7 @@ cp -r rules/common .claude/rules/
 
 这会让系统更诚实，也更容易交接和接力。
 
-### `codex-longrun-dev`
+### `longrun-dev`
 
 **它解决的是“如何让长任务长期不跑偏”。**
 
@@ -212,10 +240,10 @@ cp -r rules/common .claude/rules/
 
 这个 skill 会在目标仓库里生成一套 longrun harness：
 
-- `.codex-longrun/init.sh`：依赖准备和 smoke 检查
-- `.codex-longrun/feature_list.json`：feature 定义与 pass/fail 状态
-- `.codex-longrun/progress.md`：append-only 的 session 进展日志
-- `.codex-longrun/session_state.json`：当前恢复状态和会话信息
+- `.longrun/init.sh`：依赖准备和 smoke 检查
+- `.longrun/feature_list.json`：feature 定义与 pass/fail 状态
+- `.longrun/progress.md`：append-only 的 session 进展日志
+- `.longrun/session_state.json`：当前恢复状态和会话信息
 
 最重要的一点是：长任务的状态，不再是对话资产，而是 repo 资产。
 
@@ -296,7 +324,7 @@ multi-agent 最大的难点，不是并行能力，而是边界治理。
 
 ```mermaid
 flowchart LR
-    A[repo-codex-bootstrap<br/>持久化 repo 记忆] --> B[codex-longrun-dev<br/>管理长任务执行连续性]
+    A[repo-bootstrap<br/>持久化 repo 记忆] --> B[longrun-dev<br/>管理长任务执行连续性]
     B --> C[agent-team-dev<br/>控制并行协作]
     A --> C
     C --> D[带证据的交付<br/>和可恢复 handoff]
@@ -304,8 +332,8 @@ flowchart LR
 
 一句话总结：
 
-- `repo-codex-bootstrap` 让 agent 记得住
-- `codex-longrun-dev` 让 agent 不跑偏
+- `repo-bootstrap` 让 agent 记得住
+- `longrun-dev` 让 agent 不跑偏
 - `agent-team-dev` 让多个 agent 不失控
 
 ## Skills vs Rules
@@ -354,8 +382,8 @@ flowchart LR
 ## 推荐使用顺序
 
 1. 安装 skills 和 rules（见[快速开始](#快速开始)）
-2. 先用 `repo-codex-bootstrap` 把仓库知识落盘
-3. 任务跨多 session 时，用 `codex-longrun-dev` 管执行连续性
+2. 先用 `repo-bootstrap` 把仓库知识落盘
+3. 任务跨多 session 时，用 `longrun-dev` 管执行连续性
 4. 只有在确实存在并行收益时，再用 `agent-team-dev`
 5. 在此基础上，再叠加领域技能
 
@@ -380,7 +408,7 @@ flowchart LR
 | `article-writing` | 写高质量长文、教程和 Newsletter |
 | `backend-patterns` | 设计和优化 Node.js、Express、Next.js 后端 |
 | `claude-api` | 构建基于 Claude API 的应用 |
-| `codex-longrun-dev` | 用长期 harness 管理跨 session 开发 |
+| `longrun-dev` | 用长期 harness 管理跨 session 开发 |
 | `coding-standards` | 统一 TS、JS、React、Node 编码规范 |
 | `content-engine` | 把一个主题扩成多平台内容系统 |
 | `crosspost` | 针对不同平台改写同一主题内容 |
@@ -406,11 +434,11 @@ flowchart LR
 | `paper-deep-review` | 深入阅读和解释论文 |
 | `pdf` | 解析、生成和检查 PDF |
 | `playwright` | 从终端自动化真实浏览器 |
-| `repo-codex-bootstrap` | 持久化 repo 记忆并持续生成 codex 文档 |
+| `repo-bootstrap` | 持久化 repo 记忆并持续生成上下文文档 |
 | `screenshot` | 截取桌面或应用截图 |
 | `security-review` | 审查鉴权、密钥、输入处理和敏感流 |
-| `skill-creator` | 创建或优化 Codex skills |
-| `skill-installer` | 安装 skills 到本地 Codex 环境 |
+| `skill-creator` | 创建或优化 skills |
+| `skill-installer` | 安装 skills 到本地环境 |
 | `strategic-compact` | 在关键里程碑压缩上下文 |
 | `tdd-workflow` | 用测试先行推动实现 |
 | `verification-loop` | 交付前做结构化验证 |

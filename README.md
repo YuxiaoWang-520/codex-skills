@@ -69,11 +69,40 @@ The goal is not to add one more clever prompt. The goal is to upgrade agent work
 
 ### Install Skills
 
+<details>
+<summary><strong>Claude Code</strong></summary>
+
+```bash
+# Install the 3 flagship skills
+mkdir -p ~/.claude/skills
+cp -R skills/repo-bootstrap ~/.claude/skills/
+cp -R skills/longrun-dev ~/.claude/skills/
+cp -R skills/agent-team-dev ~/.claude/skills/
+
+# Or install the full collection
+cp -R skills/* ~/.claude/skills/
+```
+
+Expected structure:
+
+```text
+~/.claude/skills/
+  repo-bootstrap/
+  longrun-dev/
+  agent-team-dev/
+  ...
+```
+
+</details>
+
+<details>
+<summary><strong>Codex (OpenAI)</strong></summary>
+
 ```bash
 # Install the 3 flagship skills
 mkdir -p ~/.codex/skills
-cp -R skills/repo-codex-bootstrap ~/.codex/skills/
-cp -R skills/codex-longrun-dev ~/.codex/skills/
+cp -R skills/repo-bootstrap ~/.codex/skills/
+cp -R skills/longrun-dev ~/.codex/skills/
 cp -R skills/agent-team-dev ~/.codex/skills/
 
 # Or install the full collection
@@ -84,11 +113,13 @@ Expected structure:
 
 ```text
 ~/.codex/skills/
-  repo-codex-bootstrap/
-  codex-longrun-dev/
+  repo-bootstrap/
+  longrun-dev/
   agent-team-dev/
   ...
 ```
+
+</details>
 
 ### Install Rules (Always-On Guardrails)
 
@@ -118,13 +149,13 @@ If you only try three things from this repo, start here:
 
 | Skill | Layer | Core Problem | Design Lever | Typical Outputs |
 | --- | --- | --- | --- | --- |
-| `repo-codex-bootstrap` | Context | Repo knowledge gets lost between sessions | Split understanding into durable documents | `codex/state.json`, `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md` |
-| `codex-longrun-dev` | Execution | Long tasks drift, lose focus, or declare done too early | Stateful harness with evidence-backed completion | `.codex-longrun/init.sh`, `feature_list.json`, `progress.md`, `session_state.json` |
+| `repo-bootstrap` | Context | Repo knowledge gets lost between sessions | Split understanding into durable documents | `codex/state.json`, `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md` |
+| `longrun-dev` | Execution | Long tasks drift, lose focus, or declare done too early | Stateful harness with evidence-backed completion | `.longrun/init.sh`, `feature_list.json`, `progress.md`, `session_state.json` |
 | `agent-team-dev` | Collaboration | Multi-agent work collides without governance | Compact engineering team with explicit ownership | task contract, role packets, `A1/I1/T1/R1` artifacts |
 
 ---
 
-### `repo-codex-bootstrap`
+### `repo-bootstrap`
 
 **Protects context.** Turns repo understanding from hidden background knowledge into an explicit, persistent workspace.
 
@@ -145,7 +176,7 @@ This skill separates repo cognition into six durable artifacts:
 
 ---
 
-### `codex-longrun-dev`
+### `longrun-dev`
 
 **Keeps long tasks on track.** Most demos show how an agent starts. Real engineering needs to control how an agent *continues*.
 
@@ -189,14 +220,14 @@ Three orchestration modes based on risk:
 
 ```mermaid
 flowchart LR
-    A[repo-codex-bootstrap<br/>Persist repo memory] --> B[codex-longrun-dev<br/>Control long-running execution]
+    A[repo-bootstrap<br/>Persist repo memory] --> B[longrun-dev<br/>Control long-running execution]
     B --> C[agent-team-dev<br/>Coordinate parallel work]
     A --> C
     C --> D[Verified delivery<br/>with evidence and handoff]
 ```
 
-- `repo-codex-bootstrap` makes the agent **remember**
-- `codex-longrun-dev` makes the agent **stay on track**
+- `repo-bootstrap` makes the agent **remember**
+- `longrun-dev` makes the agent **stay on track**
 - `agent-team-dev` makes multiple agents **cooperate without chaos**
 
 ## Skills vs Rules
@@ -253,8 +284,8 @@ Beyond the flagship trio, the repo includes a broader reusable library:
 
 | Skill | Purpose |
 | --- | --- |
-| `⭐⭐ repo-codex-bootstrap` | Persist repo memory with structured codex documents |
-| `⭐⭐ codex-longrun-dev` | Long-horizon development with stateful harness |
+| `⭐⭐ repo-bootstrap` | Persist repo memory with structured context documents |
+| `⭐⭐ longrun-dev` | Long-horizon development with stateful harness |
 | `agent-team-dev` | Multi-agent team with explicit ownership and review gates |
 | `⭐ api-design` | Production REST API design patterns |
 | `⭐ backend-patterns` | Node/Express/Next.js backend architecture |
@@ -323,8 +354,8 @@ Beyond the flagship trio, the repo includes a broader reusable library:
 | Skill | Purpose |
 | --- | --- |
 | `claude-api` | Claude API integration patterns |
-| `skill-creator` | Create or refine Codex skills |
-| `skill-installer` | Install skills into local Codex environment |
+| `skill-creator` | Create or refine skills |
+| `skill-installer` | Install skills into local environment |
 
 </details>
 
@@ -333,8 +364,8 @@ Beyond the flagship trio, the repo includes a broader reusable library:
 For serious repo work, a strong default is:
 
 1. Install skills and rules (see [Quick Start](#quick-start))
-2. Use `repo-codex-bootstrap` to make repo knowledge persistent
-3. Use `codex-longrun-dev` when the task will span multiple sessions
+2. Use `repo-bootstrap` to make repo knowledge persistent
+3. Use `longrun-dev` when the task will span multiple sessions
 4. Use `agent-team-dev` only when bounded parallelism is worth the coordination cost
 5. Layer on domain-specific skills after the operating system is in place
 

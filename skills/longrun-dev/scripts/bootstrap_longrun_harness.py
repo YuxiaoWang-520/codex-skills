@@ -54,7 +54,7 @@ def detect_stack(repo_root: Path) -> StackHints:
             dep_setup = "npm ci || npm install"
             runner = "npm"
 
-        smoke_test = "echo '[WARN] No smoke command configured yet. Update .codex-longrun/init.sh.'"
+        smoke_test = "echo '[WARN] No smoke command configured yet. Update .longrun/init.sh.'"
         for candidate in ("test:smoke", "test:e2e", "test", "lint"):
             if candidate in scripts:
                 if runner == "npm":
@@ -108,11 +108,11 @@ def detect_stack(repo_root: Path) -> StackHints:
             notes=notes,
         )
 
-    notes.append("Could not auto-detect stack. Customize .codex-longrun/init.sh manually.")
+    notes.append("Could not auto-detect stack. Customize .longrun/init.sh manually.")
     return StackHints(
         stack="unknown",
-        dep_setup="echo '[WARN] Unknown dependency setup. Update .codex-longrun/init.sh.'",
-        smoke_test="echo '[WARN] Unknown smoke test. Update .codex-longrun/init.sh.'",
+        dep_setup="echo '[WARN] Unknown dependency setup. Update .longrun/init.sh.'",
+        smoke_test="echo '[WARN] Unknown smoke test. Update .longrun/init.sh.'",
         notes=notes,
     )
 
@@ -138,7 +138,7 @@ def make_feature_list(goal: str, now: str) -> Dict[str, object]:
             "id": "F-001",
             "category": "infrastructure",
             "priority": "P0",
-            "description": "Make startup and smoke checks deterministic via .codex-longrun/init.sh.",
+            "description": "Make startup and smoke checks deterministic via .longrun/init.sh.",
             "acceptance_criteria": [
                 "init.sh exits with code 0 when baseline is healthy",
                 "init.sh fails fast with non-zero status on broken baseline",
@@ -181,7 +181,7 @@ def make_feature_list(goal: str, now: str) -> Dict[str, object]:
 def make_progress_md(goal: str, now: str, stack: str, notes: List[str]) -> str:
     note_lines = "\n".join(f"- {n}" for n in notes) if notes else "- None"
 
-    return f"""# Codex Long-Run Progress Log
+    return f"""# Long-Run Progress Log
 
 - Original goal: {goal}
 - Initialized at (UTC): {now}
@@ -191,9 +191,9 @@ def make_progress_md(goal: str, now: str, stack: str, notes: List[str]) -> str:
 - Feature: HARNESS-INIT
 - Objective: Bootstrap long-running harness artifacts.
 - Changes:
-  - Added .codex-longrun/init.sh
-  - Added .codex-longrun/feature_list.json
-  - Added .codex-longrun/session_state.json
+  - Added .longrun/init.sh
+  - Added .longrun/feature_list.json
+  - Added .longrun/session_state.json
 - Validation:
   - bootstrap script completed successfully
 - Outcome: pass
@@ -209,9 +209,9 @@ def make_init_sh(dep_setup: str, smoke_test: str) -> str:
 set -euo pipefail
 
 # Usage:
-#   .codex-longrun/init.sh            # deps + smoke
-#   .codex-longrun/init.sh deps       # deps only
-#   .codex-longrun/init.sh smoke      # smoke only
+#   .longrun/init.sh            # deps + smoke
+#   .longrun/init.sh deps       # deps only
+#   .longrun/init.sh smoke      # smoke only
 
 MODE="${{1:-all}}"
 
@@ -263,7 +263,7 @@ def write_json(path: Path, obj: Dict[str, object], force: bool) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Bootstrap long-run Codex harness artifacts")
+    parser = argparse.ArgumentParser(description="Bootstrap long-run harness artifacts")
     parser.add_argument("--repo-root", default=".", help="Repository root path")
     parser.add_argument("--goal", required=True, help="Original project goal")
     parser.add_argument(
@@ -282,7 +282,7 @@ def main() -> int:
     if not repo_root.exists():
         parser.error(f"repo root does not exist: {repo_root}")
 
-    harness_dir = repo_root / ".codex-longrun"
+    harness_dir = repo_root / ".longrun"
     harness_dir.mkdir(parents=True, exist_ok=True)
 
     now = utc_now()
