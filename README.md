@@ -11,7 +11,7 @@
 
 **Turn agentic coding from a one-off prompt trick into a durable engineering system.**
 
-[![Skills](https://img.shields.io/badge/Skills-41-111111)](./skills)
+[![Skills](https://img.shields.io/badge/Skills-45-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
 [![Flagship](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#the-3-flagship-skills)
 [![Focus](https://img.shields.io/badge/Focus-Persistent%20·%20Verifiable%20·%20Recoverable-2EA44F)](#core-idea)
@@ -278,7 +278,7 @@ This repo provides two complementary systems:
 Beyond the flagship trio, the repo includes a broader reusable library:
 
 <details>
-<summary><strong>View all 41 skills</strong></summary>
+<summary><strong>View all 45 skills</strong></summary>
 
 ### Engineering & Quality
 
@@ -303,12 +303,15 @@ Beyond the flagship trio, the repo includes a broader reusable library:
 
 | Skill | Purpose |
 | --- | --- |
+| `⭐ canvas-design` | Visual art and poster generation (.png/.pdf) |
 | `figma` | Pull design context from Figma MCP |
 | `figma-implement-design` | 1:1 Figma-to-code implementation |
+| `⭐ frontend-design` | Production-grade frontend UI design |
 | `⭐ playwright` | Real-browser automation from terminal |
 | `develop-web-game` | Iterative web-game dev + testing loop |
 | `frontend-slides` | HTML slide decks and PPT-to-web conversion |
 | `screenshot` | OS-level screenshot capture |
+| `webapp-testing` | Playwright-based local web app testing |
 
 ### Research, Docs & Knowledge
 
@@ -354,6 +357,7 @@ Beyond the flagship trio, the repo includes a broader reusable library:
 | Skill | Purpose |
 | --- | --- |
 | `claude-api` | Claude API integration patterns |
+| `⭐ mcp-builder` | Build MCP servers (Python FastMCP / Node SDK) |
 | `skill-creator` | Create or refine skills |
 | `skill-installer` | Install skills into local environment |
 

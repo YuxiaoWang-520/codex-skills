@@ -11,7 +11,7 @@
 
 **把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复的工程系统。**
 
-[![Skills](https://img.shields.io/badge/Skills-41-111111)](./skills)
+[![Skills](https://img.shields.io/badge/Skills-45-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
 [![核心卖点](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#三个核心卖点-skill)
 [![Focus](https://img.shields.io/badge/Focus-可持久化%20·%20可验证%20·%20可恢复-2EA44F)](#核心思路)
@@ -420,8 +420,10 @@ flowchart LR
 | `eval-harness` | 用正式 harness 评估 agent 行为 |
 | `exa-search` | 用 Exa 做网页、代码和公司检索 |
 | `fal-ai-media` | 生成图像、视频和音频素材 |
+| `canvas-design` | 生成视觉设计和海报（.png/.pdf） |
 | `figma` | 从 Figma 拉设计上下文和资产 |
 | `figma-implement-design` | 把 Figma 节点实现成生产级 UI |
+| `frontend-design` | 生产级前端 UI 设计 |
 | `frontend-patterns` | 构建可扩展 React/Next.js 前端架构 |
 | `frontend-slides` | 制作高表现力的 HTML 幻灯片 |
 | `gh-address-comments` | 系统化处理 GitHub PR review comments |
@@ -436,7 +438,9 @@ flowchart LR
 | `playwright` | 从终端自动化真实浏览器 |
 | `repo-bootstrap` | 持久化 repo 记忆并持续生成上下文文档 |
 | `screenshot` | 截取桌面或应用截图 |
+| `webapp-testing` | 基于 Playwright 的本地 Web 应用测试 |
 | `security-review` | 审查鉴权、密钥、输入处理和敏感流 |
+| `mcp-builder` | 构建 MCP Server（Python FastMCP / Node SDK） |
 | `skill-creator` | 创建或优化 skills |
 | `skill-installer` | 安装 skills 到本地环境 |
 | `strategic-compact` | 在关键里程碑压缩上下文 |
