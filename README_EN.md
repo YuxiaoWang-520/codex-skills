@@ -5,15 +5,27 @@
 
 </div>
 
-# Codex Skills
+# Harness Craft
 
-An open-source repository of reusable Codex skills. Each skill is a task capability unit with trigger conditions, execution workflow, references, and optional scripts.
+The craft of harnessing AI coding agents. Skills (on-demand playbooks) + Rules (always-on guardrails) = a stronger, more controllable AI engineering partner.
 
 ## Overview
 
-- Goal: standardize reusable workflows and reduce repeated context setup.
-- Scale: **41** skills (including 2 system skills under `.system`).
+- Goal: standardize reusable skills and rules to reduce repeated context setup and enforce engineering best practices out of the box.
+- Scale: **41** skills + **15** rules (10 common + 5 Python-specific).
 - Audience: AI builders, automation engineers, research/content teams, open-source maintainers.
+
+## Skills vs Rules
+
+| | Skills | Rules |
+|--|--------|-------|
+| **Analogy** | Playbook | Constitution |
+| **Loading** | On-demand via `/skill-name` | Auto-injected every session |
+| **Context cost** | Full text loaded only when invoked | Always loaded (but each is short) |
+| **Best for** | Long workflows (TDD, E2E, deep research...) | Short global constraints (coding style, security, git...) |
+| **Activation** | User-triggered | Auto-enforced every turn |
+
+**In short**: Rules are the agent's instincts. Skills are the agent's learned expertise.
 
 ## Repository Structure
 
@@ -28,15 +40,58 @@ skills/
     scripts/              # optional: executable helpers
     references/           # optional: load-on-demand docs
     assets/               # optional: templates/assets
+
+rules/
+  common/                 # Language-agnostic rules (always active)
+    coding-style.md         # Immutability, file org, functions <50 lines
+    security.md             # Pre-commit security checklist
+    testing.md              # TDD workflow, coverage >=80%
+    git-workflow.md         # Commit format, PR standards
+    code-review.md          # Review standards, severity levels, merge blocking
+    development-workflow.md # Full dev flow: search -> plan -> TDD -> review -> commit
+    patterns.md             # Design patterns, skeleton project reuse
+    performance.md          # Model selection, context management
+    agents.md               # Sub-agent auto-dispatch strategy
+    hooks.md                # Hook system and TodoWrite practices
+  python/                 # Python-specific rules (only for .py/.pyi files)
+    coding-style.md         # PEP 8, type annotations, frozen dataclass
+    patterns.md             # Protocol, dataclass DTO, context manager
+    security.md             # Env var management, bandit scanning
+    testing.md              # pytest, coverage, mark categorization
+    hooks.md                # Python project hook integration
 ```
 
 ## How To Use
+
+### Skills
 
 1. Define the target output clearly (code, docs, report, PR, release).
 2. Pick the minimum 1-3 skills that fully cover the task.
 3. Read `SKILL.md` first; only load `references/` when needed.
 4. Prefer bundled `scripts/` over ad-hoc one-off implementation.
 5. Finish with explicit verification and a short execution summary.
+
+### Rules
+
+Rules are **zero-config** after installation — they take effect automatically every session:
+
+```bash
+# Install at user level (applies to all projects)
+mkdir -p ~/.claude/rules
+cp -r rules/common ~/.claude/rules/
+cp -r rules/python ~/.claude/rules/   # pick your language
+
+# Or install at project level (applies to current project only)
+mkdir -p .claude/rules
+cp -r rules/common .claude/rules/
+```
+
+Once installed, the AI agent will automatically:
+- Use `feat:/fix:/refactor:` format for commit messages
+- Check for hardcoded secrets, SQL injection, XSS before every commit
+- Follow immutable data patterns, functions <50 lines
+- Add type annotations and use frozen dataclass for Python files
+- Proactively trigger code review after writing code
 
 ## Skill Trigger Rules
 
@@ -65,6 +120,35 @@ skills/
 - `⭐ api-design`, `⭐ tdd-workflow`, `⭐ verification-loop`, `⭐ playwright`
 - `⭐ deep-research`, `⭐ openai-docs`, `⭐ article-writing`
 - `⭐ gh-address-comments`, `⭐ gh-fix-ci`
+
+## Rules Reference
+
+> Rules take effect automatically after installation. No manual invocation needed.
+
+### Common Rules (all languages)
+
+| Rule | What it enforces |
+|------|-----------------|
+| `coding-style` | Immutable data patterns; functions <50 lines, files <800 lines, nesting <4 levels |
+| `security` | Pre-commit checks: no hardcoded secrets, parameterized SQL, XSS/CSRF protection |
+| `testing` | TDD (write tests first); coverage >=80% |
+| `git-workflow` | Commit format `<type>: <description>`; PR analyzes full commit history |
+| `code-review` | Auto-review after writing code; CRITICAL issues block merge |
+| `development-workflow` | Dev flow: search existing solutions -> plan -> TDD -> review -> commit |
+| `patterns` | Search for battle-tested skeletons first; Repository Pattern recommended |
+| `performance` | Model selection (Haiku for cost / Sonnet for daily / Opus for architecture) |
+| `agents` | Auto-dispatch sub-agents: complex features -> planner, code written -> code-reviewer |
+| `hooks` | TodoWrite best practices, permission control guide |
+
+### Python Rules (`.py`/`.pyi` files only)
+
+| Rule | What it enforces |
+|------|-----------------|
+| `coding-style` | PEP 8; type annotations required; `frozen=True` dataclass |
+| `patterns` | Protocol duck typing, dataclass DTO, context manager, generator |
+| `security` | `os.environ["KEY"]` strict access; bandit static scanning |
+| `testing` | pytest + `--cov`; `pytest.mark.unit/integration` categorization |
+| `hooks` | Python project hook integration guide |
 
 ## Full Skill Reference
 
@@ -154,16 +238,19 @@ skills/
 |---|---|---|---|
 | `claude-api` | Claude API integration patterns | Building Claude-powered apps | Decide call mode before tool orchestration |
 
-## Skill Inventory (A-Z)
+## Inventory
 
-`api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
+**Skills (A-Z):** `api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
+
+**Rules:** `common/coding-style`, `common/security`, `common/testing`, `common/git-workflow`, `common/code-review`, `common/development-workflow`, `common/patterns`, `common/performance`, `common/agents`, `common/hooks`, `python/coding-style`, `python/patterns`, `python/security`, `python/testing`, `python/hooks`.
 
 ## Maintenance Guidelines
 
 - Every skill directory must include `SKILL.md`.
 - Keep `name` aligned with folder name; keep `description` trigger-oriented.
+- Rules should stay short (10-50 lines each); move long workflows to skills.
 - Ensure executable bits for runnable scripts when needed.
-- Update skills when external APIs/platform rules change.
+- Update skills/rules when external APIs/platform rules change.
 - Record major changes in PR descriptions for auditability.
 
 ## Contributing
@@ -172,4 +259,5 @@ Issues and PRs are welcome. Before submitting, please ensure:
 
 1. Trigger conditions are clear and reusable.
 2. `SKILL.md` matches scripts/references behavior.
-3. Boundary conditions and fallback behavior are documented.
+3. Rules follow the "short + global constraint" principle — no detailed workflows.
+4. Boundary conditions and fallback behavior are documented.
