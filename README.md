@@ -38,7 +38,7 @@ These are not prompt problems. They are **engineering system problems**.
 
 - [Core Idea](#core-idea)
 - [Quick Start](#quick-start)
-- [The 3 Flagship Skills](#the-3-flagship-skills)
+- [The 4 Flagship Skills](#the-4-flagship-skills)
 - [How the Stack Fits Together](#how-the-stack-fits-together)
 - [Skills vs Rules](#skills-vs-rules)
 - [Rules Reference](#rules-reference)
