@@ -1,263 +1,373 @@
 <div align="right">
 
-[![Language: English](https://img.shields.io/badge/Language-English-0A66C2)](./README_EN.md)
-[![语言: 简体中文](https://img.shields.io/badge/语言-简体中文-2EA44F)](./README.md)
+[![Language: English](https://img.shields.io/badge/Language-English-0A66C2)](./README.md)
+[![语言: 简体中文](https://img.shields.io/badge/语言-简体中文-2EA44F)](./README_CN.md)
 
 </div>
 
+<div align="center">
+
 # Harness Craft
 
-驾驭 AI 编码 Agent 的工艺库。Skills（按需调用的操作手册）+ Rules（始终生效的行为准则）= 更强、更可控的 AI 工程伙伴。
+**Turn agentic coding from a one-off prompt trick into a durable engineering system.**
 
-## Overview
+[![Skills](https://img.shields.io/badge/Skills-41-111111)](./skills)
+[![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
+[![Flagship](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#the-3-flagship-skills)
+[![Focus](https://img.shields.io/badge/Focus-Persistent%20·%20Verifiable%20·%20Recoverable-2EA44F)](#core-idea)
+[![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
 
-- 仓库目标：沉淀高复用的 skills 与 rules，降低重复上下文沟通成本，让 AI agent 开箱即用地遵循工程最佳实践。
-- 当前规模：**41** 个 skills + **15** 条 rules（通用 10 条 + Python 5 条）。
-- 适用对象：AI 应用开发者、自动化工程师、研究/内容团队、开源维护者。
+</div>
 
-## Skills vs Rules
+---
 
-| | Skills | Rules |
-|--|--------|-------|
-| **类比** | 操作手册 | 宪法 |
-| **加载方式** | 按需显式调用（`/skill-name`） | 每次会话自动注入 |
-| **占用 context** | 调用时才加载全文 | 始终占用（但每条很短） |
-| **适合放什么** | 长篇工作流程（TDD、E2E、深度研究…） | 短小的全局约束（编码风格、安全检查、Git 规范…） |
-| **生效方式** | 用户触发后执行 | 每轮交互自动遵守 |
+This repository is built around a simple belief:
 
-**一句话**：Rules 是 agent 的本能反射，Skills 是 agent 的后天技能。
+> The biggest failure mode in agent-driven development is not intelligence — it is **system instability**.
 
-## Repository Structure
+Most teams don't get blocked because the model "can't write code". They get blocked because:
 
-```text
-skills/
-  .system/
-    skill-creator/
-    skill-installer/
-  <skill-name>/
-    SKILL.md              # 必需：触发条件与执行流程
-    agents/openai.yaml    # 可选：界面与元信息
-    scripts/              # 可选：可执行脚本
-    references/           # 可选：按需加载资料
-    assets/               # 可选：模板/素材
+- the agent understood the repo yesterday and acts like it has amnesia today
+- multiple agents look busy, but their changes collide and review quality is weak
+- plans, validation status, and handoff context live only inside chat transcripts
+- the agent feels done, while the repository is still not in a deliverable state
 
-rules/
-  common/                 # 语言无关的通用规则（始终生效）
-    coding-style.md         # 不可变数据、文件组织、函数 <50 行
-    security.md             # commit 前安全检查清单
-    testing.md              # TDD 流程、覆盖率 ≥80%
-    git-workflow.md         # commit 格式、PR 规范
-    code-review.md          # 审查标准、严重级别、阻止合并条件
-    development-workflow.md # 完整开发流程：搜索→规划→TDD→审查→提交
-    patterns.md             # 设计模式、骨架项目复用
-    performance.md          # 模型选择、context 管理、扩展思考
-    agents.md               # 子 agent 自动调度策略
-    hooks.md                # Hook 系统与 TodoWrite 实践
-  python/                 # Python 专用规则（仅 .py/.pyi 文件生效）
-    coding-style.md         # PEP 8、type annotations、frozen dataclass
-    patterns.md             # Protocol、dataclass DTO、context manager
-    security.md             # 环境变量管理、bandit 扫描
-    testing.md              # pytest、coverage、mark 分类
-    hooks.md                # Python 项目 hook 集成
-```
+These are not prompt problems. They are **engineering system problems**.
 
-## How To Use
+## Contents
 
-### Skills
+- [Core Idea](#core-idea)
+- [Quick Start](#quick-start)
+- [The 3 Flagship Skills](#the-3-flagship-skills)
+- [How the Stack Fits Together](#how-the-stack-fits-together)
+- [Skills vs Rules](#skills-vs-rules)
+- [Rules Reference](#rules-reference)
+- [Full Skill Inventory](#full-skill-inventory)
+- [Who This Is For](#who-this-is-for)
+- [Contributing](#contributing)
 
-1. 明确任务目标与交付物（代码、文档、报告、PR、发布等）。
-2. 选择最小可覆盖的 1-3 个 skills，避免同类技能重复叠加。
-3. 先读 `SKILL.md` 再执行；仅按需读取 `references/`。
-4. 有 `scripts/` 时优先复用脚本，减少一次性手写逻辑。
-5. 完成后做验证与回顾：输出、日志、测试、风险点、下一步。
+## Core Idea
 
-### Rules
+The goal is not to add one more clever prompt. The goal is to upgrade agent work into a system that is:
 
-Rules 安装后**无需任何操作**，每次会话自动生效：
+- **Persistent** — repo knowledge survives context-window loss
+- **Verifiable** — progress is tied to evidence, not model confidence
+- **Collaborative** — multiple agents work with clear boundaries
+- **Recoverable** — long tasks resume from stable state, not vague memory
+
+### Prompt Tricks vs. Engineering Systems
+
+| Prompt-First Workflow | System-First Workflow |
+| --- | --- |
+| Context lives in chat history | Context is written to repo-local artifacts |
+| Completion is based on model confidence | Completion is based on evidence and checks |
+| Multi-agent work is ad hoc | Roles, ownership, and review gates are explicit |
+| Long tasks drift across sessions | Long tasks resume from structured state |
+| Handoffs are fragile | Handoffs are built into the workflow |
+
+## Quick Start
+
+### Install Skills
 
 ```bash
-# 安装到用户级（所有项目生效）
+# Install the 3 flagship skills
+mkdir -p ~/.codex/skills
+cp -R skills/repo-codex-bootstrap ~/.codex/skills/
+cp -R skills/codex-longrun-dev ~/.codex/skills/
+cp -R skills/agent-team-dev ~/.codex/skills/
+
+# Or install the full collection
+cp -R skills/* ~/.codex/skills/
+```
+
+Expected structure:
+
+```text
+~/.codex/skills/
+  repo-codex-bootstrap/
+  codex-longrun-dev/
+  agent-team-dev/
+  ...
+```
+
+### Install Rules (Always-On Guardrails)
+
+Rules are auto-injected into every session — no manual invocation needed.
+
+```bash
+# User-level (applies to all projects)
 mkdir -p ~/.claude/rules
 cp -r rules/common ~/.claude/rules/
-cp -r rules/python ~/.claude/rules/   # 按需选择语言
+cp -r rules/python ~/.claude/rules/   # pick your language
 
-# 或安装到项目级（仅当前项目生效）
+# Or project-level (current project only)
 mkdir -p .claude/rules
 cp -r rules/common .claude/rules/
 ```
 
-安装后 AI agent 会自动：
-- 用 `feat:/fix:/refactor:` 格式写 commit message
-- 提交前检查硬编码密钥、SQL 注入、XSS 等安全问题
-- 遵循不可变数据模式、函数 <50 行等编码规范
-- Python 文件自动加 type annotations、用 frozen dataclass
-- 写完代码后主动触发 code review
+Once installed, the AI agent will automatically:
+- use `feat:`/`fix:`/`refactor:` commit format
+- check for hardcoded secrets, SQL injection, XSS before every commit
+- enforce immutable patterns, functions <50 lines, coverage ≥80%
+- add type annotations and frozen dataclass for Python files
+- trigger code review proactively after writing code
 
-## Skill Trigger Rules
+## The 3 Flagship Skills
 
-- 显式触发：用户在需求中直接提到 skill 名称（例如 `$openai-docs`）。
-- 语义触发：用户需求与 skill `description` 高度匹配。
-- 多 skill 组合：优先「研究/输入」→「实现/产出」→「验证/交付」。
+If you only try three things from this repo, start here:
 
-## Recommended Workflow
+| Skill | Layer | Core Problem | Design Lever | Typical Outputs |
+| --- | --- | --- | --- | --- |
+| `repo-codex-bootstrap` | Context | Repo knowledge gets lost between sessions | Split understanding into durable documents | `codex/state.json`, `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md` |
+| `codex-longrun-dev` | Execution | Long tasks drift, lose focus, or declare done too early | Stateful harness with evidence-backed completion | `.codex-longrun/init.sh`, `feature_list.json`, `progress.md`, `session_state.json` |
+| `agent-team-dev` | Collaboration | Multi-agent work collides without governance | Compact engineering team with explicit ownership | task contract, role packets, `A1/I1/T1/R1` artifacts |
 
-1. 上下文准备：`repo-codex-bootstrap` + `strategic-compact`
-2. 架构与实现：`api-design` / `backend-patterns` / `frontend-patterns`
-3. 质量保障：`tdd-workflow` + `e2e-testing` + `verification-loop`
-4. 发布协作：`gh-address-comments` / `gh-fix-ci` / `yeet`
+---
 
-## Star Rating（技能优先级）
+### `repo-codex-bootstrap`
 
-- `⭐⭐ Core`：跨项目高复用、建议优先掌握（默认工作流核心）。
-- `⭐ Common`：高频实战技能，覆盖大部分工程与协作场景。
-- 无星标：按特定任务场景使用的专业技能。
+**Protects context.** Turns repo understanding from hidden background knowledge into an explicit, persistent workspace.
 
-### Starred Skills Quick Picks
+A capable agent needs more than source code — it needs to know what the user is trying to achieve, what decisions were already made, what gaps remain, and whether the plan still matches execution reality.
 
-- `⭐⭐ repo-codex-bootstrap`：会话记忆与仓库上下文管理基座。
-- `⭐⭐ codex-longrun-dev`：长周期、多阶段任务的稳定推进框架。
-- `⭐ backend-patterns`, `⭐ frontend-patterns`, `⭐ coding-standards`, `⭐ security-review`
-- `⭐ api-design`, `⭐ tdd-workflow`, `⭐ verification-loop`, `⭐ playwright`
-- `⭐ deep-research`, `⭐ openai-docs`, `⭐ article-writing`
-- `⭐ gh-address-comments`, `⭐ gh-fix-ci`
+This skill separates repo cognition into six durable artifacts:
+
+| File | Responsibility | Why It Must Stay Separate |
+| --- | --- | --- |
+| `state.json` | Machine-readable source of truth | Canonical state for automation |
+| `memory.md` | Ongoing working memory | Mixed with repo facts, it becomes an unstructured diary |
+| `prompt.md` | User intent and constraints | Task semantics shouldn't be buried in repo structure |
+| `repowiki.md` | Stable repo knowledge | Long-term facts shouldn't be polluted by session noise |
+| `plan.md` | Intended path forward | Plans are not the same as execution reality |
+| `checklist.md` | Real execution ledger | Actual progress shouldn't be rewritten into design prose |
+
+**Why it works:** It doesn't pretend automation replaces understanding. It treats update rules as governance, not suggestions. And it manages unknowns explicitly — a good memory system stores what is still missing, not just what is known.
+
+---
+
+### `codex-longrun-dev`
+
+**Keeps long tasks on track.** Most demos show how an agent starts. Real engineering needs to control how an agent *continues*.
+
+Once a task spans many sessions, failure modes are predictable: the agent loses its place, baseline is already broken, scope drifts silently, and "done" is declared without evidence.
+
+| Constraint | Why It Exists | What It Prevents |
+| --- | --- | --- |
+| One feature per session | Limits scope expansion | "While I'm here" drift and hidden scope creep |
+| Run `init.sh` first | Restore health before new work | Building on a broken baseline |
+| `feature_list.json` status-only | Freeze feature definitions | Quietly rewriting the target mid-flight |
+| `progress.md` append-only | Preserve traceability | History loss and weak handoff |
+| Evidence required for completion | Tie done-ness to validation | Premature "done" based on model confidence |
+
+**Why it works:** The strongest idea is restraint. "One feature per session" is one of the highest-leverage control points — agents don't only fail by being incapable, they fail by doing too much, too broadly, too early.
+
+---
+
+### `agent-team-dev`
+
+**Governs multi-agent collaboration.** The point of multi-agent systems is not "more minds" — it's better decomposition with stronger boundaries.
+
+| Role | Write Scope | Responsibility |
+| --- | --- | --- |
+| Team Lead | Integration | Task contract, staffing, conflict resolution, final verification |
+| Solution Architect | Read-only | Design brief, risk hotspots, file impact map |
+| Feature Engineer | Production code | Smallest safe implementation patch |
+| Test Engineer | Tests & fixtures | Coverage, regression protection, test evidence |
+| Reviewer / Verifier | Read-only | Independent review of integrated result |
+
+Three orchestration modes based on risk:
+
+| Mode | When | Agents | Goal |
+| --- | --- | --- | --- |
+| Mode A | Small, low-risk, single-module | 0–1 | Lowest coordination overhead |
+| Mode B | Implementation + testing can parallelize | 2 | Throughput without losing control |
+| Mode C | High-risk, cross-module, independent review needed | 3–4 | Correctness-first protection |
+
+**Why it works:** It doesn't simulate an entire company. It optimizes for explicit file ownership, clear role packets, independent review after integration, and a single arbitration point.
+
+## How the Stack Fits Together
+
+```mermaid
+flowchart LR
+    A[repo-codex-bootstrap<br/>Persist repo memory] --> B[codex-longrun-dev<br/>Control long-running execution]
+    B --> C[agent-team-dev<br/>Coordinate parallel work]
+    A --> C
+    C --> D[Verified delivery<br/>with evidence and handoff]
+```
+
+- `repo-codex-bootstrap` makes the agent **remember**
+- `codex-longrun-dev` makes the agent **stay on track**
+- `agent-team-dev` makes multiple agents **cooperate without chaos**
+
+## Skills vs Rules
+
+This repo provides two complementary systems:
+
+| | Skills | Rules |
+|--|--------|-------|
+| **Analogy** | Playbook | Constitution |
+| **Loading** | On-demand via `/skill-name` | Auto-injected every session |
+| **Context cost** | Full text loaded only when invoked | Always loaded (each is short) |
+| **Best for** | Long workflows (TDD, E2E, deep research…) | Short global constraints (style, security, git…) |
+| **Activation** | User-triggered | Auto-enforced every turn |
+
+**In short:** Rules are the agent's **instincts**. Skills are the agent's **learned expertise**.
 
 ## Rules Reference
 
-> Rules 安装后自动生效，无需手动调用。以下是每条 rule 的作用。
+> Rules take effect automatically after installation. No manual invocation needed.
 
-### Common Rules（通用，所有语言生效）
+### Common Rules (all languages)
 
-| Rule | 自动做什么 |
-|------|-----------|
-| `coding-style` | 强制不可变数据模式；函数 <50 行、文件 <800 行、嵌套 <4 层 |
-| `security` | 每次 commit 前检查：无硬编码密钥、SQL 参数化、XSS/CSRF 防护 |
-| `testing` | 强制 TDD（先写测试再写代码）；覆盖率 ≥80% |
-| `git-workflow` | commit 格式 `<type>: <description>`；PR 分析完整 commit 历史 |
-| `code-review` | 写完代码自动审查；CRITICAL 问题阻止合并；安全敏感代码强制安全审查 |
-| `development-workflow` | 开发流程：先搜索现有方案→规划→TDD→Review→Commit |
-| `patterns` | 新功能先搜索成熟骨架项目；推荐 Repository Pattern |
-| `performance` | 模型选择建议（Haiku 省钱/Sonnet 日常/Opus 架构）；context 管理策略 |
-| `agents` | 自动调度子 agent：复杂功能→planner，写完代码→code-reviewer |
-| `hooks` | TodoWrite 最佳实践、权限控制指南 |
+| Rule | What It Enforces |
+|------|-----------------|
+| `coding-style` | Immutable data patterns; functions <50 lines, files <800 lines, nesting <4 levels |
+| `security` | Pre-commit checks: no hardcoded secrets, parameterized SQL, XSS/CSRF protection |
+| `testing` | TDD (write tests first); coverage ≥80% |
+| `git-workflow` | Commit format `<type>: <description>`; PR analyzes full commit history |
+| `code-review` | Auto-review after writing code; CRITICAL issues block merge |
+| `development-workflow` | Full dev flow: search existing solutions → plan → TDD → review → commit |
+| `patterns` | Search for battle-tested skeletons first; Repository Pattern recommended |
+| `performance` | Model selection guidance (Haiku / Sonnet / Opus); context window management |
+| `agents` | Auto-dispatch sub-agents: complex features → planner, code written → reviewer |
+| `hooks` | TodoWrite best practices, permission control guide |
 
-### Python Rules（仅 `.py`/`.pyi` 文件生效）
+### Python Rules (`.py`/`.pyi` files only)
 
-| Rule | 自动做什么 |
-|------|-----------|
-| `coding-style` | PEP 8；所有函数必须写 type annotations；用 `frozen=True` dataclass |
-| `patterns` | Protocol 鸭子类型、dataclass DTO、context manager、generator |
-| `security` | `os.environ["KEY"]` 严格取值；bandit 静态扫描 |
-| `testing` | pytest + `--cov`；`pytest.mark.unit/integration` 分类 |
-| `hooks` | Python 项目 hook 集成指南 |
+| Rule | What It Enforces |
+|------|-----------------|
+| `coding-style` | PEP 8; type annotations required; `frozen=True` dataclass for immutability |
+| `patterns` | Protocol duck typing, dataclass DTO, context manager, generator idioms |
+| `security` | `os.environ["KEY"]` strict access; bandit static scanning |
+| `testing` | pytest + `--cov`; `pytest.mark.unit/integration` categorization |
+| `hooks` | Python project hook integration guide |
 
-## Full Skill Reference
+## Full Skill Inventory
 
-> 字段说明：
-> - 用途：解决什么问题
-> - 使用时机：何时触发最有效
-> - 使用建议：落地时的实践建议
+Beyond the flagship trio, the repo includes a broader reusable library:
 
-### 1) System Skills
+<details>
+<summary><strong>View all 41 skills</strong></summary>
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `skill-creator` | 创建/更新 skill，规范化技能结构 | 要沉淀新能力或重构旧技能时 | 用真实样例反推边界，保持 `SKILL.md` 精简 |
-| `skill-installer` | 安装 curated/GitHub skills 到 `$CODEX_HOME/skills` | 新环境搭建、团队同步、迁移恢复 | 安装后立即做最小烟雾测试 |
+### Engineering & Quality
 
-### 2) Engineering & Quality
+| Skill | Purpose |
+| --- | --- |
+| `⭐⭐ repo-codex-bootstrap` | Persist repo memory with structured codex documents |
+| `⭐⭐ codex-longrun-dev` | Long-horizon development with stateful harness |
+| `agent-team-dev` | Multi-agent team with explicit ownership and review gates |
+| `⭐ api-design` | Production REST API design patterns |
+| `⭐ backend-patterns` | Node/Express/Next.js backend architecture |
+| `⭐ frontend-patterns` | React/Next.js frontend architecture |
+| `⭐ coding-standards` | Unified coding standards for JS/TS/React/Node |
+| `⭐ security-review` | Security checklist for sensitive changes |
+| `⭐ tdd-workflow` | Test-driven development workflow |
+| `e2e-testing` | Playwright E2E testing patterns |
+| `⭐ verification-loop` | End-to-end verification before delivery |
+| `eval-harness` | Eval-driven development framework |
+| `dmux-workflows` | Multi-agent orchestration via dmux/tmux |
+| `strategic-compact` | Context compaction at milestone boundaries |
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `⭐ api-design` | 生产级 REST API 设计 | 新建/重构接口，对外开放 API | 先定资源与错误模型，再做分页过滤 |
-| `⭐ backend-patterns` | Node/Express/Next.js 后端架构与优化 | 后端模块重构、性能瓶颈治理 | 与 `security-review` 联合，在设计阶段介入 |
-| `⭐ frontend-patterns` | React/Next.js 架构与性能实践 | 页面复杂度上升、状态管理混乱 | 先做状态分层与渲染边界，再做优化 |
-| `⭐ coding-standards` | TS/JS/React/Node 编码规范 | 团队风格不一致、评审成本高 | 绑定 lint/test 门禁，防止"规范落空" |
-| `⭐ security-review` | 安全审查清单（鉴权/输入/密钥/支付） | 涉及敏感数据或高风险接口时 | 先做威胁建模，再做实现与验证 |
-| `⭐ tdd-workflow` | 测试驱动开发流程 | 新功能、修复缺陷、重构高风险模块 | 先写失败测试，再写实现 |
-| `e2e-testing` | Playwright 端到端测试体系 | 核心用户路径需要回归保障 | 优先覆盖高价值路径，减少脆弱断言 |
-| `⭐ verification-loop` | 会话级综合验证机制 | 多模块改动、需要可审计交付 | 形成"静态检查→测试→手测"闭环 |
-| `eval-harness` | EDD 评估框架 | 需要量化 agent/model 效果 | 先固化指标和样本，再做策略对比 |
-| `⭐⭐ codex-longrun-dev` | 长周期自主开发协作框架 | 任务跨度数小时/数天 | 一次一个 feature，确保每轮可验证 |
-| `dmux-workflows` | dmux/tmux 多 agent 编排 | 可并行拆解的复杂任务 | 预先划分无重叠职责边界 |
-| `⭐⭐ repo-codex-bootstrap` | 仓库级 `codex/` 文档初始化与维护 | 新仓库或跨会话上下文易丢失 | 每会话先读 `memory.md`/`prompt.md`，每轮滚动更新 |
-| `strategic-compact` | 关键阶段手动上下文压缩 | 长任务上下文接近上限时 | 按里程碑压缩，不按固定轮次机械压缩 |
+### Frontend, Design & Automation
 
-### 3) Frontend, Design & Automation
+| Skill | Purpose |
+| --- | --- |
+| `figma` | Pull design context from Figma MCP |
+| `figma-implement-design` | 1:1 Figma-to-code implementation |
+| `⭐ playwright` | Real-browser automation from terminal |
+| `develop-web-game` | Iterative web-game dev + testing loop |
+| `frontend-slides` | HTML slide decks and PPT-to-web conversion |
+| `screenshot` | OS-level screenshot capture |
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `figma` | 通过 Figma MCP 拉取设计上下文与资产 | 有 Figma URL/节点或 MCP 连接问题 | 先拉 token/变量再编码，避免视觉猜测 |
-| `figma-implement-design` | Figma 1:1 高保真实现 | 明确要求"与设计稿一致" | 先对齐项目设计系统与 token 映射 |
-| `⭐ playwright` | 终端自动化真实浏览器 | UI 流程复现、抓取、截图、调试 | 脚本化关键路径并显式等待 |
-| `develop-web-game` | Web 游戏迭代与验证闭环 | HTML/JS 游戏小步快跑开发 | 每次只改一个机制并即时回归 |
-| `frontend-slides` | HTML 幻灯片制作或 PPT 转 Web | 路演、演讲、培训课件 | 先定叙事节奏和视觉母版 |
-| `screenshot` | 系统级截图能力 | 需要窗口/区域/全屏截图 | 先确认目标窗口与分辨率 |
+### Research, Docs & Knowledge
 
-### 4) Research, Docs & Knowledge
+| Skill | Purpose |
+| --- | --- |
+| `⭐ deep-research` | Multi-source cited deep research |
+| `market-research` | Market/competitor/investor diligence |
+| `paper-deep-review` | Structured paper dissection |
+| `⭐ openai-docs` | Official OpenAI docs lookup with citations |
+| `exa-search` | Exa neural web/code/company search |
+| `⭐ article-writing` | Long-form writing with voice consistency |
+| `doc` | `.docx` authoring/editing with layout checks |
+| `pdf` | PDF extraction/generation/review |
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `⭐ deep-research` | 多源深度研究并提供引用 | 需要证据链与可追溯结论 | 先收敛问题，再扩展来源 |
-| `market-research` | 市场/竞品/尽调研究 | 商业决策、市场进入、融资准备 | 结论绑定决策动作，避免信息堆砌 |
-| `paper-deep-review` | 论文深读与结构化拆解 | 需要快速理解方法与实验 | 先看问题定义与贡献，再看实验边界 |
-| `⭐ openai-docs` | OpenAI 官方文档检索与引用 | 涉及 OpenAI API 能力或限制 | 优先官方来源，标注查询日期 |
-| `exa-search` | Exa 神经搜索（网页/代码/公司） | 需要快速定位高相关资料 | 把检索结果做二次验证再下结论 |
-| `⭐ article-writing` | 高质量长文写作与风格对齐 | 文章、教程、Newsletter、指南 | 先确定受众与样例文风再写作 |
-| `doc` | `.docx` 创建/编辑与排版校验 | Word 文档交付且版式重要 | 结构化生成后做渲染复核 |
-| `pdf` | PDF 解析、生成与审阅 | 报告/论文/票据类 PDF 工作流 | 文本抽取与版式校验分开处理 |
+### GitHub, Ops & Delivery
 
-### 5) GitHub, Project Ops & Delivery
+| Skill | Purpose |
+| --- | --- |
+| `⭐ gh-address-comments` | Resolve PR review comments systematically |
+| `⭐ gh-fix-ci` | Diagnose and fix failing GitHub Actions |
+| `yeet` | Stage/commit/push/open PR in one flow |
+| `linear` | Linear issue and project management |
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `⭐ gh-address-comments` | 处理 PR review/issue 评论 | PR 收到反馈需要逐条闭环 | 先分级评论，再按优先级处理 |
-| `⭐ gh-fix-ci` | 排查并修复 GitHub Actions 失败 | PR checks 失败或不稳定 | 先最小复现，再实施修复 |
-| `yeet` | 一键 stage/commit/push/开 PR | 用户明确要求一条龙发布 | 仅在显式授权下使用 |
-| `linear` | Linear 任务与项目流管理 | 需要跟踪任务状态和协作 | issue 必须写清验收标准 |
+### Content, Media & Growth
 
-### 6) Content, Media & Growth
+| Skill | Purpose |
+| --- | --- |
+| `content-engine` | Multi-platform content system design |
+| `crosspost` | Channel-specific cross-post adaptation |
+| `video-editing` | AI-assisted video editing pipeline |
+| `fal-ai-media` | Image/video/audio generation via fal.ai |
+| `x-api` | X/Twitter API integration |
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `content-engine` | 多平台原生内容系统建设 | 从单一素材扩展内容矩阵 | 先定义内容支柱再多平台改写 |
-| `crosspost` | 跨平台差异化分发 | 同主题需发 X/LinkedIn/Threads 等 | 保持核心观点一致，平台表达重写 |
-| `video-editing` | AI 辅助视频编辑全流程 | vlog、产品短视频、批量剪辑 | 先锁主线叙事，再加特效 |
-| `fal-ai-media` | fal.ai 图像/视频/音频生成 | 需要快速生成 AI 媒体资产 | 先小样本试参，再批量生成 |
-| `x-api` | X/Twitter API 集成 | 自动发帖、检索、分析 | 严格处理 OAuth 与速率限制 |
+### Business & Fundraising
 
-### 7) Business & Fundraising
+| Skill | Purpose |
+| --- | --- |
+| `investor-materials` | Fundraising decks, memos, and models |
+| `investor-outreach` | Investor outreach copywriting |
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `investor-materials` | 融资材料创建与维护 | BP/one-pager/memo/财务模型准备 | 所有材料共用同一数据口径 |
-| `investor-outreach` | 投资人外联文案 | 冷启动、引荐、跟进、进展更新 | 按投资人画像做个性化首段 |
+### Platform Integrations
 
-### 8) Platform Integrations
+| Skill | Purpose |
+| --- | --- |
+| `claude-api` | Claude API integration patterns |
+| `skill-creator` | Create or refine Codex skills |
+| `skill-installer` | Install skills into local Codex environment |
 
-| Skill | 用途 | 使用时机 | 使用建议 |
-|---|---|---|---|
-| `claude-api` | Anthropic Claude API 工程化集成 | 构建 Claude 驱动应用 | 先定义调用模式，再封装工具链 |
+</details>
 
-## Inventory
+## Recommended Operating Order
 
-**Skills (A-Z):** `api-design`, `article-writing`, `backend-patterns`, `claude-api`, `codex-longrun-dev`, `coding-standards`, `content-engine`, `crosspost`, `deep-research`, `develop-web-game`, `dmux-workflows`, `doc`, `e2e-testing`, `eval-harness`, `exa-search`, `fal-ai-media`, `figma`, `figma-implement-design`, `frontend-patterns`, `frontend-slides`, `gh-address-comments`, `gh-fix-ci`, `investor-materials`, `investor-outreach`, `linear`, `market-research`, `openai-docs`, `paper-deep-review`, `pdf`, `playwright`, `repo-codex-bootstrap`, `screenshot`, `security-review`, `skill-creator`, `skill-installer`, `strategic-compact`, `tdd-workflow`, `verification-loop`, `video-editing`, `x-api`, `yeet`.
+For serious repo work, a strong default is:
 
-**Rules:** `common/coding-style`, `common/security`, `common/testing`, `common/git-workflow`, `common/code-review`, `common/development-workflow`, `common/patterns`, `common/performance`, `common/agents`, `common/hooks`, `python/coding-style`, `python/patterns`, `python/security`, `python/testing`, `python/hooks`.
+1. Install skills and rules (see [Quick Start](#quick-start))
+2. Use `repo-codex-bootstrap` to make repo knowledge persistent
+3. Use `codex-longrun-dev` when the task will span multiple sessions
+4. Use `agent-team-dev` only when bounded parallelism is worth the coordination cost
+5. Layer on domain-specific skills after the operating system is in place
 
-## Maintenance Guidelines
+Companion skills by category:
 
-- 每个 skill 目录必须包含 `SKILL.md`。
-- `name` 与目录名保持一致，`description` 写清触发条件。
-- Rules 保持短小（每条 10-50 行），长流程请放到 skills 中。
-- 脚本涉及执行权限时，保持可执行位正确。
-- 外部依赖变更（API、平台策略、CLI 行为）后及时更新 skill/rule。
-- 重要改动应通过 PR 描述记录变更原因与影响范围。
+- **Architecture:** `api-design`, `backend-patterns`, `frontend-patterns`, `coding-standards`
+- **Quality:** `tdd-workflow`, `e2e-testing`, `verification-loop`, `security-review`
+- **Research:** `deep-research`, `openai-docs`, `article-writing`
+- **Delivery:** `gh-address-comments`, `gh-fix-ci`, `yeet`, `linear`
+
+## Who This Is For
+
+- Builders who want agents to act more like **durable collaborators** than chat assistants
+- Teams running multi-step implementation, testing, and delivery through agents
+- Engineers who care about **handoff quality**, verification discipline, and controlled autonomy
+- Anyone who has felt that agent workflows are impressive in demos but unreliable in production
 
 ## Contributing
 
-欢迎提交 Issue 和 PR 来补充新技能/规则、修正流程或改进文档。建议在提交前确保：
+Contributions are welcome. The standard is practical usefulness.
 
-1. 技能触发条件清晰且可复用。
-2. `SKILL.md` 与脚本/参考资料一致。
-3. Rules 遵循"短小 + 全局约束"原则，不放具体工作流。
-4. 说明中包含边界条件与失败回退策略。
+A good contribution should:
+
+- Solve a recurring real-world problem
+- Have clear trigger conditions
+- Define a concrete workflow, not generic advice
+- Include scripts or references when they materially improve execution
+- Rules should stay short (10–50 lines each) — move long workflows to skills
+
+---
+
+<div align="center">
+
+**[Skills](./skills)** · **[Rules](./rules)** · **[Issues](https://github.com/YuxiaoWang-520/harness-craft/issues)** · **[Contributing](#contributing)**
+
+</div>

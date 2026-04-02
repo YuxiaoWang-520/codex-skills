@@ -7,13 +7,14 @@
 
 <div align="center">
 
-# Codex Skills
+# Harness Craft
 
 **把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复的工程系统。**
 
 [![Skills](https://img.shields.io/badge/Skills-41-111111)](./skills)
+[![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
 [![核心卖点](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#三个核心卖点-skill)
-[![Focus](https://img.shields.io/badge/Focus-可持久化%20%C2%B7%20可验证%20%C2%B7%20可恢复-2EA44F)](#核心思路)
+[![Focus](https://img.shields.io/badge/Focus-可持久化%20·%20可验证%20·%20可恢复-2EA44F)](#核心思路)
 [![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
 
 </div>
@@ -37,7 +38,8 @@
 - [快速开始](#快速开始)
 - [三个核心卖点 Skill](#三个核心卖点-skill)
 - [这套组合是怎么协同工作的](#这套组合是怎么协同工作的)
-- [怎么使用这个仓库](#怎么使用这个仓库)
+- [Skills vs Rules](#skills-vs-rules)
+- [Rules 参考](#rules-参考)
 - [完整 Skill 清单](#完整-skill-清单)
 - [适合谁](#适合谁)
 - [Contributing](#contributing)
@@ -82,6 +84,28 @@ cp -R skills/agent-team-dev ~/.codex/skills/
 mkdir -p ~/.codex/skills
 cp -R skills/* ~/.codex/skills/
 ```
+
+### 安装 Rules（始终生效的行为准则）
+
+Rules 安装后**无需任何操作**，每次会话自动生效：
+
+```bash
+# 用户级（所有项目生效）
+mkdir -p ~/.claude/rules
+cp -r rules/common ~/.claude/rules/
+cp -r rules/python ~/.claude/rules/   # 按需选择语言
+
+# 或项目级（仅当前项目生效）
+mkdir -p .claude/rules
+cp -r rules/common .claude/rules/
+```
+
+安装后 AI agent 会自动：
+- 用 `feat:`/`fix:`/`refactor:` 格式写 commit message
+- 提交前检查硬编码密钥、SQL 注入、XSS 等安全问题
+- 遵循不可变数据模式、函数 <50 行、覆盖率 ≥80%
+- Python 文件自动加 type annotations、用 frozen dataclass
+- 写完代码后主动触发 code review
 
 目标结构大致如下：
 
@@ -284,44 +308,63 @@ flowchart LR
 - `codex-longrun-dev` 让 agent 不跑偏
 - `agent-team-dev` 让多个 agent 不失控
 
-## 怎么使用这个仓库
+## Skills vs Rules
 
-### 安装到 Codex
+本仓库提供两套互补的系统：
 
-把 skill 目录放到本地 Codex skills 目录下即可。
+| | Skills | Rules |
+|--|--------|-------|
+| **类比** | 操作手册 | 宪法 |
+| **加载方式** | 按需显式调用（`/skill-name`） | 每次会话自动注入 |
+| **占用 context** | 调用时才加载全文 | 始终占用（但每条很短） |
+| **适合放什么** | 长篇工作流程（TDD、E2E、深度研究…） | 短小的全局约束（编码风格、安全、Git…） |
+| **生效方式** | 用户触发后执行 | 每轮交互自动遵守 |
 
-通常是：
+**一句话**：Rules 是 agent 的**本能反射**，Skills 是 agent 的**后天技能**。
 
-- `~/.codex/skills/`
-- `$CODEX_HOME/skills/`
+## Rules 参考
 
-每个 skill 的结构都比较统一：
+> Rules 安装后自动生效，无需手动调用。
 
-```text
-<skill-name>/
-  SKILL.md
-  agents/openai.yaml
-  scripts/
-  references/
-  assets/
-```
+### Common Rules（通用，所有语言生效）
 
-### 推荐使用顺序
+| Rule | 自动做什么 |
+|------|-----------|
+| `coding-style` | 强制不可变数据模式；函数 <50 行、文件 <800 行、嵌套 <4 层 |
+| `security` | 每次 commit 前检查：无硬编码密钥、SQL 参数化、XSS/CSRF 防护 |
+| `testing` | 强制 TDD（先写测试再写代码）；覆盖率 ≥80% |
+| `git-workflow` | commit 格式 `<type>: <description>`；PR 分析完整 commit 历史 |
+| `code-review` | 写完代码自动审查；CRITICAL 问题阻止合并 |
+| `development-workflow` | 开发流程：先搜索现有方案→规划→TDD→Review→Commit |
+| `patterns` | 新功能先搜索成熟骨架项目；推荐 Repository Pattern |
+| `performance` | 模型选择建议（Haiku/Sonnet/Opus）；context 管理策略 |
+| `agents` | 自动调度子 agent：复杂功能→planner，写完代码→reviewer |
+| `hooks` | TodoWrite 最佳实践、权限控制指南 |
 
-如果你要把 agent 真正带进 repo 工作流，一个很强的默认组合是：
+### Python Rules（仅 `.py`/`.pyi` 文件生效）
 
-1. 先安装到 `~/.codex/skills/`
+| Rule | 自动做什么 |
+|------|-----------|
+| `coding-style` | PEP 8；所有函数必须写 type annotations；用 `frozen=True` dataclass |
+| `patterns` | Protocol 鸭子类型、dataclass DTO、context manager、generator |
+| `security` | `os.environ["KEY"]` 严格取值；bandit 静态扫描 |
+| `testing` | pytest + `--cov`；`pytest.mark.unit/integration` 分类 |
+| `hooks` | Python 项目 hook 集成指南 |
+
+## 推荐使用顺序
+
+1. 安装 skills 和 rules（见[快速开始](#快速开始)）
 2. 先用 `repo-codex-bootstrap` 把仓库知识落盘
 3. 任务跨多 session 时，用 `codex-longrun-dev` 管执行连续性
 4. 只有在确实存在并行收益时，再用 `agent-team-dev`
 5. 在此基础上，再叠加领域技能
 
-推荐搭配的补充 skills：
+推荐搭配：
 
-- 架构与实现：`api-design`、`backend-patterns`、`frontend-patterns`、`coding-standards`
-- 质量与验证：`tdd-workflow`、`e2e-testing`、`verification-loop`、`security-review`
-- 研究与文档：`deep-research`、`openai-docs`、`article-writing`
-- 交付与流程：`gh-address-comments`、`gh-fix-ci`、`yeet`、`linear`
+- **架构与实现：** `api-design`、`backend-patterns`、`frontend-patterns`、`coding-standards`
+- **质量与验证：** `tdd-workflow`、`e2e-testing`、`verification-loop`、`security-review`
+- **研究与文档：** `deep-research`、`openai-docs`、`article-writing`
+- **交付与流程：** `gh-address-comments`、`gh-fix-ci`、`yeet`、`linear`
 
 ## 完整 Skill 清单
 
