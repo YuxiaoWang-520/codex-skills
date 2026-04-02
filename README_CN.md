@@ -9,12 +9,12 @@
 
 # Harness Craft
 
-**把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复的工程系统。**
+**把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复、可学习的工程系统。**
 
-[![Skills](https://img.shields.io/badge/Skills-45-111111)](./skills)
+[![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
-[![核心卖点](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#三个核心卖点-skill)
-[![Focus](https://img.shields.io/badge/Focus-可持久化%20·%20可验证%20·%20可恢复-2EA44F)](#核心思路)
+[![核心卖点](https://img.shields.io/badge/Flagship-4%20Core%20Skills-0A66C2)](#四个核心卖点-skill)
+[![Focus](https://img.shields.io/badge/Focus-可持久化%20·%20可验证%20·%20可恢复%20·%20可学习-2EA44F)](#核心思路)
 [![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
 
 </div>
@@ -36,7 +36,7 @@
 
 - [核心思路](#核心思路)
 - [快速开始](#快速开始)
-- [三个核心卖点 Skill](#三个核心卖点-skill)
+- [四个核心卖点 Skill](#四个核心卖点-skill)
 - [这套组合是怎么协同工作的](#这套组合是怎么协同工作的)
 - [Skills vs Rules](#skills-vs-rules)
 - [Rules 参考](#rules-参考)
@@ -54,6 +54,7 @@
 - **可验证**：进展依赖证据，而不是模型自我感觉
 - **可协作**：多 agent 并行时边界清晰，不相互踩踏
 - **可恢复**：长任务能从稳定状态继续，而不是从模糊记忆重启
+- **可学习**：agent 能从交互中积累知识，越用越聪明
 
 这就是整个仓库的设计中心。
 
@@ -75,10 +76,11 @@
 <summary><strong>Claude Code</strong></summary>
 
 ```bash
-# 安装三个核心 skill
+# 安装四个核心 skill
 mkdir -p ~/.claude/skills
 cp -R skills/repo-bootstrap ~/.claude/skills/
 cp -R skills/longrun-dev ~/.claude/skills/
+cp -R skills/learn ~/.claude/skills/
 cp -R skills/agent-team-dev ~/.claude/skills/
 
 # 或整仓安装
@@ -91,6 +93,7 @@ cp -R skills/* ~/.claude/skills/
 ~/.claude/skills/
   repo-bootstrap/
   longrun-dev/
+  learn/
   agent-team-dev/
   ...
 ```
@@ -101,10 +104,11 @@ cp -R skills/* ~/.claude/skills/
 <summary><strong>Codex (OpenAI)</strong></summary>
 
 ```bash
-# 安装三个核心 skill
+# 安装四个核心 skill
 mkdir -p ~/.codex/skills
 cp -R skills/repo-bootstrap ~/.codex/skills/
 cp -R skills/longrun-dev ~/.codex/skills/
+cp -R skills/learn ~/.codex/skills/
 cp -R skills/agent-team-dev ~/.codex/skills/
 
 # 或整仓安装
@@ -117,6 +121,7 @@ cp -R skills/* ~/.codex/skills/
 ~/.codex/skills/
   repo-bootstrap/
   longrun-dev/
+  learn/
   agent-team-dev/
   ...
 ```
@@ -145,23 +150,25 @@ cp -r rules/common .claude/rules/
 - Python 文件自动加 type annotations、用 frozen dataclass
 - 写完代码后主动触发 code review
 
-## 三个核心卖点 Skill
+## 四个核心卖点 Skill
 
-如果你只想先试三个 skill，优先看这三个：
+如果你只想先试四个 skill，优先看这四个：
 
 - `repo-bootstrap`
 - `longrun-dev`
+- `learn`
 - `agent-team-dev`
 
-这三个 skill 分别对应 agent 工作流最容易失控的三个层面：
+这四个 skill 分别对应 agent 工作流最容易失控的四个层面：
 
 | Skill | 所在层 | 我想解决的核心问题 | 设计抓手 | 最关键的控制点 | 典型输出 |
 | --- | --- | --- | --- | --- | --- |
 | `repo-bootstrap` | 上下文层 | 上下文会丢，仓库知识无法持续复用 | 把项目认知拆成长期文档并由结构化状态驱动 | 文档分责、持续更新、显式未知项 | `codex/state.json`、`memory.md`、`prompt.md`、`repowiki.md`、`plan.md`、`checklist.md` |
 | `longrun-dev` | 执行连续性层 | 长任务跨 session 后容易漂移、失焦、提前宣布完成 | 把长期开发变成有状态的 harness | 每轮只做一个 feature、先恢复 baseline、必须留 evidence | `.longrun/init.sh`、`feature_list.json`、`progress.md`、`session_state.json` |
+| `learn` | 知识积累层 | 交互中的高价值知识会随 session 结束而消失 | 结构化提取 + 强度演化 + 分级作用域 | 质量门控、scope 隔离、半自动提升 | `~/.claude/learned/`、带 `weak→medium→strong` 演化的知识文件 |
 | `agent-team-dev` | 协作编排层 | 多 agent 并行容易冲突、失控、噪音大 | 把多 agent 编排成一个小型工程团队 | ownership、角色边界、独立 review、round cap | task contract、role packet、`A1/I1/T1/R1` artifacts |
 
-这三个 skill 组合在一起，才构成这个仓库真正的差异化价值。
+这四个 skill 组合在一起，才构成这个仓库真正的差异化价值。
 
 ### `repo-bootstrap`
 
@@ -318,7 +325,59 @@ multi-agent 最大的难点，不是并行能力，而是边界治理。
 - review 必须独立，且发生在集成之后
 - 最终真相源只能有一个
 
-所以这个 skill 的重点不是“更多 agent 更聪明”，而是“多 agent 必须先被治理”。
+所以这个 skill 的重点不是”更多 agent 更聪明”，而是”多 agent 必须先被治理”。
+
+### `learn`
+
+**它解决的是”如何让 agent 越用越聪明”。**
+
+每次开发者和 agent 之间的对话，都散落着高价值知识：纠正、模式、事实、偏好。但如果没有学习系统，这些知识会随着 session 结束而消失。下一次对话，agent 又要从零开始，用户又要重新教一遍。
+
+#### 它到底在解决什么问题
+
+- agent 上次被纠正过”不要 mock 数据库”，这次又 mock 了
+- 用户已经说过三遍”回答简洁一点”，agent 还是啰嗦
+- 项目有特殊的部署流程，每次都要重新解释
+- 用户的编码偏好（命名风格、架构模式等）无法被记住
+
+#### 架构设计
+
+这个 skill 的设计灵感来自 ECC 的 continuous-learning 系统，但做了大幅简化：
+
+| 设计决策 | 为什么这样做 | 防的是什么问题 |
+| --- | --- | --- |
+| 只有两个命令（`/learn` + `/learn-review`） | 最小认知负担 | 用户记不住 6 个命令 |
+| 用 Markdown 而不是 YAML | 人可读、可直接编辑 | 知识变成黑盒，用户无法检查 |
+| 三档强度（`weak→medium→strong`） | 简单但有效的验证模型 | 浮点数伪精确（0.47 vs 0.52 没有区别） |
+| 分 project/global 两级 | 项目经验不污染其他项目 | 跨项目知识污染 |
+| 半自动提升（建议+确认） | 用户确认后再全局化 | 错误知识污染所有项目 |
+| 质量门控（Save/Merge/Skip） | 保存前过滤噪音 | 知识目录退化成垃圾场 |
+
+#### 四种知识类型（按价值排序）
+
+1. **Corrections（纠正）** — 用户纠正过 agent 的做法，最高价值
+2. **Patterns（模式）** — 反复出现的工作流或编码惯例
+3. **Facts（事实）** — 项目/环境特定的真实信息
+4. **Preferences（偏好）** — 用户的个人风格偏好
+
+#### 为什么它是对 ECC 的改进
+
+ECC v2.1 用 PreToolUse/PostToolUse hooks + Haiku 后台 observer agent + YAML instinct 文件 + 浮点置信度 + 6 个命令。技术上更精密，但对用户来说：
+
+- hooks 依赖平台能力，不通用
+- 后台 observer 有额外 LLM 调用成本
+- YAML 文件对开发者不友好
+- 6 个命令认知负担重
+
+这个 skill 保留了 ECC 最核心的洞察 — **对话是知识金矿** — 但把实现简化到”装上就能用，用了就有感”。没有后台 agent，没有 hooks 依赖，没有 YAML，只有 Markdown 文件和两个命令。
+
+#### 用户体感设计
+
+“越用越聪明”不能只是技术上做到了，用户必须**感受到**：
+
+- 每次 `/learn`，清晰列出学了什么、跳过了什么
+- 当 agent 因为已学知识做出不同决策时，主动说明原因
+- `/learn-review` 顶部显示累计统计：已积累 23 条全局 / 12 条项目知识
 
 ## 这套组合是怎么协同工作的
 
@@ -328,13 +387,16 @@ flowchart LR
     B --> C[agent-team-dev<br/>控制并行协作]
     A --> C
     C --> D[带证据的交付<br/>和可恢复 handoff]
+    D --> E[learn<br/>提取并积累知识]
+    E -->|下一个 session| A
 ```
 
 一句话总结：
 
-- `repo-bootstrap` 让 agent 记得住
+- `repo-bootstrap` 让 agent 记得住项目
 - `longrun-dev` 让 agent 不跑偏
 - `agent-team-dev` 让多个 agent 不失控
+- `learn` 让 agent 越用越聪明
 
 ## Skills vs Rules
 
@@ -384,8 +446,9 @@ flowchart LR
 1. 安装 skills 和 rules（见[快速开始](#快速开始)）
 2. 先用 `repo-bootstrap` 把仓库知识落盘
 3. 任务跨多 session 时，用 `longrun-dev` 管执行连续性
-4. 只有在确实存在并行收益时，再用 `agent-team-dev`
-5. 在此基础上，再叠加领域技能
+4. 每次有价值的 session 结束后，用 `learn` 积累知识
+5. 只有在确实存在并行收益时，再用 `agent-team-dev`
+6. 在此基础上，再叠加领域技能
 
 推荐搭配：
 
@@ -396,7 +459,7 @@ flowchart LR
 
 ## 完整 Skill 清单
 
-除了上面三个核心 skill，这个仓库还包含一系列面向工程、测试、研究、内容、交付的可复用 skills。
+除了上面四个核心 skill，这个仓库还包含一系列面向工程、测试、研究、内容、交付的可复用 skills。
 
 <details>
 <summary><strong>查看全部 skills</strong></summary>
@@ -408,6 +471,7 @@ flowchart LR
 | `article-writing` | 写高质量长文、教程和 Newsletter |
 | `backend-patterns` | 设计和优化 Node.js、Express、Next.js 后端 |
 | `claude-api` | 构建基于 Claude API 的应用 |
+| `learn` | 从交互中提取、积累并应用可复用知识 |
 | `longrun-dev` | 用长期 harness 管理跨 session 开发 |
 | `coding-standards` | 统一 TS、JS、React、Node 编码规范 |
 | `content-engine` | 把一个主题扩成多平台内容系统 |

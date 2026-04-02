@@ -11,10 +11,10 @@
 
 **Turn agentic coding from a one-off prompt trick into a durable engineering system.**
 
-[![Skills](https://img.shields.io/badge/Skills-45-111111)](./skills)
+[![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
-[![Flagship](https://img.shields.io/badge/Flagship-3%20Core%20Skills-0A66C2)](#the-3-flagship-skills)
-[![Focus](https://img.shields.io/badge/Focus-Persistent%20·%20Verifiable%20·%20Recoverable-2EA44F)](#core-idea)
+[![Flagship](https://img.shields.io/badge/Flagship-4%20Core%20Skills-0A66C2)](#the-4-flagship-skills)
+[![Focus](https://img.shields.io/badge/Focus-Persistent%20·%20Verifiable%20·%20Recoverable%20·%20Learnable-2EA44F)](#core-idea)
 [![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
 
 </div>
@@ -54,6 +54,7 @@ The goal is not to add one more clever prompt. The goal is to upgrade agent work
 - **Verifiable** — progress is tied to evidence, not model confidence
 - **Collaborative** — multiple agents work with clear boundaries
 - **Recoverable** — long tasks resume from stable state, not vague memory
+- **Learnable** — agents accumulate knowledge from interactions and get smarter over time
 
 ### Prompt Tricks vs. Engineering Systems
 
@@ -73,10 +74,11 @@ The goal is not to add one more clever prompt. The goal is to upgrade agent work
 <summary><strong>Claude Code</strong></summary>
 
 ```bash
-# Install the 3 flagship skills
+# Install the 4 flagship skills
 mkdir -p ~/.claude/skills
 cp -R skills/repo-bootstrap ~/.claude/skills/
 cp -R skills/longrun-dev ~/.claude/skills/
+cp -R skills/learn ~/.claude/skills/
 cp -R skills/agent-team-dev ~/.claude/skills/
 
 # Or install the full collection
@@ -89,6 +91,7 @@ Expected structure:
 ~/.claude/skills/
   repo-bootstrap/
   longrun-dev/
+  learn/
   agent-team-dev/
   ...
 ```
@@ -99,10 +102,11 @@ Expected structure:
 <summary><strong>Codex (OpenAI)</strong></summary>
 
 ```bash
-# Install the 3 flagship skills
+# Install the 4 flagship skills
 mkdir -p ~/.codex/skills
 cp -R skills/repo-bootstrap ~/.codex/skills/
 cp -R skills/longrun-dev ~/.codex/skills/
+cp -R skills/learn ~/.codex/skills/
 cp -R skills/agent-team-dev ~/.codex/skills/
 
 # Or install the full collection
@@ -115,6 +119,7 @@ Expected structure:
 ~/.codex/skills/
   repo-bootstrap/
   longrun-dev/
+  learn/
   agent-team-dev/
   ...
 ```
@@ -143,15 +148,16 @@ Once installed, the AI agent will automatically:
 - add type annotations and frozen dataclass for Python files
 - trigger code review proactively after writing code
 
-## The 3 Flagship Skills
+## The 4 Flagship Skills
 
-If you only try three things from this repo, start here:
+If you only try four things from this repo, start here:
 
 | Skill | Layer | Core Problem | Design Lever | Typical Outputs |
 | --- | --- | --- | --- | --- |
 | `repo-bootstrap` | Context | Repo knowledge gets lost between sessions | Split understanding into durable documents | `codex/state.json`, `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md` |
 | `longrun-dev` | Execution | Long tasks drift, lose focus, or declare done too early | Stateful harness with evidence-backed completion | `.longrun/init.sh`, `feature_list.json`, `progress.md`, `session_state.json` |
 | `agent-team-dev` | Collaboration | Multi-agent work collides without governance | Compact engineering team with explicit ownership | task contract, role packets, `A1/I1/T1/R1` artifacts |
+| `learn` | Knowledge | Valuable knowledge from interactions gets lost between sessions | Structured extraction with strength-based evolution | `~/.claude/learned/`, knowledge files with `weak→medium→strong` progression |
 
 ---
 
@@ -216,6 +222,32 @@ Three orchestration modes based on risk:
 
 **Why it works:** It doesn't simulate an entire company. It optimizes for explicit file ownership, clear role packets, independent review after integration, and a single arbitration point.
 
+---
+
+### `learn`
+
+**Makes agents smarter over time.** Every conversation contains valuable knowledge — corrections, patterns, facts, preferences. Without a learning system, this knowledge evaporates when the session ends.
+
+This skill gives agents a structured way to extract, evaluate, and accumulate reusable knowledge from interactions:
+
+| Design choice | Why | What it prevents |
+| --- | --- | --- |
+| Two commands only (`/learn` + `/learn-review`) | Minimal cognitive load | Users forgetting which of 6 commands to use |
+| Markdown files, not YAML/JSON | Human-readable, directly editable | Black-box knowledge that users can't inspect |
+| Three-tier strength (`weak→medium→strong`) | Simple but effective validation | Floating-point pseudo-precision (0.47 vs 0.52) |
+| Project + Global scoping | Keep project knowledge isolated | Cross-project contamination |
+| Semi-automatic promotion | User confirms before globalizing | Wrong knowledge polluting all projects |
+| Quality gate (Save/Merge/Skip) | Filter noise before saving | Knowledge directory becoming a junk drawer |
+
+**Four knowledge types, prioritized:**
+
+1. **Corrections** — user corrected the agent's approach (highest value)
+2. **Patterns** — repeated workflow or coding convention
+3. **Facts** — project/environment-specific truths
+4. **Preferences** — user's personal style choices
+
+**Why it works:** It draws on the same insight as ECC's continuous-learning system — that conversations are a gold mine of reusable knowledge — but strips away the complexity. No background observer agents, no hooks dependency, no YAML instinct files. Just a skill that extracts knowledge into human-readable Markdown, validates it through use, and makes it available in future sessions. The agent gets smarter, and the user can see exactly what it learned.
+
 ## How the Stack Fits Together
 
 ```mermaid
@@ -224,11 +256,14 @@ flowchart LR
     B --> C[agent-team-dev<br/>Coordinate parallel work]
     A --> C
     C --> D[Verified delivery<br/>with evidence and handoff]
+    D --> E[learn<br/>Extract & accumulate knowledge]
+    E -->|next session| A
 ```
 
-- `repo-bootstrap` makes the agent **remember**
+- `repo-bootstrap` makes the agent **remember** the project
 - `longrun-dev` makes the agent **stay on track**
 - `agent-team-dev` makes multiple agents **cooperate without chaos**
+- `learn` makes the agent **get smarter** over time
 
 ## Skills vs Rules
 
@@ -275,10 +310,10 @@ This repo provides two complementary systems:
 
 ## Full Skill Inventory
 
-Beyond the flagship trio, the repo includes a broader reusable library:
+Beyond the flagship quartet, the repo includes a broader reusable library:
 
 <details>
-<summary><strong>View all 45 skills</strong></summary>
+<summary><strong>View all 46 skills</strong></summary>
 
 ### Engineering & Quality
 
@@ -286,6 +321,7 @@ Beyond the flagship trio, the repo includes a broader reusable library:
 | --- | --- |
 | `⭐⭐ repo-bootstrap` | Persist repo memory with structured context documents |
 | `⭐⭐ longrun-dev` | Long-horizon development with stateful harness |
+| `⭐⭐ learn` | Extract and accumulate knowledge from interactions |
 | `agent-team-dev` | Multi-agent team with explicit ownership and review gates |
 | `⭐ api-design` | Production REST API design patterns |
 | `⭐ backend-patterns` | Node/Express/Next.js backend architecture |
@@ -370,8 +406,9 @@ For serious repo work, a strong default is:
 1. Install skills and rules (see [Quick Start](#quick-start))
 2. Use `repo-bootstrap` to make repo knowledge persistent
 3. Use `longrun-dev` when the task will span multiple sessions
-4. Use `agent-team-dev` only when bounded parallelism is worth the coordination cost
-5. Layer on domain-specific skills after the operating system is in place
+4. Use `learn` after productive sessions to accumulate knowledge
+5. Use `agent-team-dev` only when bounded parallelism is worth the coordination cost
+6. Layer on domain-specific skills after the operating system is in place
 
 Companion skills by category:
 
