@@ -1,4 +1,4 @@
 interface:
   display_name: "Repo Bootstrap"
   short_description: "Continuously sync repository memory from state-backed local docs"
-  default_prompt: "Read codex/memory.md and codex/prompt.md, gather the latest repository/task context, sync codex/state.json, and re-render memory.md, prompt.md, repowiki.md, plan.md, and checklist.md so repo knowledge survives future turns."
+  default_prompt: "Read .harness/memory.md and .harness/prompt.md, gather the latest repository/task context, sync .harness/state.json, and re-render memory.md, prompt.md, repowiki.md, plan.md, and checklist.md so repo knowledge survives future turns."

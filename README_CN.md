@@ -163,7 +163,7 @@ cp -r rules/common .claude/rules/
 
 | Skill | 所在层 | 我想解决的核心问题 | 设计抓手 | 最关键的控制点 | 典型输出 |
 | --- | --- | --- | --- | --- | --- |
-| `repo-bootstrap` | 上下文层 | 上下文会丢，仓库知识无法持续复用 | 把项目认知拆成长期文档并由结构化状态驱动 | 文档分责、持续更新、显式未知项 | `codex/state.json`、`memory.md`、`prompt.md`、`repowiki.md`、`plan.md`、`checklist.md` |
+| `repo-bootstrap` | 上下文层 | 上下文会丢，仓库知识无法持续复用 | 把项目认知拆成长期文档并由结构化状态驱动 | 文档分责、持续更新、显式未知项 | `.harness/state.json`、`memory.md`、`prompt.md`、`repowiki.md`、`plan.md`、`checklist.md` |
 | `longrun-dev` | 执行连续性层 | 长任务跨 session 后容易漂移、失焦、提前宣布完成 | 把长期开发变成有状态的 harness | 每轮只做一个 feature、先恢复 baseline、必须留 evidence | `.longrun/init.sh`、`feature_list.json`、`progress.md`、`session_state.json` |
 | `learn` | 知识积累层 | 交互中的高价值知识会随 session 结束而消失 | 结构化提取 + 强度演化 + 分级作用域 | 质量门控、scope 隔离、半自动提升 | `~/.claude/learned/`、带 `weak→medium→strong` 演化的知识文件 |
 | `agent-team-dev` | 协作编排层 | 多 agent 并行容易冲突、失控、噪音大 | 把多 agent 编排成一个小型工程团队 | ownership、角色边界、独立 review、round cap | task contract、role packet、`A1/I1/T1/R1` artifacts |
@@ -193,12 +193,12 @@ cp -r rules/common .claude/rules/
 
 这个 skill 把仓库认知拆成 6 个长期工件：
 
-- `codex/state.json`：机器可读的唯一真相源
-- `codex/memory.md`：持续工作记忆
-- `codex/prompt.md`：用户意图、约束、解释历史
-- `codex/repowiki.md`：仓库事实、目录、命令、环境说明
-- `codex/plan.md`：方案设计、假设、风险、验证路径
-- `codex/checklist.md`：真实执行账本、文件变更、验证状态
+- `.harness/state.json`：机器可读的唯一真相源
+- `.harness/memory.md`：持续工作记忆
+- `.harness/prompt.md`：用户意图、约束、解释历史
+- `.harness/repowiki.md`：仓库事实、目录、命令、环境说明
+- `.harness/plan.md`：方案设计、假设、风险、验证路径
+- `.harness/checklist.md`：真实执行账本、文件变更、验证状态
 
 之所以要拆开，是因为这些职责不能混写：
 

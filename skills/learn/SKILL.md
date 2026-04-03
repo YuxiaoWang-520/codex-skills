@@ -268,7 +268,7 @@ This reinforces the user's confidence that the agent is learning.
 | | repo-bootstrap | learn |
 |--|----------------|-------|
 | **What it stores** | Current project state, plans, progress | Reusable knowledge from interactions |
-| **Where** | `codex/` (project-internal) | `~/.claude/learned/` + `.claude/learned/` |
+| **Where** | `.harness/` (project-internal) | `~/.claude/learned/` + `.claude/learned/` |
 | **Lifecycle** | Changes with project activity | Accumulates over time |
 | **Update frequency** | Every session | When knowledge is extracted |
 | **Analogy** | Working memory | Long-term memory |

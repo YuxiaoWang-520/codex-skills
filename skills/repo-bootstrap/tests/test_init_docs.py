@@ -59,12 +59,12 @@ class RepoBootstrapTests(unittest.TestCase):
 
         result = self.module.sync_docs(self.repo_root, context={})
 
-        self.assertTrue((self.repo_root / "codex" / "state.json").exists())
+        self.assertTrue((self.repo_root / ".harness" / "state.json").exists())
         self.assertEqual(result["docs"]["memory.md"], "created")
-        self.assertIn("/codex/", (self.repo_root / ".gitignore").read_text(encoding="utf-8"))
+        self.assertIn("/.harness/", (self.repo_root / ".gitignore").read_text(encoding="utf-8"))
 
-        repowiki = (self.repo_root / "codex" / "repowiki.md").read_text(encoding="utf-8")
-        prompt_log = (self.repo_root / "codex" / "prompt.md").read_text(encoding="utf-8")
+        repowiki = (self.repo_root / ".harness" / "repowiki.md").read_text(encoding="utf-8")
+        prompt_log = (self.repo_root / ".harness" / "prompt.md").read_text(encoding="utf-8")
 
         self.assertIn("Example App", repowiki)
         self.assertIn("A sample service for managing durable repo context.", repowiki)
@@ -102,9 +102,9 @@ class RepoBootstrapTests(unittest.TestCase):
             },
         )
 
-        memory = (self.repo_root / "codex" / "memory.md").read_text(encoding="utf-8")
-        prompt_log = (self.repo_root / "codex" / "prompt.md").read_text(encoding="utf-8")
-        state = json.loads((self.repo_root / "codex" / "state.json").read_text(encoding="utf-8"))
+        memory = (self.repo_root / ".harness" / "memory.md").read_text(encoding="utf-8")
+        prompt_log = (self.repo_root / ".harness" / "prompt.md").read_text(encoding="utf-8")
+        state = json.loads((self.repo_root / ".harness" / "state.json").read_text(encoding="utf-8"))
 
         self.assertIn("Implement rolling updates", memory)
         self.assertIn("Use a state.json source of truth", memory)
@@ -144,12 +144,12 @@ class RepoBootstrapTests(unittest.TestCase):
                     ],
                     "validation": {
                         "automated_checks": ["python3 -m unittest"],
-                        "manual_checks": ["Inspect codex/*.md output"],
-                        "artifacts": ["codex/state.json"],
+                        "manual_checks": ["Inspect .harness/*.md output"],
+                        "artifacts": [".harness/state.json"],
                     },
                     "risks": ["State schema drift"],
                     "mitigations": ["Render markdown from one source of truth"],
-                    "rollback": "Re-run bootstrap with a clean codex directory.",
+                    "rollback": "Re-run bootstrap with a clean .harness directory.",
                 },
                 "checklist": {
                     "plan_mapping": [
@@ -186,8 +186,8 @@ class RepoBootstrapTests(unittest.TestCase):
             },
         )
 
-        plan = (self.repo_root / "codex" / "plan.md").read_text(encoding="utf-8")
-        checklist = (self.repo_root / "codex" / "checklist.md").read_text(encoding="utf-8")
+        plan = (self.repo_root / ".harness" / "plan.md").read_text(encoding="utf-8")
+        checklist = (self.repo_root / ".harness" / "checklist.md").read_text(encoding="utf-8")
 
         self.assertIn("| P1 | Create a state-backed sync layer |", plan)
         self.assertIn("skills/repo-bootstrap/scripts/init_docs.py", plan)

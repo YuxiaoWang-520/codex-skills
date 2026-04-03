@@ -2,16 +2,16 @@
 
 `repo-bootstrap` gives a repository a local agent memory system that survives context-window loss.
 
-It maintains a `codex/` workspace in the repo root and keeps these files synchronized:
+It maintains a `.harness/` workspace in the repo root and keeps these files synchronized:
 
-- `codex/state.json`
-- `codex/memory.md`
-- `codex/prompt.md`
-- `codex/repowiki.md`
-- `codex/plan.md`
-- `codex/checklist.md`
+- `.harness/state.json`
+- `.harness/memory.md`
+- `.harness/prompt.md`
+- `.harness/repowiki.md`
+- `.harness/plan.md`
+- `.harness/checklist.md`
 
-`codex/state.json` is the source of truth. The markdown files are rendered views for humans and agents.
+`.harness/state.json` is the source of truth. The markdown files are rendered views for humans and agents.
 
 ## What It Solves
 
@@ -30,12 +30,12 @@ The skill now works as a rolling sync system instead of a one-time template boot
 On each invocation it can:
 
 - inspect repo manifests and common files to refresh baseline facts
-- merge the latest task context into `codex/state.json`
+- merge the latest task context into `.harness/state.json`
 - preserve useful history instead of replacing it
 - regenerate the markdown files from structured state
-- keep `/codex/` ignored in `.gitignore`
+- keep `/.harness/` ignored in `.gitignore`
 
-It also captures legacy `codex/*.md` files into state archives when upgrading an older repo that did not have `codex/state.json`.
+It also captures legacy markdown files (from `.harness/` or the older `codex/` directory) into state archives when upgrading a repo that did not have `.harness/state.json`.
 
 ## Quick Start
 
@@ -47,9 +47,9 @@ python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
   --repo-root <repo-root> \
   --latest-prompt "Analyze and improve this repository." \
   --intent "Persist durable repo knowledge for future turns." \
-  --objective "Keep codex docs continuously synchronized." \
+  --objective "Keep harness docs continuously synchronized." \
   --workstream "repository analysis" \
-  --work-summary "Synced codex state for the current turn." \
+  --work-summary "Synced harness state for the current turn." \
   --next-action "Review generated docs"
 ```
 
@@ -59,9 +59,9 @@ python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
   --latest-prompt "Analyze and improve this repository." \
   --intent "Persist durable repo knowledge for future turns." \
-  --objective "Keep codex docs continuously synchronized." \
+  --objective "Keep harness docs continuously synchronized." \
   --workstream "repository analysis" \
-  --work-summary "Synced codex state for the current turn." \
+  --work-summary "Synced harness state for the current turn." \
   --next-action "Review generated docs"
 ```
 
@@ -71,14 +71,14 @@ Claude Code:
 ```bash
 python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
   --repo-root <repo-root> \
-  --context-file /tmp/codex-context.json
+  --context-file /tmp/harness-context.json
 ```
 
 Codex:
 ```bash
 python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
-  --context-file /tmp/codex-context.json
+  --context-file /tmp/harness-context.json
 ```
 
 You can also pass inline JSON:
@@ -155,10 +155,10 @@ If you provide `plan` without `checklist`, the script will derive a checklist sk
 
 When using this skill in an agent workflow:
 
-1. Read `codex/memory.md` and `codex/prompt.md` before starting analysis.
-2. Read `codex/repowiki.md` before non-trivial code or architecture work.
+1. Read `.harness/memory.md` and `.harness/prompt.md` before starting analysis.
+2. Read `.harness/repowiki.md` before non-trivial code or architecture work.
 3. Gather the latest task context during the turn.
-4. Sync that context into `codex/state.json`.
+4. Sync that context into `.harness/state.json`.
 5. Let the script regenerate all five markdown files.
 
 This is what makes the skill improve over time instead of resetting to templates.
@@ -187,6 +187,6 @@ python3 skills/repo-bootstrap/tests/test_init_docs.py
 
 ## Notes
 
-- `codex/state.json` is local memory and should remain out of git.
+- `.harness/state.json` is local memory and should remain out of git.
 - The markdown files are rendered views, not the canonical state.
 - Unknown facts should be recorded as explicit gaps or next discovery actions, not left as empty placeholders.

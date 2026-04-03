@@ -283,7 +283,7 @@ def detect_repo_facts(repo_root: Path) -> Dict[str, Any]:
             [
                 entry.name
                 for entry in repo_root.iterdir()
-                if entry.is_dir() and entry.name not in {".git", "codex", "node_modules", ".venv", "venv", "__pycache__"}
+                if entry.is_dir() and entry.name not in {".git", ".harness", "codex", "node_modules", ".venv", "venv", "__pycache__"}
             ]
         )
     except Exception:
@@ -681,7 +681,7 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
             "why_now": "Persistent context reduces repeated rediscovery in future sessions.",
             "repo_facts": repo_facts,
             "assumptions": [
-                "The codex directory stays local-only and remains ignored by git.",
+                "The .harness directory stays local-only and remains ignored by git.",
                 "Detected manifest files are the best first-pass source of repo facts.",
             ],
             "decisions": [
@@ -689,7 +689,7 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
                     "timestamp": timestamp,
                     "summary": "Bootstrap context docs with a machine-readable state file.",
                     "reason": "A single source of truth makes markdown regeneration and rolling updates deterministic.",
-                    "tradeoff": "Adds one local JSON file under codex/ for structure.",
+                    "tradeoff": "Adds one local JSON file under .harness/ for structure.",
                 }
             ],
             "blockers": [],
@@ -722,7 +722,7 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
         "prompt_log": {
             "latest_prompt": "Captured automatically during bootstrap because no explicit prompt was provided.",
             "intent": "Initialize or refresh durable agent repository memory files.",
-            "constraints": ["Keep /codex/ ignored by git."],
+            "constraints": ["Keep /.harness/ ignored by git."],
             "requested_output_format": "Updated context markdown files backed by state.json.",
             "success_criteria": ["All context docs exist with useful baseline content."],
             "history": [
@@ -731,8 +731,8 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
                     "prompt": "Captured automatically during bootstrap because no explicit prompt was provided.",
                     "summary": "Bootstrap repo context docs",
                     "intent": "Initialize durable repo memory",
-                    "constraints": ["Keep /codex/ ignored by git."],
-                    "outcome_link": "codex/*.md",
+                    "constraints": ["Keep /.harness/ ignored by git."],
+                    "outcome_link": ".harness/*.md",
                 }
             ],
             "clarifications": [],
@@ -752,7 +752,10 @@ def build_initial_state(repo_root: Path, facts: Dict[str, Any], timestamp: str) 
 def capture_legacy_docs(repo_root: Path, state: Dict[str, Any], timestamp: str) -> None:
     archives = state.setdefault("archives", {})
     for doc_name in ["memory.md", "prompt.md", "repowiki.md", "plan.md", "checklist.md"]:
-        doc_path = repo_root / "codex" / doc_name
+        # Check both new (.harness/) and legacy (codex/) locations
+        doc_path = repo_root / ".harness" / doc_name
+        if not doc_path.exists():
+            doc_path = repo_root / "codex" / doc_name
         if not doc_path.exists():
             continue
         existing_text = read_text(doc_path).strip()
@@ -772,11 +775,14 @@ def capture_legacy_docs(repo_root: Path, state: Dict[str, Any], timestamp: str) 
 
 
 def load_state(repo_root: Path, facts: Dict[str, Any], timestamp: str, force: bool) -> Dict[str, Any]:
-    state_path = repo_root / "codex" / "state.json"
+    state_path = repo_root / ".harness" / "state.json"
+    legacy_state_path = repo_root / "codex" / "state.json"
     state = {}
 
     if state_path.exists() and not force:
         state = read_json_file(state_path)
+    elif legacy_state_path.exists() and not force:
+        state = read_json_file(legacy_state_path)
 
     if not state or force:
         state = build_initial_state(repo_root, facts, timestamp)
@@ -835,7 +841,7 @@ def update_prompt_log(state: Dict[str, Any], context: Dict[str, Any], timestamp:
         "summary": summary,
         "intent": intent,
         "constraints": constraints,
-        "outcome_link": str(context.get("outcome_link") or "codex/*.md").strip(),
+        "outcome_link": str(context.get("outcome_link") or ".harness/*.md").strip(),
     }
 
     if not history or history[-1].get("prompt") != latest_prompt or history[-1].get("intent") != intent:
@@ -1101,7 +1107,7 @@ def render_memory(state: Dict[str, Any]) -> str:
 
 - Last Updated: {updated_at}
 - Status: active
-- Source of Truth: `codex/state.json`
+- Source of Truth: `.harness/state.json`
 
 ## Current Objective
 - Primary goal: {objective}
@@ -1188,7 +1194,7 @@ def render_prompt_log(state: Dict[str, Any]) -> str:
 
 - Last Updated: {updated_at}
 - Status: active
-- Source of Truth: `codex/state.json`
+- Source of Truth: `.harness/state.json`
 
 ## Latest Prompt
 ```text
@@ -1274,7 +1280,7 @@ def render_repowiki(state: Dict[str, Any]) -> str:
 - Last Updated: {updated_at}
 - Status: active
 - Scope: living operational wiki for this repository
-- Source of Truth: `codex/state.json`
+- Source of Truth: `.harness/state.json`
 
 ## Repository Purpose
 - Repository name: {repo_name}
@@ -1437,7 +1443,7 @@ def render_plan(state: Dict[str, Any]) -> str:
 - Last Updated: {updated_at}
 - Status: active
 - Rule: update when planning is requested or non-trivial implementation starts.
-- Source of Truth: `codex/state.json`
+- Source of Truth: `.harness/state.json`
 
 ## Request Scope
 - Request summary: {request_summary}
@@ -1557,8 +1563,8 @@ def render_checklist(state: Dict[str, Any]) -> str:
 
 - Last Updated: {updated_at}
 - Status: active
-- Rule: keep aligned with `codex/plan.md` when code changes are planned or executed.
-- Source of Truth: `codex/state.json`
+- Rule: keep aligned with `.harness/plan.md` when code changes are planned or executed.
+- Source of Truth: `.harness/state.json`
 
 ## Plan Mapping
 {mapping}
@@ -1634,7 +1640,7 @@ def write_file(path: Path, content: str) -> str:
 
 def ensure_context_ignored(repo_root: Path) -> str:
     gitignore_path = repo_root / ".gitignore"
-    ignore_entry = "/codex/"
+    ignore_entry = "/.harness/"
     existed_before = gitignore_path.exists()
 
     if existed_before:
@@ -1643,7 +1649,7 @@ def ensure_context_ignored(repo_root: Path) -> str:
         lines = []
 
     normalized = set(line.strip() for line in lines)
-    aliases = {"codex/", "/codex/", "codex"}
+    aliases = {".harness/", "/.harness/", ".harness", "codex/", "/codex/", "codex"}
     if normalized.intersection(aliases):
         return "exists"
 
@@ -1663,7 +1669,7 @@ def sync_docs(repo_root: Path, context: Optional[Dict[str, Any]] = None, force: 
     state = load_state(repo_root, facts, timestamp, force)
     state = apply_context(state, facts, context, timestamp)
 
-    docs_dir = repo_root / "codex"
+    docs_dir = repo_root / ".harness"
     doc_statuses = {}
     for name, content in render_docs(state).items():
         doc_statuses[name] = write_file(docs_dir / name, content)
@@ -1763,9 +1769,9 @@ def main() -> int:
     print("Repo root: {0}".format(result["repo_root"]))
     print("Timestamp: {0}".format(result["timestamp"]))
     for doc_name in sorted(result["docs"].keys()):
-        print("[{0}] {1}".format(result["docs"][doc_name], repo_root / "codex" / doc_name))
-    print("[{0}] {1}".format(result["state"], repo_root / "codex" / "state.json"))
-    print("[{0}] {1} (ensure /codex/ ignored)".format(result["gitignore"], repo_root / ".gitignore"))
+        print("[{0}] {1}".format(result["docs"][doc_name], repo_root / ".harness" / doc_name))
+    print("[{0}] {1}".format(result["state"], repo_root / ".harness" / "state.json"))
+    print("[{0}] {1} (ensure /.harness/ ignored)".format(result["gitignore"], repo_root / ".gitignore"))
     return 0
 
 

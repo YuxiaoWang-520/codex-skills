@@ -1,13 +1,13 @@
 ---
 name: repo-bootstrap
-description: Initialize and continuously maintain repository-level agent context under `codex/` using a state-backed memory system. Keeps `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, and `checklist.md` synchronized from `codex/state.json`, and keeps `/codex/` ignored by git. Use when the user asks for repository bootstrap, durable project memory, rolling context updates, or plan/checklist-driven implementation review.
+description: Initialize and continuously maintain repository-level agent context under `.harness/` using a state-backed memory system. Keeps `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, and `checklist.md` synchronized from `.harness/state.json`, and keeps `/.harness/` ignored by git. Use when the user asks for repository bootstrap, durable project memory, rolling context updates, or plan/checklist-driven implementation review.
 ---
 
 # Repo Bootstrap
 
-Create and maintain a `codex/` workspace in the repository root so future turns keep stable project memory, structured plan state, and reviewable execution artifacts.
+Create and maintain a `.harness/` workspace in the repository root so future turns keep stable project memory, structured plan state, and reviewable execution artifacts.
 
-This skill now uses `codex/state.json` as a local machine-readable source of truth. The five markdown files are rendered from that state so the agent can keep updating them without losing prior knowledge.
+This skill now uses `.harness/state.json` as a local machine-readable source of truth. The five markdown files are rendered from that state so the agent can keep updating them without losing prior knowledge.
 
 ## When To Use It
 
@@ -21,17 +21,17 @@ This skill now uses `codex/state.json` as a local machine-readable source of tru
 
 The durable memory model has two layers:
 
-1. `codex/state.json`
+1. `.harness/state.json`
    - structured source of truth for current memory, prompt log, repo facts, plan, and checklist state
    - preserves rolling history and allows deterministic markdown regeneration
 2. Rendered markdown views
-   - `codex/memory.md`
-   - `codex/prompt.md`
-   - `codex/repowiki.md`
-   - `codex/plan.md`
-   - `codex/checklist.md`
+   - `.harness/memory.md`
+   - `.harness/prompt.md`
+   - `.harness/repowiki.md`
+   - `.harness/plan.md`
+   - `.harness/checklist.md`
 
-`/codex/` must remain gitignored.
+`/.harness/` must remain gitignored.
 
 ## Quick Start
 
@@ -43,10 +43,10 @@ Claude Code:
 python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
   --repo-root <repo-root> \
   --latest-prompt "Summarize and improve this repo bootstrap skill." \
-  --intent "Persist durable repo memory and update the codex docs." \
+  --intent "Persist durable repo memory and update the harness docs." \
   --objective "Upgrade repo-bootstrap to support rolling updates." \
   --workstream "skill enhancement" \
-  --work-summary "Synced codex state for the current task." \
+  --work-summary "Synced harness state for the current task." \
   --next-action "Run verification"
 ```
 
@@ -55,10 +55,10 @@ Codex:
 python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
   --latest-prompt "Summarize and improve this repo bootstrap skill." \
-  --intent "Persist durable repo memory and update the codex docs." \
+  --intent "Persist durable repo memory and update the harness docs." \
   --objective "Upgrade repo-bootstrap to support rolling updates." \
   --workstream "skill enhancement" \
-  --work-summary "Synced codex state for the current task." \
+  --work-summary "Synced harness state for the current task." \
   --next-action "Run verification"
 ```
 
@@ -68,32 +68,32 @@ Claude Code:
 ```bash
 python3 ~/.claude/skills/repo-bootstrap/scripts/init_docs.py \
   --repo-root <repo-root> \
-  --context-file /tmp/codex-context.json
+  --context-file /tmp/harness-context.json
 ```
 
 Codex:
 ```bash
 python3 "$CODEX_HOME/skills/repo-bootstrap/scripts/init_docs.py" \
   --repo-root <repo-root> \
-  --context-file /tmp/codex-context.json
+  --context-file /tmp/harness-context.json
 ```
 
 4. Confirm these files exist:
-   - `codex/state.json`
-   - `codex/memory.md`
-   - `codex/prompt.md`
-   - `codex/repowiki.md`
-   - `codex/plan.md`
-   - `codex/checklist.md`
-5. Confirm `.gitignore` contains `/codex/`.
+   - `.harness/state.json`
+   - `.harness/memory.md`
+   - `.harness/prompt.md`
+   - `.harness/repowiki.md`
+   - `.harness/plan.md`
+   - `.harness/checklist.md`
+5. Confirm `.gitignore` contains `/.harness/`.
 
 ## Required Turn Workflow
 
 Apply this workflow every time the skill is invoked.
 
-1. Read `codex/memory.md` and `codex/prompt.md` before analysis.
-2. For code or architecture tasks, also read `codex/repowiki.md` before planning.
-3. Before finishing the turn, sync the latest task context back into `codex/state.json`.
+1. Read `.harness/memory.md` and `.harness/prompt.md` before analysis.
+2. For code or architecture tasks, also read `.harness/repowiki.md` before planning.
+3. Before finishing the turn, sync the latest task context back into `.harness/state.json`.
 4. Let the script re-render the five markdown files from state.
 5. If facts changed, update `repowiki.md` through the structured state instead of editing only the markdown view.
 
@@ -101,11 +101,11 @@ The skill is only doing its job if the state is refreshed continuously. Bootstra
 
 ## Non-Negotiable Rules
 
-1. `codex/state.json` is the canonical local memory store.
+1. `.harness/state.json` is the canonical local memory store.
 2. `memory.md` and `prompt.md` must be refreshed on every invocation.
 3. `repowiki.md` must be refreshed whenever repository facts evolve, or at minimum receive a review entry.
 4. `plan.md` and `checklist.md` must stay aligned through shared step IDs or explicit mapping.
-5. `/codex/` must stay ignored in `.gitignore`.
+5. `/.harness/` must stay ignored in `.gitignore`.
 6. Do not wipe history just to keep docs tidy; summarize or trim old entries instead.
 7. Do not rely on placeholder-only content after bootstrap.
 
@@ -190,7 +190,7 @@ If `plan` is present and `checklist` is omitted, the script auto-derives a check
 
 ## RepoWiki Depth Standard
 
-`codex/repowiki.md` must remain a practical wiki, not a summary paragraph. It should stay useful for future sessions by including:
+`.harness/repowiki.md` must remain a practical wiki, not a summary paragraph. It should stay useful for future sessions by including:
 
 1. repository purpose and non-goals
 2. architecture notes and control/data-flow hints
@@ -218,7 +218,7 @@ When `checklist.md` is active:
 
 ## Migration Behavior
 
-If legacy codex markdown files exist but `codex/state.json` does not, the script captures those markdown files into state archives before rendering the new state-backed versions. This prevents silent knowledge loss during upgrade.
+If legacy markdown files exist (from either `.harness/` or the older `codex/` directory) but `.harness/state.json` does not, the script captures those markdown files into state archives before rendering the new state-backed versions. This prevents silent knowledge loss during upgrade.
 
 ## Anti-Patterns
 
@@ -233,4 +233,4 @@ If legacy codex markdown files exist but `codex/state.json` does not, the script
 
 ### scripts/
 
-- `scripts/init_docs.py`: bootstraps and continuously syncs `codex/state.json` plus the rendered markdown files.
+- `scripts/init_docs.py`: bootstraps and continuously syncs `.harness/state.json` plus the rendered markdown files.

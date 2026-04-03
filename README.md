@@ -154,7 +154,7 @@ If you only try four things from this repo, start here:
 
 | Skill | Layer | Core Problem | Design Lever | Typical Outputs |
 | --- | --- | --- | --- | --- |
-| `repo-bootstrap` | Context | Repo knowledge gets lost between sessions | Split understanding into durable documents | `codex/state.json`, `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md` |
+| `repo-bootstrap` | Context | Repo knowledge gets lost between sessions | Split understanding into durable documents | `.harness/state.json`, `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md` |
 | `longrun-dev` | Execution | Long tasks drift, lose focus, or declare done too early | Stateful harness with evidence-backed completion | `.longrun/init.sh`, `feature_list.json`, `progress.md`, `session_state.json` |
 | `agent-team-dev` | Collaboration | Multi-agent work collides without governance | Compact engineering team with explicit ownership | task contract, role packets, `A1/I1/T1/R1` artifacts |
 | `learn` | Knowledge | Valuable knowledge from interactions gets lost between sessions | Structured extraction with strength-based evolution | `~/.claude/learned/`, knowledge files with `weak→medium→strong` progression |
@@ -181,12 +181,12 @@ When this information lives only in chat history, it is extremely fragile. One s
 
 This skill splits repo cognition into six durable artifacts:
 
-- `codex/state.json`: machine-readable single source of truth
-- `codex/memory.md`: ongoing working memory
-- `codex/prompt.md`: user intent, constraints, explanation history
-- `codex/repowiki.md`: repo facts — directories, commands, environment
-- `codex/plan.md`: design approach, assumptions, risks, validation paths
-- `codex/checklist.md`: real execution ledger — file changes, validation status
+- `.harness/state.json`: machine-readable single source of truth
+- `.harness/memory.md`: ongoing working memory
+- `.harness/prompt.md`: user intent, constraints, explanation history
+- `.harness/repowiki.md`: repo facts — directories, commands, environment
+- `.harness/plan.md`: design approach, assumptions, risks, validation paths
+- `.harness/checklist.md`: real execution ledger — file changes, validation status
 
 These responsibilities must stay separated:
 
