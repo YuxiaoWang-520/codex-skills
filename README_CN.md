@@ -149,6 +149,7 @@ cp -r rules/common .claude/rules/
 - 遵循不可变数据模式、函数 <50 行、覆盖率 ≥80%
 - Python 文件自动加 type annotations、用 frozen dataclass
 - 写完代码后主动触发 code review
+- 自动加载并应用之前 session 积累的知识
 
 ## 四个核心卖点 Skill
 
@@ -401,6 +402,16 @@ strength: strong（直接跳级）
 - `/learn-review` 顶部显示累计统计：已积累 23 条全局 / 12 条项目知识
 - 新 session 开始时提示：已加载 8 条项目经验和 15 条全局经验
 
+#### 知识如何真正生效
+
+`learn` skill 只负责**存储**知识，它本身不会自动加载。要让知识在新 session 中自动生效，需要安装 `rules/common/` 中的 `learned-knowledge` rule。Rules 每次会话自动注入，安装后 agent 会在每个新 session 自动加载并应用已积累的知识，无需任何手动操作。完整链路：
+
+```
+/learn → 保存知识文件 → learned-knowledge rule 下次 session 自动加载 → agent 应用并引用
+```
+
+不安装该 rule 的话，`/learn` 仍然可以提取和保存知识，但下次 session 不会自动使用。安装方式见 [Rules 参考](#rules-参考)。
+
 ## 这套组合是怎么协同工作的
 
 ```mermaid
@@ -451,6 +462,7 @@ flowchart LR
 | `patterns` | 新功能先搜索成熟骨架项目；推荐 Repository Pattern |
 | `performance` | 模型选择建议（Haiku/Sonnet/Opus）；context 管理策略 |
 | `agents` | 自动调度子 agent：复杂功能→planner，写完代码→reviewer |
+| `learned-knowledge` | 每次 session 自动加载已学知识（`~/.claude/learned/` + `.claude/learned/`）；应用纠正、模式、事实、偏好；引用来源 |
 | `hooks` | TodoWrite 最佳实践、权限控制指南 |
 
 ### Python Rules（仅 `.py`/`.pyi` 文件生效）

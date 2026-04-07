@@ -147,6 +147,7 @@ Once installed, the AI agent will automatically:
 - enforce immutable patterns, functions <50 lines, coverage ≥80%
 - add type annotations and frozen dataclass for Python files
 - trigger code review proactively after writing code
+- load and apply learned knowledge from previous sessions
 
 ## The 4 Flagship Skills
 
@@ -386,6 +387,16 @@ Why not auto-promote? Because the cost of false promotion (polluting global scop
 
 **Why it works:** Conversations are full of knowledge that agents lose between sessions. This skill turns that loss into lasting growth. Two commands, Markdown files, three strength tiers, and a quality gate — simple enough to actually use, transparent enough to trust, and structured enough to compound over time.
 
+#### How learned knowledge actually takes effect
+
+The `learn` skill only **stores** knowledge — it does not auto-load. To close the loop, install the `learned-knowledge` rule from `rules/common/`. Rules are auto-injected every session, so once installed, the agent will automatically load and apply accumulated knowledge without any manual action. The full pipeline:
+
+```
+/learn → saves knowledge files → learned-knowledge rule auto-loads them next session → agent applies and cites
+```
+
+Without the rule, `/learn` still extracts knowledge, but future sessions won't use it automatically. See the [Rules Reference](#rules-reference) for installation.
+
 ## How the Stack Fits Together
 
 ```mermaid
@@ -434,6 +445,7 @@ This repo provides two complementary systems:
 | `patterns` | Search for battle-tested skeletons first; Repository Pattern recommended |
 | `performance` | Model selection guidance (Haiku / Sonnet / Opus); context window management |
 | `agents` | Auto-dispatch sub-agents: complex features → planner, code written → reviewer |
+| `learned-knowledge` | Load learned knowledge (`~/.claude/learned/` + `.claude/learned/`) at session start; apply corrections, patterns, facts, preferences; cite sources |
 | `hooks` | TodoWrite best practices, permission control guide |
 
 ### Python Rules (`.py`/`.pyi` files only)

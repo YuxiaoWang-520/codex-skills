@@ -261,6 +261,45 @@ When the agent applies learned knowledge, briefly mention it:
 
 This reinforces the user's confidence that the agent is learning.
 
+## Activation: How Learned Knowledge Takes Effect
+
+The `learn` skill only **stores** knowledge — it does not auto-load it into future sessions. To close the loop, you need to install the `learned-knowledge` rule.
+
+### The learn → rule → auto-load pipeline
+
+```
+/learn extracts knowledge → saves to ~/.claude/learned/ or .claude/learned/
+                                          ↓
+learned-knowledge rule auto-injected every session
+                                          ↓
+Agent loads strong/medium entries at session start → applies them
+```
+
+### How to activate
+
+Install the rule so it auto-loads every session:
+
+```bash
+# User-level (all projects)
+cp rules/common/learned-knowledge.md ~/.claude/rules/common/
+
+# Or project-level (current project only)
+cp rules/common/learned-knowledge.md .claude/rules/
+```
+
+### What happens without the rule
+
+- `/learn` still works — it extracts and saves knowledge normally
+- But future sessions will **not** automatically load or apply saved knowledge
+- The agent would need to be told manually to read the knowledge files
+
+### What happens with the rule
+
+- Every new session, the agent checks `~/.claude/learned/` and `.claude/learned/`
+- `strong` and `medium` entries are loaded automatically
+- The agent cites learned knowledge when it influences decisions
+- The user sees a one-line announcement: "Loaded N project entries and M global entries"
+
 ## Integration with repo-bootstrap
 
 `learn` and `repo-bootstrap` are complementary:
