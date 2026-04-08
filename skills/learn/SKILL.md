@@ -37,14 +37,22 @@ python3 "$SKILLS_HOME/learn/scripts/learn_manager.py" init
 This creates:
 
 ```text
-~/.claude/learned/            # Global knowledge (cross-project)
+Claude: ~/.claude/learned/    # Global knowledge (cross-project)
+Codex:  ~/.codex/learned/     # Global knowledge (cross-project)
   corrections/
   patterns/
   facts/
   preferences/
 ```
 
-For project-level knowledge, the directories are created under `.claude/learned/` in the project root when needed.
+For project-level knowledge, the directories are created under the assistant's
+native project path when needed:
+
+- Claude: `.claude/learned/`
+- Codex: `.codex/learned/`
+
+During migration, the helper script can also read the other namespace so prior
+knowledge is not stranded.
 
 ### Two commands, that's it
 
@@ -90,7 +98,7 @@ For each candidate, make one of three decisions:
 
 Before deciding, run these checks:
 
-- [ ] Search existing `~/.claude/learned/` and `.claude/learned/` for keyword overlap
+- [ ] Search existing learned knowledge in the assistant's native global and project directories
 - [ ] Check if appending to an existing knowledge file would be better
 - [ ] Confirm this is reusable, not a one-off
 
@@ -100,8 +108,8 @@ Ask: "Would this knowledge be useful in a different project?"
 
 | Scope | Where it saves | When to use |
 |-------|---------------|-------------|
-| **Global** | `~/.claude/learned/` | Generic patterns: security, git, debugging, tool usage, user preferences |
-| **Project** | `.claude/learned/` | Project-specific: architecture conventions, deploy procedures, team agreements |
+| **Global** | `~/.claude/learned/` or `~/.codex/learned/` | Generic patterns: security, git, debugging, tool usage, user preferences |
+| **Project** | `.claude/learned/` or `.codex/learned/` | Project-specific: architecture conventions, deploy procedures, team agreements |
 
 **When unsure, choose project.** It is safer to keep knowledge scoped and promote later than to pollute the global space.
 
@@ -112,9 +120,9 @@ Save each piece of knowledge as a Markdown file (see format below), then report 
 ```
 Learned from this session:
 
-  [correction] Don't mock DB in integration tests  → .claude/learned/corrections/
-  [pattern]    Use AppError class for all API errors → .claude/learned/patterns/
-  [preference] Keep responses concise               → ~/.claude/learned/preferences/
+  [correction] Don't mock DB in integration tests  → .claude/learned/ or .codex/learned/
+  [pattern]    Use AppError class for all API errors → project learned directory
+  [preference] Keep responses concise               → global learned directory
 
   Merged 1 into existing knowledge:
     [fact] Deploy checklist updated (added staging step)
@@ -195,7 +203,7 @@ Run the helper script to display statistics:
 python3 ~/.claude/skills/learn/scripts/learn_manager.py stats
 
 # Codex
-python3 "$CODEX_HOME/skills/learn/scripts/learn_manager.py" stats
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/learn/scripts/learn_manager.py" stats
 ```
 
 Present the output to the user, showing counts by type, strength, and scope.
@@ -203,7 +211,11 @@ Present the output to the user, showing counts by type, strength, and scope.
 ### Step 2 — List knowledge
 
 ```bash
+# Claude Code
 python3 ~/.claude/skills/learn/scripts/learn_manager.py list
+
+# Codex
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/learn/scripts/learn_manager.py" list
 ```
 
 Show each entry with its type, strength, confirmed count, and one-line summary.
@@ -230,7 +242,11 @@ Suggest promoting a project-scoped knowledge entry to global when:
 3. The user confirms
 
 ```bash
+# Claude Code
 python3 ~/.claude/skills/learn/scripts/learn_manager.py promote
+
+# Codex
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/learn/scripts/learn_manager.py" promote
 ```
 
 This lists promotion candidates. The user decides — no automatic promotion.
@@ -241,9 +257,10 @@ This lists promotion candidates. The user decides — no automatic promotion.
 
 At the start of a new session, the agent should:
 
-1. Check if `~/.claude/learned/` exists — load `strong` and `medium` global knowledge
-2. Check if `.claude/learned/` exists — load `strong` and `medium` project knowledge
-3. Use loaded knowledge to inform behavior (respect corrections, follow patterns, remember facts, honor preferences)
+1. Check the assistant's native global learned directory — load `strong` and `medium` global knowledge
+2. Check the assistant's native project learned directory — load `strong` and `medium` project knowledge
+3. During migration, also read the other namespace when it exists to avoid losing prior knowledge
+4. Use loaded knowledge to inform behavior (respect corrections, follow patterns, remember facts, honor preferences)
 
 ### Selective loading
 
@@ -263,21 +280,25 @@ This reinforces the user's confidence that the agent is learning.
 
 ## Activation: How Learned Knowledge Takes Effect
 
-The `learn` skill only **stores** knowledge — it does not auto-load it into future sessions. To close the loop, you need to install the `learned-knowledge` rule.
+The `learn` skill only **stores** knowledge. The auto-load mechanism depends on
+the assistant:
 
-### The learn → rule → auto-load pipeline
+- **Claude Code**: install the `learned-knowledge` rule in `rules/common/`
+- **Codex**: install harness-craft's Codex guardrails into `AGENTS.md`
+
+### The learn → always-on guardrails → auto-load pipeline
 
 ```
-/learn extracts knowledge → saves to ~/.claude/learned/ or .claude/learned/
-                                          ↓
-learned-knowledge rule auto-injected every session
-                                          ↓
+/learn extracts knowledge → saves to assistant-native learned directories
+                                                ↓
+always-on guardrails load every new session
+                                                ↓
 Agent loads strong/medium entries at session start → applies them
 ```
 
 ### How to activate
 
-Install the rule so it auto-loads every session:
+Claude Code:
 
 ```bash
 # User-level (all projects)
@@ -287,15 +308,25 @@ cp rules/common/learned-knowledge.md ~/.claude/rules/common/
 cp rules/common/learned-knowledge.md .claude/rules/
 ```
 
-### What happens without the rule
+Codex:
+
+```bash
+# User-level (all projects)
+python3 scripts/install.py --assistant codex --skip-skills
+
+# Or project-level (current project only)
+python3 scripts/install.py --assistant codex --skip-skills --scope project --project-root "$(pwd)"
+```
+
+### What happens without the always-on layer
 
 - `/learn` still works — it extracts and saves knowledge normally
 - But future sessions will **not** automatically load or apply saved knowledge
 - The agent would need to be told manually to read the knowledge files
 
-### What happens with the rule
+### What happens with the always-on layer
 
-- Every new session, the agent checks `~/.claude/learned/` and `.claude/learned/`
+- Every new session, the agent checks the assistant-native learned directories
 - `strong` and `medium` entries are loaded automatically
 - The agent cites learned knowledge when it influences decisions
 - The user sees a one-line announcement: "Loaded N project entries and M global entries"
@@ -307,7 +338,7 @@ cp rules/common/learned-knowledge.md .claude/rules/
 | | repo-bootstrap | learn |
 |--|----------------|-------|
 | **What it stores** | Current project state, plans, progress | Reusable knowledge from interactions |
-| **Where** | `.harness/` (project-internal) | `~/.claude/learned/` + `.claude/learned/` |
+| **Where** | `.harness/` (project-internal) | `~/.claude/learned/` or `~/.codex/learned/`, plus project-scoped learned dirs |
 | **Lifecycle** | Changes with project activity | Accumulates over time |
 | **Update frequency** | Every session | When knowledge is extracted |
 | **Analogy** | Working memory | Long-term memory |
@@ -321,7 +352,7 @@ When both are active:
 ## Storage Structure
 
 ```text
-~/.claude/learned/              # Global (cross-project)
+~/.claude/learned/ or ~/.codex/learned/   # Global (cross-project)
 ├── corrections/
 │   ├── no-db-mocks-in-integration.md
 │   └── use-const-not-let.md
@@ -334,7 +365,7 @@ When both are active:
     ├── concise-responses.md
     └── chinese-comments.md
 
-.claude/learned/                # Project-specific
+.claude/learned/ or .codex/learned/       # Project-specific
 ├── corrections/
 ├── patterns/
 │   └── use-repository-pattern.md
@@ -351,8 +382,8 @@ When both are active:
 - **No code dumps.** Knowledge files capture patterns and rules, not entire code blocks.
 - **No secrets.** Never save API keys, passwords, or credentials in knowledge files.
 - **User consent.** Always show what will be saved and get confirmation before writing.
-- **Don't duplicate rules.** If something is already enforced by a rule in `~/.claude/rules/`, don't save it as learned knowledge.
-- **Don't duplicate memory.** If something belongs in auto-memory (`~/.claude/projects/.../memory/`), it's probably context, not reusable knowledge. Knowledge is about *how to work*, memory is about *what happened*.
+- **Don't duplicate rules.** If something is already enforced by the assistant's always-on guardrails, don't save it as learned knowledge.
+- **Don't duplicate memory.** If something belongs in repo memory such as `.harness/`, it's probably context, not reusable knowledge. Knowledge is about *how to work*, memory is about *what happened*.
 
 ## When to Suggest `/learn`
 

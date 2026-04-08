@@ -25,34 +25,90 @@ import argparse
 import os
 import re
 import sys
-from datetime import date
 from pathlib import Path
 
 KNOWLEDGE_TYPES = ("corrections", "patterns", "facts", "preferences")
 STRENGTHS = ("weak", "medium", "strong")
 
 
+def dedupe_paths(paths: list[Path]) -> list[Path]:
+    """Return paths in order without duplicates."""
+    seen: set[Path] = set()
+    result: list[Path] = []
+    for path in paths:
+        resolved = path.expanduser()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        result.append(resolved)
+    return result
+
+
+def is_codex_mode() -> bool:
+    """Infer whether the skill is running in a Codex install."""
+    if os.environ.get("CODEX_HOME"):
+        return True
+    script_path = Path(__file__).resolve()
+    return any(parent.name == ".codex" for parent in [script_path, *script_path.parents])
+
+
 def get_global_dir() -> Path:
-    """Return the global learned knowledge directory."""
-    codex_home = os.environ.get("CODEX_HOME")
-    if codex_home:
-        return Path(codex_home) / "learned"
+    """Return the primary global learned knowledge directory."""
+    if is_codex_mode():
+        codex_home = os.environ.get("CODEX_HOME")
+        if codex_home:
+            return Path(codex_home) / "learned"
+        return Path.home() / ".codex" / "learned"
     return Path.home() / ".claude" / "learned"
 
 
-def get_project_dir(project_root: str | None = None) -> Path | None:
-    """Return the project-level learned knowledge directory, or None."""
+def get_global_read_dirs() -> list[Path]:
+    """Return readable global knowledge directories, primary first."""
+    if is_codex_mode():
+        candidates = [get_global_dir(), Path.home() / ".claude" / "learned"]
+    else:
+        candidates = [get_global_dir(), Path.home() / ".codex" / "learned"]
+    return [path for path in dedupe_paths(candidates) if path.exists()]
+
+
+def resolve_project_root(project_root: str | None = None) -> Path | None:
+    """Resolve the repository root used for project-scoped knowledge."""
     if project_root:
-        p = Path(project_root) / ".claude" / "learned"
-        return p if p.exists() else None
+        return Path(project_root)
     cwd = Path.cwd()
     for parent in [cwd, *cwd.parents]:
-        candidate = parent / ".claude" / "learned"
-        if candidate.exists():
-            return candidate
+        if (parent / ".codex" / "learned").exists():
+            return parent
+        if (parent / ".claude" / "learned").exists():
+            return parent
         if (parent / ".git").exists():
-            return parent / ".claude" / "learned"
+            return parent
     return None
+
+
+def get_project_dir(project_root: str | None = None) -> Path | None:
+    """Return the primary project-level learned knowledge directory."""
+    root = resolve_project_root(project_root)
+    if root is None:
+        return None
+    namespace = ".codex" if is_codex_mode() else ".claude"
+    return root / namespace / "learned"
+
+
+def get_project_read_dirs(project_root: str | None = None) -> list[Path]:
+    """Return readable project knowledge directories, primary first."""
+    root = resolve_project_root(project_root)
+    if root is None:
+        return []
+    primary_namespace = ".codex" if is_codex_mode() else ".claude"
+    fallback_namespace = ".claude" if primary_namespace == ".codex" else ".codex"
+    return [
+        path for path in dedupe_paths([
+            root / primary_namespace / "learned",
+            root / fallback_namespace / "learned",
+        ])
+        if path.exists()
+    ]
 
 
 def parse_frontmatter(filepath: Path) -> dict:
@@ -96,16 +152,13 @@ def collect_entries(
     """Collect knowledge entries matching filters."""
     entries = []
     dirs_to_scan: list[tuple[Path, str]] = []
+    seen_keys: set[tuple[str, str, str]] = set()
 
     if scope in ("all", "global"):
-        gdir = get_global_dir()
-        if gdir.exists():
-            dirs_to_scan.append((gdir, "global"))
+        dirs_to_scan.extend((gdir, "global") for gdir in get_global_read_dirs())
 
     if scope in ("all", "project"):
-        pdir = get_project_dir(project_root)
-        if pdir and pdir.exists():
-            dirs_to_scan.append((pdir, "project"))
+        dirs_to_scan.extend((pdir, "project") for pdir in get_project_read_dirs(project_root))
 
     for base, entry_scope in dirs_to_scan:
         type_dirs = [knowledge_type] if knowledge_type else KNOWLEDGE_TYPES
@@ -114,14 +167,16 @@ def collect_entries(
             if not type_dir.is_dir():
                 continue
             for f in sorted(type_dir.glob("*.md")):
+                dedupe_key = (entry_scope, t, f.name)
+                if dedupe_key in seen_keys:
+                    continue
                 fm = parse_frontmatter(f)
                 if strength and fm.get("strength") != strength:
                     continue
-                # Normalize type to directory name (plural)
                 raw_type = fm.get("type", t)
                 norm_type = raw_type if raw_type in KNOWLEDGE_TYPES else raw_type + "s"
                 if norm_type not in KNOWLEDGE_TYPES:
-                    norm_type = t  # fallback to directory name
+                    norm_type = t
                 entries.append({
                     "path": f,
                     "scope": entry_scope,
@@ -132,7 +187,7 @@ def collect_entries(
                     "title": get_title(f),
                     "source": fm.get("source", ""),
                 })
-
+                seen_keys.add(dedupe_key)
     return entries
 
 
@@ -149,7 +204,11 @@ def cmd_init(args: argparse.Namespace) -> None:
         print(f"  [OK] {d}")
 
     if args.project_root:
-        proj_dir = Path(args.project_root) / ".claude" / "learned"
+        proj_dir = get_project_dir(args.project_root)
+        if proj_dir is None:
+            print("\n[init] Could not resolve project root.")
+            print("\n[init] Done. Directories are ready.")
+            return
         print(f"\n[init] Project directory: {proj_dir}")
         for t in KNOWLEDGE_TYPES:
             d = proj_dir / t
@@ -169,7 +228,7 @@ def cmd_list(args: argparse.Namespace) -> None:
     )
     if not entries:
         print("No knowledge entries found.")
-        if not get_global_dir().exists():
+        if not get_global_read_dirs():
             print("Hint: run 'learn_manager.py init' first.")
         return
 
@@ -259,8 +318,8 @@ def cmd_search(args: argparse.Namespace) -> None:
 
 def cmd_promote(args: argparse.Namespace) -> None:
     """List or execute project-to-global promotions."""
-    project_dir = get_project_dir(args.project_root)
-    if not project_dir or not project_dir.exists():
+    project_dirs = get_project_read_dirs(args.project_root)
+    if not project_dirs:
         print("No project-level knowledge directory found.")
         return
 

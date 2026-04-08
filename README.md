@@ -68,33 +68,25 @@ The goal is not to add one more clever prompt. The goal is to upgrade agent work
 
 ## Quick Start
 
-### Install Skills
+### One-Command Install (Recommended)
 
 <details>
 <summary><strong>Claude Code</strong></summary>
 
 ```bash
-# Install the 4 flagship skills
-mkdir -p ~/.claude/skills
-cp -R skills/repo-bootstrap ~/.claude/skills/
-cp -R skills/longrun-dev ~/.claude/skills/
-cp -R skills/learn ~/.claude/skills/
-cp -R skills/agent-team-dev ~/.claude/skills/
+python3 scripts/install.py --assistant claude --profile flagship --with-python-rules
 
-# Or install the full collection
-cp -R skills/* ~/.claude/skills/
+# Full collection
+python3 scripts/install.py --assistant claude --profile all --with-python-rules
+
+# Project-scoped rules for the current repo
+python3 scripts/install.py --assistant claude --skip-skills --scope project --project-root "$(pwd)"
 ```
 
-Expected structure:
+What the installer does:
 
-```text
-~/.claude/skills/
-  repo-bootstrap/
-  longrun-dev/
-  learn/
-  agent-team-dev/
-  ...
-```
+- installs skills into `~/.claude/skills/`
+- installs always-on guardrails into `~/.claude/rules/` or `.claude/rules/`
 
 </details>
 
@@ -102,36 +94,61 @@ Expected structure:
 <summary><strong>Codex (OpenAI)</strong></summary>
 
 ```bash
-# Install the 4 flagship skills
+python3 scripts/install.py --assistant codex --profile flagship --with-python-rules
+
+# Full collection
+python3 scripts/install.py --assistant codex --profile all --with-python-rules
+
+# Project-scoped guardrails for the current repo
+python3 scripts/install.py --assistant codex --skip-skills --scope project --project-root "$(pwd)"
+```
+
+What the installer does:
+
+- installs skills into `~/.codex/skills/`
+- installs always-on guardrails into `~/.codex/AGENTS.md` or `.codex/AGENTS.md`
+- uses a managed block, so existing user-written AGENTS content outside that block is preserved
+- restart Codex after installation so new sessions pick up the updated `AGENTS.md`
+
+</details>
+
+### Why Codex Uses `AGENTS.md`
+
+Claude has a native `rules/` layer. Codex does not. In Codex, the always-on
+equivalent is `AGENTS.md`, so the installer renders the same guardrails into a
+managed `AGENTS.md` block.
+
+That means:
+
+- **Claude**: rules stay as short markdown files under `~/.claude/rules/` or `.claude/rules/`
+- **Codex**: the same rule layer is installed into `~/.codex/AGENTS.md` or `.codex/AGENTS.md`
+
+In both cases, the end result is the same: always-on guardrails with no manual
+invocation once installed.
+
+### Manual Install (Fallback)
+
+If you prefer not to use the installer, skills can still be copied manually.
+
+```bash
+# Claude skills
+mkdir -p ~/.claude/skills
+cp -R skills/repo-bootstrap ~/.claude/skills/
+cp -R skills/longrun-dev ~/.claude/skills/
+cp -R skills/learn ~/.claude/skills/
+cp -R skills/agent-team-dev ~/.claude/skills/
+
+# Codex skills
 mkdir -p ~/.codex/skills
 cp -R skills/repo-bootstrap ~/.codex/skills/
 cp -R skills/longrun-dev ~/.codex/skills/
 cp -R skills/learn ~/.codex/skills/
 cp -R skills/agent-team-dev ~/.codex/skills/
-
-# Or install the full collection
-cp -R skills/* ~/.codex/skills/
 ```
 
-Expected structure:
-
-```text
-~/.codex/skills/
-  repo-bootstrap/
-  longrun-dev/
-  learn/
-  agent-team-dev/
-  ...
-```
-
-</details>
-
-### Install Rules (Always-On Guardrails)
-
-Rules are auto-injected into every session — no manual invocation needed.
+Claude rules can also be installed manually:
 
 ```bash
-# User-level (applies to all projects)
 mkdir -p ~/.claude/rules
 cp -r rules/common ~/.claude/rules/
 cp -r rules/python ~/.claude/rules/   # pick your language
@@ -140,6 +157,9 @@ cp -r rules/python ~/.claude/rules/   # pick your language
 mkdir -p .claude/rules
 cp -r rules/common .claude/rules/
 ```
+
+For Codex guardrails, prefer `scripts/install.py` because Codex needs
+`AGENTS.md` management rather than direct `rules/` copying.
 
 Once installed, the AI agent will automatically:
 - use `feat:`/`fix:`/`refactor:` commit format
@@ -158,7 +178,7 @@ If you only try four things from this repo, start here:
 | `repo-bootstrap` | Context | Repo knowledge gets lost between sessions | Split understanding into durable documents | `.harness/state.json`, `memory.md`, `prompt.md`, `repowiki.md`, `plan.md`, `checklist.md` |
 | `longrun-dev` | Execution | Long tasks drift, lose focus, or declare done too early | Stateful harness with evidence-backed completion | `.longrun/init.sh`, `feature_list.json`, `progress.md`, `session_state.json` |
 | `agent-team-dev` | Collaboration | Multi-agent work collides without governance | Compact engineering team with explicit ownership | task contract, role packets, `A1/I1/T1/R1` artifacts |
-| `learn` | Knowledge | Valuable knowledge from interactions gets lost between sessions | Structured extraction with strength-based evolution | `~/.claude/learned/`, knowledge files with `weak→medium→strong` progression |
+| `learn` | Knowledge | Valuable knowledge from interactions gets lost between sessions | Structured extraction with strength-based evolution | `~/.claude/learned/` or `~/.codex/learned/`, knowledge files with `weak→medium→strong` progression |
 
 ---
 
@@ -368,8 +388,8 @@ This is more practical than floating-point confidence: `weak/medium/strong` is e
 
 Knowledge is stored at two levels:
 
-- **Project** (`.claude/learned/`): project-specific knowledge, the default destination
-- **Global** (`~/.claude/learned/`): cross-project universal knowledge
+- **Project** (`.claude/learned/` or `.codex/learned/`): project-specific knowledge, the default destination
+- **Global** (`~/.claude/learned/` or `~/.codex/learned/`): cross-project universal knowledge
 
 Promotion rules are deliberately conservative: only when a project-scoped entry reaches `strength = strong` and its content contains no project-specific references will the system **suggest** promotion — but the user always confirms.
 
@@ -389,13 +409,22 @@ Why not auto-promote? Because the cost of false promotion (polluting global scop
 
 #### How learned knowledge actually takes effect
 
-The `learn` skill only **stores** knowledge — it does not auto-load. To close the loop, install the `learned-knowledge` rule from `rules/common/`. Rules are auto-injected every session, so once installed, the agent will automatically load and apply accumulated knowledge without any manual action. The full pipeline:
+The `learn` skill only **stores** knowledge — it does not auto-load. To close
+the loop, install the assistant's always-on guardrail layer:
+
+- **Claude Code**: install the `learned-knowledge` rule from `rules/common/`
+- **Codex**: install harness-craft's managed `AGENTS.md` block via `scripts/install.py`
+
+Once installed, the agent will automatically load and apply accumulated
+knowledge in future sessions. The full pipeline:
 
 ```
-/learn → saves knowledge files → learned-knowledge rule auto-loads them next session → agent applies and cites
+/learn → saves knowledge files → always-on guardrails auto-load them next session → agent applies and cites
 ```
 
-Without the rule, `/learn` still extracts knowledge, but future sessions won't use it automatically. See the [Rules Reference](#rules-reference) for installation.
+Without that always-on layer, `/learn` still extracts knowledge, but future
+sessions won't use it automatically. See [Quick Start](#quick-start) and the
+[Rules Reference](#rules-reference) for installation details.
 
 ## How the Stack Fits Together
 
@@ -421,16 +450,19 @@ This repo provides two complementary systems:
 | | Skills | Rules |
 |--|--------|-------|
 | **Analogy** | Playbook | Constitution |
-| **Loading** | On-demand via `/skill-name` | Auto-injected every session |
+| **Loading** | On-demand via `/skill-name` | Always-on guardrails every session |
 | **Context cost** | Full text loaded only when invoked | Always loaded (each is short) |
 | **Best for** | Long workflows (TDD, E2E, deep research…) | Short global constraints (style, security, git…) |
-| **Activation** | User-triggered | Auto-enforced every turn |
+| **Activation** | User-triggered | Claude: `rules/`; Codex: `AGENTS.md` |
 
-**In short:** Rules are the agent's **instincts**. Skills are the agent's **learned expertise**.
+**In short:** Rules are the agent's **instincts**. Skills are the agent's
+**learned expertise**. Claude and Codex expose the always-on layer
+differently, but the design goal is the same.
 
 ## Rules Reference
 
-> Rules take effect automatically after installation. No manual invocation needed.
+> Rules take effect automatically after installation. In Claude they live in
+> `rules/`; in Codex the same guardrails are rendered into `AGENTS.md`.
 
 ### Common Rules (all languages)
 
@@ -445,7 +477,7 @@ This repo provides two complementary systems:
 | `patterns` | Search for battle-tested skeletons first; Repository Pattern recommended |
 | `performance` | Model selection guidance (Haiku / Sonnet / Opus); context window management |
 | `agents` | Auto-dispatch sub-agents: complex features → planner, code written → reviewer |
-| `learned-knowledge` | Load learned knowledge (`~/.claude/learned/` + `.claude/learned/`) at session start; apply corrections, patterns, facts, preferences; cite sources |
+| `learned-knowledge` | Load learned knowledge (Claude: `~/.claude/learned/` + `.claude/learned/`; Codex: `~/.codex/learned/` + `.codex/learned/`) at session start; apply corrections, patterns, facts, preferences; cite sources |
 | `hooks` | TodoWrite best practices, permission control guide |
 
 ### Python Rules (`.py`/`.pyi` files only)

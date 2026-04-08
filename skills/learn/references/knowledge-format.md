@@ -170,13 +170,13 @@ strength: strong (immediate, regardless of confirmed count)
 ## Directory structure
 
 ```text
-~/.claude/learned/              # Global (cross-project)
+~/.claude/learned/ or ~/.codex/learned/   # Global (cross-project)
 ├── corrections/
 ├── patterns/
 ├── facts/
 └── preferences/
 
-<project-root>/.claude/learned/ # Project-specific
+<project-root>/.claude/learned/ or <project-root>/.codex/learned/  # Project-specific
 ├── corrections/
 ├── patterns/
 ├── facts/

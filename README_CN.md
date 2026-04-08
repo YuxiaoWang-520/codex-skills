@@ -70,33 +70,25 @@
 
 ## 快速开始
 
-### 安装 Skills
+### 一条命令安装（推荐）
 
 <details>
 <summary><strong>Claude Code</strong></summary>
 
 ```bash
-# 安装四个核心 skill
-mkdir -p ~/.claude/skills
-cp -R skills/repo-bootstrap ~/.claude/skills/
-cp -R skills/longrun-dev ~/.claude/skills/
-cp -R skills/learn ~/.claude/skills/
-cp -R skills/agent-team-dev ~/.claude/skills/
+python3 scripts/install.py --assistant claude --profile flagship --with-python-rules
 
-# 或整仓安装
-cp -R skills/* ~/.claude/skills/
+# 安装全部 skills
+python3 scripts/install.py --assistant claude --profile all --with-python-rules
+
+# 仅为当前项目安装 project 级 rules
+python3 scripts/install.py --assistant claude --skip-skills --scope project --project-root "$(pwd)"
 ```
 
-目标结构：
+安装器会：
 
-```text
-~/.claude/skills/
-  repo-bootstrap/
-  longrun-dev/
-  learn/
-  agent-team-dev/
-  ...
-```
+- 把 skills 安装到 `~/.claude/skills/`
+- 把 always-on guardrails 安装到 `~/.claude/rules/` 或 `.claude/rules/`
 
 </details>
 
@@ -104,36 +96,58 @@ cp -R skills/* ~/.claude/skills/
 <summary><strong>Codex (OpenAI)</strong></summary>
 
 ```bash
-# 安装四个核心 skill
+python3 scripts/install.py --assistant codex --profile flagship --with-python-rules
+
+# 安装全部 skills
+python3 scripts/install.py --assistant codex --profile all --with-python-rules
+
+# 仅为当前项目安装 project 级 guardrails
+python3 scripts/install.py --assistant codex --skip-skills --scope project --project-root "$(pwd)"
+```
+
+安装器会：
+
+- 把 skills 安装到 `~/.codex/skills/`
+- 把 always-on guardrails 安装到 `~/.codex/AGENTS.md` 或 `.codex/AGENTS.md`
+- 使用 managed block 方式更新 `AGENTS.md`，保留用户自己写的其他内容
+- 安装后重启 Codex，让新的 `AGENTS.md` 从下一个 session 开始生效
+
+</details>
+
+### 为什么 Codex 用 `AGENTS.md`
+
+Claude 有原生 `rules/` 机制，Codex 没有。Codex 里真正的 always-on
+等价物是 `AGENTS.md`，所以安装器会把同一套 guardrails 渲染成
+`AGENTS.md` 的 managed block。
+
+也就是说：
+
+- **Claude**：规则继续安装到 `~/.claude/rules/` 或 `.claude/rules/`
+- **Codex**：同样的规则层会安装到 `~/.codex/AGENTS.md` 或 `.codex/AGENTS.md`
+
+两者的目标相同：安装后无需手动调用，每次新会话自动生效。
+
+### 手工安装（兜底方案）
+
+```bash
+# Claude skills
+mkdir -p ~/.claude/skills
+cp -R skills/repo-bootstrap ~/.claude/skills/
+cp -R skills/longrun-dev ~/.claude/skills/
+cp -R skills/learn ~/.claude/skills/
+cp -R skills/agent-team-dev ~/.claude/skills/
+
+# Codex skills
 mkdir -p ~/.codex/skills
 cp -R skills/repo-bootstrap ~/.codex/skills/
 cp -R skills/longrun-dev ~/.codex/skills/
 cp -R skills/learn ~/.codex/skills/
 cp -R skills/agent-team-dev ~/.codex/skills/
-
-# 或整仓安装
-cp -R skills/* ~/.codex/skills/
 ```
 
-目标结构：
-
-```text
-~/.codex/skills/
-  repo-bootstrap/
-  longrun-dev/
-  learn/
-  agent-team-dev/
-  ...
-```
-
-</details>
-
-### 安装 Rules（始终生效的行为准则）
-
-Rules 安装后**无需任何操作**，每次会话自动生效：
+Claude 的 rules 也可以继续手工安装：
 
 ```bash
-# 用户级（所有项目生效）
 mkdir -p ~/.claude/rules
 cp -r rules/common ~/.claude/rules/
 cp -r rules/python ~/.claude/rules/   # 按需选择语言
@@ -142,6 +156,9 @@ cp -r rules/python ~/.claude/rules/   # 按需选择语言
 mkdir -p .claude/rules
 cp -r rules/common .claude/rules/
 ```
+
+Codex 的 always-on guardrails 建议通过 `scripts/install.py` 安装，因为
+它需要管理 `AGENTS.md`，而不是直接复制 `rules/` 目录。
 
 安装后 AI agent 会自动：
 - 用 `feat:`/`fix:`/`refactor:` 格式写 commit message
@@ -166,7 +183,7 @@ cp -r rules/common .claude/rules/
 | --- | --- | --- | --- | --- | --- |
 | `repo-bootstrap` | 上下文层 | 上下文会丢，仓库知识无法持续复用 | 把项目认知拆成长期文档并由结构化状态驱动 | 文档分责、持续更新、显式未知项 | `.harness/state.json`、`memory.md`、`prompt.md`、`repowiki.md`、`plan.md`、`checklist.md` |
 | `longrun-dev` | 执行连续性层 | 长任务跨 session 后容易漂移、失焦、提前宣布完成 | 把长期开发变成有状态的 harness | 每轮只做一个 feature、先恢复 baseline、必须留 evidence | `.longrun/init.sh`、`feature_list.json`、`progress.md`、`session_state.json` |
-| `learn` | 知识积累层 | 交互中的高价值知识会随 session 结束而消失 | 结构化提取 + 强度演化 + 分级作用域 | 质量门控、scope 隔离、半自动提升 | `~/.claude/learned/`、带 `weak→medium→strong` 演化的知识文件 |
+| `learn` | 知识积累层 | 交互中的高价值知识会随 session 结束而消失 | 结构化提取 + 强度演化 + 分级作用域 | 质量门控、scope 隔离、半自动提升 | `~/.claude/learned/` 或 `~/.codex/learned/`、带 `weak→medium→strong` 演化的知识文件 |
 | `agent-team-dev` | 协作编排层 | 多 agent 并行容易冲突、失控、噪音大 | 把多 agent 编排成一个小型工程团队 | ownership、角色边界、独立 review、round cap | task contract、role packet、`A1/I1/T1/R1` artifacts |
 
 这四个 skill 组合在一起，才构成这个仓库真正的差异化价值。
@@ -385,8 +402,8 @@ strength: strong（直接跳级）
 
 知识分两级存储：
 
-- **Project**（`.claude/learned/`）：项目特定知识，默认落盘到这里
-- **Global**（`~/.claude/learned/`）：跨项目通用知识
+- **Project**（`.claude/learned/` 或 `.codex/learned/`）：项目特定知识，默认落盘到这里
+- **Global**（`~/.claude/learned/` 或 `~/.codex/learned/`）：跨项目通用知识
 
 提升规则很克制：只有当一条 project 知识满足 `strength = strong` 且内容不包含项目特定引用时，系统才会**建议**提升 — 但最终由用户确认。
 
@@ -404,13 +421,22 @@ strength: strong（直接跳级）
 
 #### 知识如何真正生效
 
-`learn` skill 只负责**存储**知识，它本身不会自动加载。要让知识在新 session 中自动生效，需要安装 `rules/common/` 中的 `learned-knowledge` rule。Rules 每次会话自动注入，安装后 agent 会在每个新 session 自动加载并应用已积累的知识，无需任何手动操作。完整链路：
+`learn` skill 只负责**存储**知识，它本身不会自动加载。要让知识在新
+session 中自动生效，需要安装助手对应的“始终生效”层：
+
+- **Claude Code**：安装 `rules/common/` 中的 `learned-knowledge` rule
+- **Codex**：通过 `scripts/install.py` 安装 harness-craft 生成的 `AGENTS.md` managed block
+
+安装后 agent 会在每个新 session 自动加载并应用已积累的知识，无需任何
+手动操作。完整链路：
 
 ```
-/learn → 保存知识文件 → learned-knowledge rule 下次 session 自动加载 → agent 应用并引用
+/learn → 保存知识文件 → 始终生效的 guardrails 在下个 session 自动加载 → agent 应用并引用
 ```
 
-不安装该 rule 的话，`/learn` 仍然可以提取和保存知识，但下次 session 不会自动使用。安装方式见 [Rules 参考](#rules-参考)。
+如果不安装这层 always-on guardrails，`/learn` 仍然可以提取和保存知识，
+但下次 session 不会自动使用。安装方式见[快速开始](#快速开始)和
+[Rules 参考](#rules-参考)。
 
 ## 这套组合是怎么协同工作的
 
@@ -438,16 +464,18 @@ flowchart LR
 | | Skills | Rules |
 |--|--------|-------|
 | **类比** | 操作手册 | 宪法 |
-| **加载方式** | 按需显式调用（`/skill-name`） | 每次会话自动注入 |
+| **加载方式** | 按需显式调用（`/skill-name`） | 每次会话都有 always-on guardrails |
 | **占用 context** | 调用时才加载全文 | 始终占用（但每条很短） |
 | **适合放什么** | 长篇工作流程（TDD、E2E、深度研究…） | 短小的全局约束（编码风格、安全、Git…） |
-| **生效方式** | 用户触发后执行 | 每轮交互自动遵守 |
+| **生效方式** | 用户触发后执行 | Claude: `rules/`；Codex: `AGENTS.md` |
 
 **一句话**：Rules 是 agent 的**本能反射**，Skills 是 agent 的**后天技能**。
+Claude 和 Codex 的承载机制不同，但设计目标是同一层能力。
 
 ## Rules 参考
 
-> Rules 安装后自动生效，无需手动调用。
+> Rules 安装后自动生效，无需手动调用。Claude 通过 `rules/` 承载，
+> Codex 通过 `AGENTS.md` 承载同一套 guardrails。
 
 ### Common Rules（通用，所有语言生效）
 
@@ -462,7 +490,7 @@ flowchart LR
 | `patterns` | 新功能先搜索成熟骨架项目；推荐 Repository Pattern |
 | `performance` | 模型选择建议（Haiku/Sonnet/Opus）；context 管理策略 |
 | `agents` | 自动调度子 agent：复杂功能→planner，写完代码→reviewer |
-| `learned-knowledge` | 每次 session 自动加载已学知识（`~/.claude/learned/` + `.claude/learned/`）；应用纠正、模式、事实、偏好；引用来源 |
+| `learned-knowledge` | 每次 session 自动加载已学知识（Claude：`~/.claude/learned/` + `.claude/learned/`；Codex：`~/.codex/learned/` + `.codex/learned/`）；应用纠正、模式、事实、偏好；引用来源 |
 | `hooks` | TodoWrite 最佳实践、权限控制指南 |
 
 ### Python Rules（仅 `.py`/`.pyi` 文件生效）

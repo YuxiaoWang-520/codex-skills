@@ -1,0 +1,5 @@
+.DS_Store
+.pytest_cache/
+.longrun/
+__pycache__/
+*.pyc
