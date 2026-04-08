@@ -7,7 +7,7 @@
 
 <div align="center">
 
-<h1>Harness Craft <img src="./assets/readme/logo.svg" alt="Harness Craft mascot" width="88" valign="middle"/></h1>
+<h1><img src="./assets/readme/mascot-crab.svg" alt="Harness Craft mascot" width="88" valign="middle"/> Harness Craft</h1>
 
 **Harness Craft: Turn agentic coding from a one-off prompt trick into a durable engineering system.**
 

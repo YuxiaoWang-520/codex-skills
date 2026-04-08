@@ -7,7 +7,7 @@
 
 <div align="center">
 
-<h1>Harness Craft <img src="./assets/readme/logo.svg" alt="Harness Craft mascot" width="88" valign="middle"/></h1>
+<h1><img src="./assets/readme/mascot-crab.svg" alt="Harness Craft mascot" width="88" valign="middle"/> Harness Craft</h1>
 
 **Harness Craft：把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复、可学习的工程系统。**
 
