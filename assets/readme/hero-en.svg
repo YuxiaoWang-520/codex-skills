@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 720" role="img" aria-labelledby="title desc">
+  <title id="title">Harness Craft hero</title>
+  <desc id="desc">A landing-page style banner for Harness Craft showing durable agent systems for Claude Code and Codex.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#07111f"/>
+      <stop offset="45%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0f3d36"/>
+    </linearGradient>
+    <radialGradient id="glowBlue" cx="15%" cy="15%" r="55%">
+      <stop offset="0%" stop-color="#0a66c2" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#0a66c2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowGreen" cx="85%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#2ea44f" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#2ea44f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#132235" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#101a28" stop-opacity="0.88"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0a66c2"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#2ea44f"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#020617" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="720" rx="40" fill="url(#bg)"/>
+  <rect width="1400" height="720" rx="40" fill="url(#glowBlue)"/>
+  <rect width="1400" height="720" rx="40" fill="url(#glowGreen)"/>
+
+  <g opacity="0.16">
+    <path d="M0 580 C220 520 360 640 560 600 C760 560 930 430 1200 470 C1280 482 1340 500 1400 520" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <path d="M80 140 C240 90 390 170 520 150 C680 126 760 76 930 96 C1110 116 1230 180 1360 150" fill="none" stroke="#ffffff" stroke-width="2"/>
+  </g>
+
+  <g opacity="0.14" fill="#ffffff">
+    <circle cx="112" cy="96" r="3"/>
+    <circle cx="180" cy="96" r="3"/>
+    <circle cx="248" cy="96" r="3"/>
+    <circle cx="316" cy="96" r="3"/>
+    <circle cx="112" cy="160" r="3"/>
+    <circle cx="180" cy="160" r="3"/>
+    <circle cx="248" cy="160" r="3"/>
+    <circle cx="316" cy="160" r="3"/>
+    <circle cx="112" cy="224" r="3"/>
+    <circle cx="180" cy="224" r="3"/>
+    <circle cx="248" cy="224" r="3"/>
+    <circle cx="316" cy="224" r="3"/>
+  </g>
+
+  <g transform="translate(84 88)">
+    <rect x="0" y="0" width="242" height="42" rx="21" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.16"/>
+    <text x="22" y="27" fill="#dbeafe" font-size="18" font-family="Segoe UI, Arial, sans-serif" letter-spacing="1.5">CLAUDE CODE  ×  CODEX</text>
+
+    <text x="0" y="128" fill="#f8fafc" font-size="66" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Durable agent systems</text>
+    <text x="0" y="198" fill="#f8fafc" font-size="66" font-weight="700" font-family="Segoe UI, Arial, sans-serif">not just prompt tricks</text>
+
+    <text x="0" y="266" fill="#cbd5e1" font-size="24" font-family="Segoe UI, Arial, sans-serif">Persistent context, evidence-backed execution, bounded collaboration,</text>
+    <text x="0" y="302" fill="#cbd5e1" font-size="24" font-family="Segoe UI, Arial, sans-serif">and learned knowledge that compounds across sessions.</text>
+
+    <g transform="translate(0 356)">
+      <rect x="0" y="0" width="116" height="42" rx="21" fill="#0a66c2" fill-opacity="0.16" stroke="#0a66c2"/>
+      <text x="26" y="27" fill="#dbeafe" font-size="20" font-family="Segoe UI, Arial, sans-serif">skills/</text>
+
+      <rect x="132" y="0" width="112" height="42" rx="21" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+      <text x="160" y="27" fill="#ede9fe" font-size="20" font-family="Segoe UI, Arial, sans-serif">rules/</text>
+
+      <rect x="260" y="0" width="150" height="42" rx="21" fill="#2ea44f" fill-opacity="0.14" stroke="#2ea44f"/>
+      <text x="290" y="27" fill="#dcfce7" font-size="20" font-family="Segoe UI, Arial, sans-serif">AGENTS.md</text>
+    </g>
+
+    <g transform="translate(0 470)" filter="url(#shadow)">
+      <rect x="0" y="0" width="180" height="112" rx="24" fill="#0b1422" fill-opacity="0.72" stroke="#ffffff" stroke-opacity="0.08"/>
+      <text x="28" y="48" fill="#ffffff" font-size="18" font-family="Segoe UI, Arial, sans-serif">Reusable system</text>
+      <text x="28" y="84" fill="#60a5fa" font-size="34" font-weight="700" font-family="Segoe UI, Arial, sans-serif">46 skills</text>
+
+      <rect x="198" y="0" width="180" height="112" rx="24" fill="#0b1422" fill-opacity="0.72" stroke="#ffffff" stroke-opacity="0.08"/>
+      <text x="226" y="48" fill="#ffffff" font-size="18" font-family="Segoe UI, Arial, sans-serif">Always-on guardrails</text>
+      <text x="226" y="84" fill="#c084fc" font-size="34" font-weight="700" font-family="Segoe UI, Arial, sans-serif">15 rules</text>
+
+      <rect x="396" y="0" width="240" height="112" rx="24" fill="#0b1422" fill-opacity="0.72" stroke="#ffffff" stroke-opacity="0.08"/>
+      <text x="424" y="48" fill="#ffffff" font-size="18" font-family="Segoe UI, Arial, sans-serif">Operating-system layers</text>
+      <text x="424" y="84" fill="#4ade80" font-size="34" font-weight="700" font-family="Segoe UI, Arial, sans-serif">4 flagship skills</text>
+    </g>
+  </g>
+
+  <g transform="translate(820 84)" filter="url(#shadow)">
+    <rect x="0" y="0" width="500" height="560" rx="36" fill="#08111d" fill-opacity="0.48" stroke="#ffffff" stroke-opacity="0.08"/>
+    <rect x="32" y="36" width="436" height="10" rx="5" fill="url(#accent)" opacity="0.9"/>
+
+    <g transform="translate(40 74)">
+      <rect x="0" y="0" width="180" height="188" rx="28" fill="url(#card)" stroke="#60a5fa" stroke-opacity="0.55"/>
+      <rect x="18" y="18" width="58" height="58" rx="18" fill="#0a66c2" fill-opacity="0.16" stroke="#60a5fa"/>
+      <rect x="34" y="34" width="12" height="12" rx="3" fill="#60a5fa"/>
+      <rect x="50" y="34" width="12" height="12" rx="3" fill="#60a5fa"/>
+      <rect x="34" y="50" width="12" height="12" rx="3" fill="#60a5fa"/>
+      <rect x="50" y="50" width="12" height="12" rx="3" fill="#60a5fa"/>
+      <text x="18" y="108" fill="#f8fafc" font-size="26" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Repo memory</text>
+      <text x="18" y="140" fill="#bfdbfe" font-size="18" font-family="Segoe UI, Arial, sans-serif">Stateful context that survives</text>
+      <text x="18" y="166" fill="#bfdbfe" font-size="18" font-family="Segoe UI, Arial, sans-serif">session boundaries.</text>
+
+      <rect x="196" y="0" width="224" height="188" rx="28" fill="url(#card)" stroke="#34d399" stroke-opacity="0.55"/>
+      <rect x="214" y="18" width="58" height="58" rx="18" fill="#2ea44f" fill-opacity="0.14" stroke="#34d399"/>
+      <path d="M230 60 L244 44 L256 52 L272 34" fill="none" stroke="#86efac" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="214" y="108" fill="#f8fafc" font-size="26" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Long-run execution</text>
+      <text x="214" y="140" fill="#dcfce7" font-size="18" font-family="Segoe UI, Arial, sans-serif">One feature at a time, with</text>
+      <text x="214" y="166" fill="#dcfce7" font-size="18" font-family="Segoe UI, Arial, sans-serif">evidence before done.</text>
+
+      <rect x="0" y="214" width="224" height="188" rx="28" fill="url(#card)" stroke="#c084fc" stroke-opacity="0.55"/>
+      <rect x="18" y="232" width="58" height="58" rx="18" fill="#8b5cf6" fill-opacity="0.14" stroke="#c084fc"/>
+      <circle cx="38" cy="261" r="8" fill="#ddd6fe"/>
+      <circle cx="56" cy="247" r="8" fill="#ddd6fe"/>
+      <circle cx="62" cy="273" r="8" fill="#ddd6fe"/>
+      <path d="M38 261 L56 247 L62 273" stroke="#ddd6fe" stroke-width="3" fill="none"/>
+      <text x="18" y="322" fill="#f8fafc" font-size="26" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Bounded teamwork</text>
+      <text x="18" y="354" fill="#ede9fe" font-size="18" font-family="Segoe UI, Arial, sans-serif">Ownership, review gates, and</text>
+      <text x="18" y="380" fill="#ede9fe" font-size="18" font-family="Segoe UI, Arial, sans-serif">controlled parallelism.</text>
+
+      <rect x="240" y="214" width="180" height="188" rx="28" fill="url(#card)" stroke="#fb923c" stroke-opacity="0.6"/>
+      <rect x="258" y="232" width="58" height="58" rx="18" fill="#f97316" fill-opacity="0.14" stroke="#fb923c"/>
+      <path d="M288 246 L294 262 L310 268 L294 274 L288 290 L282 274 L266 268 L282 262 Z" fill="#fdba74"/>
+      <text x="258" y="322" fill="#f8fafc" font-size="26" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Learned knowledge</text>
+      <text x="258" y="354" fill="#ffedd5" font-size="18" font-family="Segoe UI, Arial, sans-serif">Corrections and patterns that</text>
+      <text x="258" y="380" fill="#ffedd5" font-size="18" font-family="Segoe UI, Arial, sans-serif">carry into future sessions.</text>
+    </g>
+  </g>
+</svg>

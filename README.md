@@ -11,11 +11,27 @@
 
 **Turn agentic coding from a one-off prompt trick into a durable engineering system.**
 
+<sub>Built for Claude Code and Codex. Skills for depth. Always-on guardrails for instinct. Evidence for delivery.</sub>
+
 [![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
 [![Flagship](https://img.shields.io/badge/Flagship-4%20Core%20Skills-0A66C2)](#the-4-flagship-skills)
 [![Focus](https://img.shields.io/badge/Focus-Persistent%20·%20Verifiable%20·%20Recoverable%20·%20Learnable-2EA44F)](#core-idea)
 [![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
+
+<br/>
+
+<img src="./assets/readme/hero-en.svg" alt="Harness Craft hero banner" width="100%"/>
+
+<br/>
+
+<a href="#quick-start"><strong>Quick Start</strong></a>
+·
+<a href="#the-4-flagship-skills"><strong>Flagship Skills</strong></a>
+·
+<a href="#rules-reference"><strong>Rules / AGENTS</strong></a>
+·
+<a href="#full-skill-inventory"><strong>Full Inventory</strong></a>
 
 </div>
 
@@ -27,34 +43,104 @@ This repository is built around a simple belief:
 
 Most teams don't get blocked because the model "can't write code". They get blocked because:
 
-- the agent understood the repo yesterday and acts like it has amnesia today
-- multiple agents look busy, but their changes collide and review quality is weak
-- plans, validation status, and handoff context live only inside chat transcripts
-- the agent feels done, while the repository is still not in a deliverable state
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      The agent understood the repo yesterday and acts like it has amnesia today.
+    </td>
+    <td width="50%" valign="top">
+      Multiple agents look busy, but their changes collide and review quality is weak.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      Plans, validation status, and handoff context live only inside chat transcripts.
+    </td>
+    <td width="50%" valign="top">
+      The agent feels done, while the repository is still not in a deliverable state.
+    </td>
+  </tr>
+</table>
 
 These are not prompt problems. They are **engineering system problems**.
 
-## Contents
+## Quick Navigation
 
-- [Core Idea](#core-idea)
-- [Quick Start](#quick-start)
-- [The 4 Flagship Skills](#the-4-flagship-skills)
-- [How the Stack Fits Together](#how-the-stack-fits-together)
-- [Skills vs Rules](#skills-vs-rules)
-- [Rules Reference](#rules-reference)
-- [Full Skill Inventory](#full-skill-inventory)
-- [Who This Is For](#who-this-is-for)
-- [Contributing](#contributing)
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <strong><a href="#core-idea">Core Idea</a></strong><br/>
+      Why this repo treats agent work as a system problem, not a prompt problem.
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#quick-start">Quick Start</a></strong><br/>
+      Install Claude or Codex in one command.
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#the-4-flagship-skills">Flagship Skills</a></strong><br/>
+      The four skills that form the operating system.
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <strong><a href="#how-the-stack-fits-together">System Fit</a></strong><br/>
+      See how memory, execution, collaboration, and learning reinforce each other.
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#skills-vs-rules">Skills vs Rules</a></strong><br/>
+      Separate long workflows from always-on guardrails.
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#rules-reference">Rules / AGENTS</a></strong><br/>
+      Understand how Claude `rules/` maps to Codex `AGENTS.md`.
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <strong><a href="#full-skill-inventory">Full Inventory</a></strong><br/>
+      Browse the complete reusable skill library.
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#who-this-is-for">Who This Is For</a></strong><br/>
+      Check whether this stack fits your workflow.
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#contributing">Contributing</a></strong><br/>
+      Add new skills or rules without breaking the design discipline.
+    </td>
+  </tr>
+</table>
 
 ## Core Idea
 
 The goal is not to add one more clever prompt. The goal is to upgrade agent work into a system that is:
 
-- **Persistent** — repo knowledge survives context-window loss
-- **Verifiable** — progress is tied to evidence, not model confidence
-- **Collaborative** — multiple agents work with clear boundaries
-- **Recoverable** — long tasks resume from stable state, not vague memory
-- **Learnable** — agents accumulate knowledge from interactions and get smarter over time
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <strong>Persistent</strong><br/>
+      Repo knowledge survives context-window loss.
+    </td>
+    <td width="33%" valign="top">
+      <strong>Verifiable</strong><br/>
+      Progress is tied to evidence, not model confidence.
+    </td>
+    <td width="33%" valign="top">
+      <strong>Collaborative</strong><br/>
+      Multiple agents work with clear boundaries.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Recoverable</strong><br/>
+      Long tasks resume from stable state, not vague memory.
+    </td>
+    <td width="50%" valign="top" colspan="2">
+      <strong>Learnable</strong><br/>
+      Agents accumulate knowledge from interactions and get smarter over time.
+    </td>
+  </tr>
+</table>
 
 ### Prompt Tricks vs. Engineering Systems
 
@@ -69,6 +155,20 @@ The goal is not to add one more clever prompt. The goal is to upgrade agent work
 ## Quick Start
 
 ### One-Command Install (Recommended)
+
+#### Platform At A Glance
+
+| Dimension | Claude Code | Codex |
+| --- | --- | --- |
+| Skills home | `~/.claude/skills/` | `~/.codex/skills/` |
+| Always-on layer | `~/.claude/rules/` or `.claude/rules/` | `~/.codex/AGENTS.md` or `.codex/AGENTS.md` |
+| Recommended install | `python3 scripts/install.py --assistant claude --profile flagship --with-python-rules` | `python3 scripts/install.py --assistant codex --profile flagship --with-python-rules` |
+| After install | Start a new Claude session | Restart Codex, then start a new session |
+
+> [!TIP]
+> New here? Install the flagship profile first. It gives you the smallest
+> complete system: persistent context, long-run execution, controlled
+> collaboration, and learned knowledge.
 
 <details>
 <summary><strong>Claude Code</strong></summary>
@@ -162,16 +262,41 @@ For Codex guardrails, prefer `scripts/install.py` because Codex needs
 `AGENTS.md` management rather than direct `rules/` copying.
 
 Once installed, the AI agent will automatically:
-- use `feat:`/`fix:`/`refactor:` commit format
-- check for hardcoded secrets, SQL injection, XSS before every commit
-- enforce immutable patterns, functions <50 lines, coverage ≥80%
-- add type annotations and frozen dataclass for Python files
-- trigger code review proactively after writing code
-- load and apply learned knowledge from previous sessions
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      Use `feat:` / `fix:` / `refactor:` commit format.
+    </td>
+    <td width="50%" valign="top">
+      Check for hardcoded secrets, SQL injection, and XSS before every commit.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      Enforce immutable patterns, functions under 50 lines, and coverage above 80%.
+    </td>
+    <td width="50%" valign="top">
+      Add Python type annotations and prefer frozen dataclasses.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      Trigger code review proactively after writing code.
+    </td>
+    <td width="50%" valign="top">
+      Load and apply learned knowledge from previous sessions.
+    </td>
+  </tr>
+</table>
 
 ## The 4 Flagship Skills
 
 If you only try four things from this repo, start here:
+
+<p align="center">
+  <img src="./assets/readme/flagship-en.svg" alt="Harness Craft flagship skills overview" width="100%"/>
+</p>
 
 | Skill | Layer | Core Problem | Design Lever | Typical Outputs |
 | --- | --- | --- | --- | --- |

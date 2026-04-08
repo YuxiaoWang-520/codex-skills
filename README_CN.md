@@ -11,13 +11,31 @@
 
 **把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复、可学习的工程系统。**
 
+<sub>同时适配 Claude Code 与 Codex。用 Skills 承载深流程，用 always-on guardrails 承载本能约束，用证据驱动交付。</sub>
+
 [![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
 [![核心卖点](https://img.shields.io/badge/Flagship-4%20Core%20Skills-0A66C2)](#四个核心卖点-skill)
 [![Focus](https://img.shields.io/badge/Focus-可持久化%20·%20可验证%20·%20可恢复%20·%20可学习-2EA44F)](#核心思路)
 [![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
 
+<br/>
+
+<img src="./assets/readme/hero-cn.svg" alt="Harness Craft 中文视觉头图" width="100%"/>
+
+<br/>
+
+<a href="#快速开始"><strong>快速开始</strong></a>
+·
+<a href="#四个核心卖点-skill"><strong>核心 Skills</strong></a>
+·
+<a href="#rules-参考"><strong>Rules / AGENTS</strong></a>
+·
+<a href="#完整-skill-清单"><strong>完整清单</strong></a>
+
 </div>
+
+---
 
 这个仓库背后的核心判断很简单：
 
@@ -25,24 +43,73 @@
 
 很多团队的痛点其实并不是 agent 不会写代码，而是下面这些更现实的问题：
 
-- agent 上一轮明明已经理解过仓库，这一轮又像失忆一样重新摸索
-- 多个 agent 看起来都很忙，但改动互相踩踏，review 结果也不可信
-- 文档、计划、验证、交接这些中间状态只存在于对话里，过几天就追不回来
-- agent 很容易“感觉自己完成了”，但仓库实际并没有进入可交付状态
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      agent 上一轮明明已经理解过仓库，这一轮又像失忆一样重新摸索。
+    </td>
+    <td width="50%" valign="top">
+      多个 agent 看起来都很忙，但改动互相踩踏，review 结果也不可信。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      文档、计划、验证、交接这些中间状态只存在于对话里，过几天就追不回来。
+    </td>
+    <td width="50%" valign="top">
+      agent 很容易“感觉自己完成了”，但仓库实际并没有进入可交付状态。
+    </td>
+  </tr>
+</table>
 
 这类问题，本质上不是“智力问题”，而是“系统问题”。
 
-## 目录
+## 快速导航
 
-- [核心思路](#核心思路)
-- [快速开始](#快速开始)
-- [四个核心卖点 Skill](#四个核心卖点-skill)
-- [这套组合是怎么协同工作的](#这套组合是怎么协同工作的)
-- [Skills vs Rules](#skills-vs-rules)
-- [Rules 参考](#rules-参考)
-- [完整 Skill 清单](#完整-skill-清单)
-- [适合谁](#适合谁)
-- [Contributing](#contributing)
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <strong><a href="#核心思路">核心思路</a></strong><br/>
+      看清这个仓库为什么解决的是系统问题，而不是 prompt 问题。
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#快速开始">快速开始</a></strong><br/>
+      一条命令安装 Claude 或 Codex 版本。
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#四个核心卖点-skill">核心 Skills</a></strong><br/>
+      四个关键 skill 构成整套工作流的操作系统。
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <strong><a href="#这套组合是怎么协同工作的">组合关系</a></strong><br/>
+      看 memory、execution、collaboration、learning 如何闭环。
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#skills-vs-rules">Skills vs Rules</a></strong><br/>
+      区分长流程能力与始终生效的全局约束。
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#rules-参考">Rules / AGENTS</a></strong><br/>
+      理解 Claude `rules/` 与 Codex `AGENTS.md` 的映射关系。
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <strong><a href="#完整-skill-清单">完整清单</a></strong><br/>
+      浏览整套可复用 skill 库。
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#适合谁">适合谁</a></strong><br/>
+      判断这套栈是否匹配你的工作方式。
+    </td>
+    <td width="33%" valign="top">
+      <strong><a href="#contributing">Contributing</a></strong><br/>
+      在不破坏体系感的前提下继续扩展仓库。
+    </td>
+  </tr>
+</table>
 
 ## 核心思路
 
@@ -50,11 +117,32 @@
 
 它要做的是把 agent 工作升级成一套具备以下特性的工程系统：
 
-- **可持久化**：仓库知识不会因为切 session 就丢失
-- **可验证**：进展依赖证据，而不是模型自我感觉
-- **可协作**：多 agent 并行时边界清晰，不相互踩踏
-- **可恢复**：长任务能从稳定状态继续，而不是从模糊记忆重启
-- **可学习**：agent 能从交互中积累知识，越用越聪明
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <strong>可持久化</strong><br/>
+      仓库知识不会因为切 session 就丢失。
+    </td>
+    <td width="33%" valign="top">
+      <strong>可验证</strong><br/>
+      进展依赖证据，而不是模型自我感觉。
+    </td>
+    <td width="33%" valign="top">
+      <strong>可协作</strong><br/>
+      多 agent 并行时边界清晰，不相互踩踏。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>可恢复</strong><br/>
+      长任务能从稳定状态继续，而不是从模糊记忆重启。
+    </td>
+    <td width="50%" valign="top" colspan="2">
+      <strong>可学习</strong><br/>
+      agent 能从交互中积累知识，越用越聪明。
+    </td>
+  </tr>
+</table>
 
 这就是整个仓库的设计中心。
 
@@ -71,6 +159,19 @@
 ## 快速开始
 
 ### 一条命令安装（推荐）
+
+#### 平台对照表
+
+| 维度 | Claude Code | Codex |
+| --- | --- | --- |
+| Skills 目录 | `~/.claude/skills/` | `~/.codex/skills/` |
+| Always-on 层 | `~/.claude/rules/` 或 `.claude/rules/` | `~/.codex/AGENTS.md` 或 `.codex/AGENTS.md` |
+| 推荐安装命令 | `python3 scripts/install.py --assistant claude --profile flagship --with-python-rules` | `python3 scripts/install.py --assistant codex --profile flagship --with-python-rules` |
+| 安装后动作 | 开新 Claude session 即可 | 重启 Codex，再开新 session |
+
+> [!TIP]
+> 第一次体验这个仓库，建议先安装 `flagship` 配置。它给你的不是零散
+> prompt，而是一套最小可用的完整系统：上下文、长任务、协作、学习。
 
 <details>
 <summary><strong>Claude Code</strong></summary>
@@ -161,21 +262,41 @@ Codex 的 always-on guardrails 建议通过 `scripts/install.py` 安装，因为
 它需要管理 `AGENTS.md`，而不是直接复制 `rules/` 目录。
 
 安装后 AI agent 会自动：
-- 用 `feat:`/`fix:`/`refactor:` 格式写 commit message
-- 提交前检查硬编码密钥、SQL 注入、XSS 等安全问题
-- 遵循不可变数据模式、函数 <50 行、覆盖率 ≥80%
-- Python 文件自动加 type annotations、用 frozen dataclass
-- 写完代码后主动触发 code review
-- 自动加载并应用之前 session 积累的知识
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      用 `feat:` / `fix:` / `refactor:` 格式写 commit message。
+    </td>
+    <td width="50%" valign="top">
+      提交前检查硬编码密钥、SQL 注入、XSS 等安全问题。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      遵循不可变数据模式、函数小于 50 行、覆盖率高于 80%。
+    </td>
+    <td width="50%" valign="top">
+      Python 文件自动加 type annotations，并优先使用 frozen dataclass。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      写完代码后主动触发 code review。
+    </td>
+    <td width="50%" valign="top">
+      自动加载并应用之前 session 积累的知识。
+    </td>
+  </tr>
+</table>
 
 ## 四个核心卖点 Skill
 
 如果你只想先试四个 skill，优先看这四个：
 
-- `repo-bootstrap`
-- `longrun-dev`
-- `learn`
-- `agent-team-dev`
+<p align="center">
+  <img src="./assets/readme/flagship-cn.svg" alt="Harness Craft 四个核心技能总览" width="100%"/>
+</p>
 
 这四个 skill 分别对应 agent 工作流最容易失控的四个层面：
 
