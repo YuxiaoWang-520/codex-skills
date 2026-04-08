@@ -7,18 +7,11 @@
 
 <div align="center">
 
-<table>
-  <tr>
-    <td width="96" valign="middle">
-      <img src="./assets/readme/logo.svg" alt="Harness Craft logo" width="84"/>
-    </td>
-    <td valign="middle" align="left">
-      <h1>Harness Craft</h1>
-      <strong>Turn agentic coding from a one-off prompt trick into a durable engineering system.</strong><br/>
-      <sub>Built for Claude Code and Codex. Skills for depth. Always-on guardrails for instinct. Evidence for delivery.</sub>
-    </td>
-  </tr>
-</table>
+<h1>Harness Craft <img src="./assets/readme/logo.svg" alt="Harness Craft mascot" width="88" valign="middle"/></h1>
+
+**Harness Craft: Turn agentic coding from a one-off prompt trick into a durable engineering system.**
+
+<sub>Built for Claude Code and Codex. Skills for depth. Always-on guardrails for instinct. Evidence for delivery.</sub>
 
 [![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
@@ -296,37 +289,6 @@ Once installed, the AI agent will automatically:
 ## The 4 Flagship Skills
 
 If you only try four things from this repo, start here:
-
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-context.svg" alt="Context layer icon" width="34"/><br/>
-      <strong><code>repo-bootstrap</code></strong><br/>
-      <em>Context layer</em><br/>
-      Persist repo understanding into durable local artifacts.
-    </td>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-execution.svg" alt="Execution layer icon" width="34"/><br/>
-      <strong><code>longrun-dev</code></strong><br/>
-      <em>Execution layer</em><br/>
-      Keep long tasks narrow, stateful, and evidence-backed across sessions.
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-learn.svg" alt="Knowledge layer icon" width="34"/><br/>
-      <strong><code>learn</code></strong><br/>
-      <em>Knowledge layer</em><br/>
-      Turn repeated corrections and patterns into reusable memory.
-    </td>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-collaboration.svg" alt="Collaboration layer icon" width="34"/><br/>
-      <strong><code>agent-team-dev</code></strong><br/>
-      <em>Collaboration layer</em><br/>
-      Coordinate bounded multi-agent work without chaos.
-    </td>
-  </tr>
-</table>
 
 | Skill | Layer | Core Problem | Design Lever | Typical Outputs |
 | --- | --- | --- | --- | --- |

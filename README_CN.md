@@ -7,18 +7,11 @@
 
 <div align="center">
 
-<table>
-  <tr>
-    <td width="96" valign="middle">
-      <img src="./assets/readme/logo.svg" alt="Harness Craft logo" width="84"/>
-    </td>
-    <td valign="middle" align="left">
-      <h1>Harness Craft</h1>
-      <strong>把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复、可学习的工程系统。</strong><br/>
-      <sub>同时适配 Claude Code 与 Codex。用 Skills 承载深流程，用 always-on guardrails 承载本能约束，用证据驱动交付。</sub>
-    </td>
-  </tr>
-</table>
+<h1>Harness Craft <img src="./assets/readme/logo.svg" alt="Harness Craft mascot" width="88" valign="middle"/></h1>
+
+**Harness Craft：把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复、可学习的工程系统。**
+
+<sub>同时适配 Claude Code 与 Codex。用 Skills 承载深流程，用 always-on guardrails 承载本能约束，用证据驱动交付。</sub>
 
 [![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
@@ -296,37 +289,6 @@ Codex 的 always-on guardrails 建议通过 `scripts/install.py` 安装，因为
 ## 四个核心卖点 Skill
 
 如果你只想先试四个 skill，优先看这四个：
-
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-context.svg" alt="上下文层图标" width="34"/><br/>
-      <strong><code>repo-bootstrap</code></strong><br/>
-      <em>上下文层</em><br/>
-      把仓库认知沉淀成可持续维护的本地工件。
-    </td>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-execution.svg" alt="执行层图标" width="34"/><br/>
-      <strong><code>longrun-dev</code></strong><br/>
-      <em>执行层</em><br/>
-      让长任务跨 session 仍然聚焦、可验证、可恢复。
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-learn.svg" alt="知识层图标" width="34"/><br/>
-      <strong><code>learn</code></strong><br/>
-      <em>知识层</em><br/>
-      把纠正、模式和偏好积累成可复用的长期记忆。
-    </td>
-    <td width="50%" valign="top">
-      <img src="./assets/readme/icon-collaboration.svg" alt="协作层图标" width="34"/><br/>
-      <strong><code>agent-team-dev</code></strong><br/>
-      <em>协作层</em><br/>
-      用明确 ownership 控制多 agent 并行而不失控。
-    </td>
-  </tr>
-</table>
 
 这四个 skill 分别对应 agent 工作流最容易失控的四个层面：
 

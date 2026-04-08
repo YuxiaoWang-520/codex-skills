@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Collaboration icon">
-  <rect x="4" y="4" width="56" height="56" rx="18" fill="#0b1422" stroke="#c084fc" stroke-opacity="0.55"/>
-  <circle cx="20" cy="24" r="6" fill="#ddd6fe"/>
-  <circle cx="44" cy="20" r="6" fill="#ddd6fe"/>
-  <circle cx="38" cy="44" r="6" fill="#ddd6fe"/>
-  <path d="M25 22L39 20M23 28L35 40M43 26L39 38" fill="none" stroke="#ede9fe" stroke-width="3.5" stroke-linecap="round"/>
-</svg>

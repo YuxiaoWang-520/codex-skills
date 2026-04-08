@@ -1,22 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
-  <title id="title">Harness Craft logo</title>
-  <desc id="desc">A compact HC monogram logo for Harness Craft.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title desc">
+  <title id="title">Harness Craft mascot</title>
+  <desc id="desc">A compact mechanical crab mascot for Harness Craft.</desc>
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a66c2"/>
-      <stop offset="55%" stop-color="#1f2937"/>
-      <stop offset="100%" stop-color="#2ea44f"/>
+    <linearGradient id="shell" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffcf8a"/>
+      <stop offset="45%" stop-color="#ff8c5a"/>
+      <stop offset="100%" stop-color="#e2557d"/>
     </linearGradient>
-    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#93c5fd"/>
-      <stop offset="50%" stop-color="#c084fc"/>
-      <stop offset="100%" stop-color="#86efac"/>
+    <linearGradient id="helmet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2940"/>
+      <stop offset="100%" stop-color="#314b69"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e7eef7"/>
+      <stop offset="100%" stop-color="#90a4ba"/>
     </linearGradient>
   </defs>
-  <rect x="6" y="6" width="84" height="84" rx="26" fill="#08111d"/>
-  <rect x="6" y="6" width="84" height="84" rx="26" fill="url(#bg)" opacity="0.24"/>
-  <rect x="8" y="8" width="80" height="80" rx="24" fill="none" stroke="url(#ring)" stroke-width="4"/>
-  <path d="M27 27V69M27 48H46M46 27V69" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M72 34C67 28 58 28 52 34C45 41 45 55 52 62C58 68 67 68 72 62" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="68" cy="24" r="4" fill="#fbbf24"/>
+
+  <g transform="translate(8 8)">
+    <ellipse cx="82" cy="152" rx="54" ry="10" fill="#0f172a" opacity="0.14"/>
+
+    <path d="M38 118C23 131 18 139 14 152" fill="none" stroke="#ff9666" stroke-width="9" stroke-linecap="round"/>
+    <path d="M58 130C49 141 45 148 44 160" fill="none" stroke="#ff9666" stroke-width="9" stroke-linecap="round"/>
+    <path d="M106 130C115 141 119 148 120 160" fill="none" stroke="#ff9666" stroke-width="9" stroke-linecap="round"/>
+    <path d="M126 118C141 131 146 139 150 152" fill="none" stroke="#ff9666" stroke-width="9" stroke-linecap="round"/>
+
+    <path d="M28 93C18 81 12 68 14 53C31 56 43 63 51 74" fill="#ffa46f" stroke="#ff7b57" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M22 37L53 47L40 73L14 53Z" fill="#f4f7fb" stroke="#8299b2" stroke-width="4.2" stroke-linejoin="round"/>
+    <circle cx="36" cy="55" r="5.2" fill="#f59e0b"/>
+
+    <path d="M136 93C146 81 152 68 150 53C133 56 121 63 113 74" fill="#ffa46f" stroke="#ff7b57" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M142 37L111 47L124 73L150 53Z" fill="#f4f7fb" stroke="#8299b2" stroke-width="4.2" stroke-linejoin="round"/>
+    <circle cx="128" cy="55" r="5.2" fill="#f59e0b"/>
+
+    <ellipse cx="82" cy="86" rx="53" ry="40" fill="url(#shell)" stroke="#ef6c57" stroke-width="5"/>
+    <path d="M37 84C47 68 64 58 82 58C100 58 117 68 127 84" fill="none" stroke="#ffe0ac" stroke-width="6" stroke-linecap="round" opacity="0.65"/>
+
+    <path d="M44 70C46 45 64 30 82 30C100 30 118 45 120 70" fill="url(#helmet)" stroke="#101827" stroke-width="5" stroke-linejoin="round"/>
+    <rect x="51" y="58" width="62" height="14" rx="7" fill="#223b58" stroke="#516f8e" stroke-width="3"/>
+    <circle cx="61" cy="65" r="4.2" fill="#93c5fd"/>
+    <circle cx="103" cy="65" r="4.2" fill="#93c5fd"/>
+
+    <path d="M66 46C67 34 74 25 82 25C90 25 97 34 98 46" fill="none" stroke="#60a5fa" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="82" cy="22" r="5.5" fill="#fbbf24"/>
+
+    <path d="M66 49L61 24L82 31L103 24L98 49" fill="#1f2b3e" stroke="#101827" stroke-width="4.2" stroke-linejoin="round"/>
+
+    <circle cx="71" cy="89" r="9" fill="#ffffff"/>
+    <circle cx="93" cy="89" r="9" fill="#ffffff"/>
+    <circle cx="73" cy="91" r="3.8" fill="#111827"/>
+    <circle cx="91" cy="91" r="3.8" fill="#111827"/>
+    <circle cx="76" cy="87.5" r="1.6" fill="#ffffff"/>
+    <circle cx="94" cy="87.5" r="1.6" fill="#ffffff"/>
+
+    <path d="M72 106C77 110 87 110 92 106" fill="none" stroke="#7c2d12" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="58" cy="102" r="4.6" fill="#ffb3ad" opacity="0.78"/>
+    <circle cx="106" cy="102" r="4.6" fill="#ffb3ad" opacity="0.78"/>
+
+    <g transform="translate(112 104) rotate(20)">
+      <rect x="0" y="0" width="11" height="31" rx="5.5" fill="url(#steel)" stroke="#7187a0" stroke-width="2"/>
+      <path d="M-6 3H17M-2 10H13M-6 28H17M-2 21H13" fill="none" stroke="#7187a0" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <g transform="translate(30 111)">
+      <circle cx="0" cy="0" r="11" fill="#dbe7f5" stroke="#7d93ac" stroke-width="3"/>
+      <circle cx="0" cy="0" r="4.2" fill="#7d93ac"/>
+      <path d="M0-11V11M-11 0H11M-8-8L8 8M8-8L-8 8" stroke="#7d93ac" stroke-width="2.1"/>
+    </g>
+  </g>
 </svg>
