@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Context icon">
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="#0b1422" stroke="#60a5fa" stroke-opacity="0.55"/>
+  <rect x="17" y="17" width="12" height="12" rx="3" fill="#93c5fd"/>
+  <rect x="35" y="17" width="12" height="12" rx="3" fill="#93c5fd"/>
+  <rect x="17" y="35" width="12" height="12" rx="3" fill="#93c5fd"/>
+  <rect x="35" y="35" width="12" height="12" rx="3" fill="#93c5fd"/>
+  <path d="M29 23H35M23 29V35M41 29V35M29 41H35" fill="none" stroke="#dbeafe" stroke-width="3" stroke-linecap="round"/>
+</svg>

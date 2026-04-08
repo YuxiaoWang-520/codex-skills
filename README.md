@@ -7,21 +7,24 @@
 
 <div align="center">
 
-# Harness Craft
-
-**Turn agentic coding from a one-off prompt trick into a durable engineering system.**
-
-<sub>Built for Claude Code and Codex. Skills for depth. Always-on guardrails for instinct. Evidence for delivery.</sub>
+<table>
+  <tr>
+    <td width="96" valign="middle">
+      <img src="./assets/readme/logo.svg" alt="Harness Craft logo" width="84"/>
+    </td>
+    <td valign="middle" align="left">
+      <h1>Harness Craft</h1>
+      <strong>Turn agentic coding from a one-off prompt trick into a durable engineering system.</strong><br/>
+      <sub>Built for Claude Code and Codex. Skills for depth. Always-on guardrails for instinct. Evidence for delivery.</sub>
+    </td>
+  </tr>
+</table>
 
 [![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
 [![Flagship](https://img.shields.io/badge/Flagship-4%20Core%20Skills-0A66C2)](#the-4-flagship-skills)
 [![Focus](https://img.shields.io/badge/Focus-Persistent%20·%20Verifiable%20·%20Recoverable%20·%20Learnable-2EA44F)](#core-idea)
 [![Open Source](https://img.shields.io/badge/Open%20Source-Community%20Ready-F97316)](#contributing)
-
-<br/>
-
-<img src="./assets/readme/hero-en.svg" alt="Harness Craft hero banner" width="100%"/>
 
 <br/>
 
@@ -294,9 +297,36 @@ Once installed, the AI agent will automatically:
 
 If you only try four things from this repo, start here:
 
-<p align="center">
-  <img src="./assets/readme/flagship-en.svg" alt="Harness Craft flagship skills overview" width="100%"/>
-</p>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="./assets/readme/icon-context.svg" alt="Context layer icon" width="34"/><br/>
+      <strong><code>repo-bootstrap</code></strong><br/>
+      <em>Context layer</em><br/>
+      Persist repo understanding into durable local artifacts.
+    </td>
+    <td width="50%" valign="top">
+      <img src="./assets/readme/icon-execution.svg" alt="Execution layer icon" width="34"/><br/>
+      <strong><code>longrun-dev</code></strong><br/>
+      <em>Execution layer</em><br/>
+      Keep long tasks narrow, stateful, and evidence-backed across sessions.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="./assets/readme/icon-learn.svg" alt="Knowledge layer icon" width="34"/><br/>
+      <strong><code>learn</code></strong><br/>
+      <em>Knowledge layer</em><br/>
+      Turn repeated corrections and patterns into reusable memory.
+    </td>
+    <td width="50%" valign="top">
+      <img src="./assets/readme/icon-collaboration.svg" alt="Collaboration layer icon" width="34"/><br/>
+      <strong><code>agent-team-dev</code></strong><br/>
+      <em>Collaboration layer</em><br/>
+      Coordinate bounded multi-agent work without chaos.
+    </td>
+  </tr>
+</table>
 
 | Skill | Layer | Core Problem | Design Lever | Typical Outputs |
 | --- | --- | --- | --- | --- |
