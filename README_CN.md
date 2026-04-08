@@ -12,6 +12,8 @@
 **Harness Craft：把 Agentic Coding 从一次性的 prompt 技巧，升级成一套可持续、可验证、可协作、可恢复、可学习的工程系统。**
 
 <sub>同时适配 Claude Code 与 Codex。用 Skills 承载深流程，用 always-on guardrails 承载本能约束，用证据驱动交付。</sub>
+<br/>
+<sub>本仓库的 rules 设计部分借鉴了开源项目 [Everything Claude Code](https://github.com/affaan-m/everything-claude-code)。</sub>
 
 [![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)

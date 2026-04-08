@@ -12,6 +12,8 @@
 **Harness Craft: Turn agentic coding from a one-off prompt trick into a durable engineering system.**
 
 <sub>Built for Claude Code and Codex. Skills for depth. Always-on guardrails for instinct. Evidence for delivery.</sub>
+<br/>
+<sub>The rules layer in this repo is inspired in part by the open-source project [Everything Claude Code](https://github.com/affaan-m/everything-claude-code).</sub>
 
 [![Skills](https://img.shields.io/badge/Skills-46-111111)](./skills)
 [![Rules](https://img.shields.io/badge/Rules-15-8B5CF6)](./rules)
